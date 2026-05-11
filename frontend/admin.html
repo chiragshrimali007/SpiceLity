@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spicelity — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g900:#0F1E08;--g800:#1A3010;--g700:#243D14;--g600:#2C4A18;
+  --g500:#3A6020;--g400:#4A7828;--g200:#90C060;--g50:#EBF5E0;
+  --a700:#7A5010;--a600:#9A6818;--a500:#B88020;--a400:#CCA040;
+  --a200:#EDCE90;--a100:#F5E4BC;--a50:#FBF4E0;
+  --cr:#FDFAF4;--c100:#F5F0E5;--c200:#EDE5D4;--c300:#DDD0BC;--c400:#C8BEA8;
+  --t900:#1A2A0A;--t700:#2C4018;--t500:#4A5A30;--t400:#6A7858;--t200:#AAB898;
+  --red:#B82020;--redl:#FDEAEA;--blue:#1040A0;--bluel:#E8EFFD;
+  --border:#D8CEB8;--r:12px;--r-sm:8px;--r-lg:18px;
+  --sh:0 2px 12px rgba(0,0,0,.08);--sh-lg:0 6px 30px rgba(0,0,0,.12);
+  --sidebar:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);min-height:100vh;display:flex;flex-direction:column;}
+ 
+/* ═══ SPLASH ═══ */
+.spl{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--g900),var(--g800));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:spl-out .5s ease 1.6s both;pointer-events:none;}
+.spl-logo{width:70px;height:70px;object-fit:contain;animation:spl-pop .65s cubic-bezier(.34,1.56,.64,1) both;}
+.spl-fb{width:70px;height:70px;border-radius:20px;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:#fff;animation:spl-pop .65s cubic-bezier(.34,1.56,.64,1) both;}
+.spl-label{display:flex;flex-direction:column;align-items:center;gap:3px;animation:spl-up .5s ease both .3s;opacity:0;}
+.spl-label strong{font-family:'Playfair Display',serif;font-size:26px;color:var(--a200);font-weight:800;}
+.spl-label span{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(237,206,144,.45);}
+.spl-bar{width:100px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;animation:spl-up .4s ease both .5s;opacity:0;}
+.spl-fill{height:100%;background:linear-gradient(90deg,var(--a500),var(--a300));animation:bar-grow 1.4s ease .5s both;}
+@keyframes spl-pop{from{opacity:0;transform:scale(.3) rotate(-15deg);}to{opacity:1;transform:scale(1) rotate(0);}}
+@keyframes spl-up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spl-out{to{opacity:0;visibility:hidden;}}
+@keyframes bar-grow{from{width:0;}to{width:100%;}}
+ 
+/* ═══ TOP BAR ═══ */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--g900);border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:0;height:60px;flex-shrink:0;
+}
+.tb-brand{
+  width:var(--sidebar);flex-shrink:0;padding:0 22px;
+  display:flex;align-items:center;gap:10px;border-right:1px solid rgba(255,255,255,.07);
+  text-decoration:none;
+}
+.tb-logo{width:30px;height:30px;object-fit:contain;flex-shrink:0;}
+.tb-logo-fb{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+.tb-wordmark{display:flex;flex-direction:column;line-height:1;}
+.tb-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:var(--a200);letter-spacing:-.2px;}
+.tb-sub{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,206,144,.4);}
+.tb-right{flex:1;display:flex;align-items:center;justify-content:space-between;padding:0 22px;}
+.tb-page-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.7);}
+.tb-actions{display:flex;align-items:center;gap:10px;}
+.tb-ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;color:rgba(255,255,255,.7);transition:background .2s;}
+.tb-ic:hover{background:rgba(255,255,255,.13);}
+.tb-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--a500);border-radius:50%;border:2px solid var(--g900);font-size:7.5px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tb-avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--g500),var(--g600));border:1.5px solid var(--a400);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--a100);cursor:pointer;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:rgba(255,255,255,.8);}
+ 
+/* ═══ LAYOUT ═══ */
+.app-body{display:flex;flex:1;min-height:0;}
+ 
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--g900);border-right:1px solid rgba(255,255,255,.07);
+  display:flex;flex-direction:column;padding:16px 0;
+  position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:0;}
+.nav-section{margin-bottom:6px;}
+.nav-label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:0 22px;margin-bottom:4px;}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 22px;cursor:pointer;
+  font-size:13px;font-weight:600;color:rgba(255,255,255,.55);border:none;background:transparent;
+  width:100%;text-align:left;font-family:inherit;transition:all .18s;border-left:2px solid transparent;
+}
+.nav-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05);}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.08);border-left-color:var(--a400);}
+.nav-item svg{flex-shrink:0;opacity:.7;}
+.nav-item.active svg{opacity:1;}
+.nav-badge{margin-left:auto;min-width:18px;height:18px;background:var(--a500);border-radius:9px;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.sidebar-footer{margin-top:auto;padding:14px 22px;border-top:1px solid rgba(255,255,255,.07);}
+.logout-btn{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 0;width:100%;transition:color .2s;}
+.logout-btn:hover{color:rgba(255,255,255,.8);}
+ 
+/* ═══ MAIN CONTENT ═══ */
+.main{flex:1;min-width:0;padding:28px;overflow-y:auto;}
+.page{display:none;}
+.page.active{display:block;}
+ 
+/* ═══ SHARED COMPONENTS ═══ */
+.page-header{margin-bottom:24px;}
+.page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:var(--t900);letter-spacing:-.3px;}
+.page-sub{font-size:13px;color:var(--t400);margin-top:4px;}
+ 
+.card{background:#fff;border-radius:var(--r);border:.5px solid var(--border);overflow:hidden;}
+.card-hd{padding:16px 20px;border-bottom:.5px solid var(--c200);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;color:var(--t900);}
+.card-action{font-size:12px;font-weight:700;color:var(--a600);cursor:pointer;background:none;border:none;font-family:inherit;}
+.card-action:hover{text-decoration:underline;}
+ 
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;}
+.btn-primary{background:var(--g700);color:#fff;box-shadow:0 3px 12px rgba(36,61,20,.25);}
+.btn-primary:hover{background:var(--g600);}
+.btn-gold{background:var(--a600);color:#fff;}
+.btn-gold:hover{background:var(--a500);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-ghost{background:var(--c100);color:var(--t700);border:.5px solid var(--border);}
+.btn-ghost:hover{background:var(--c200);}
+.btn-danger{background:var(--redl);color:var(--red);}
+ 
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.p-green{background:var(--g50);color:var(--g600);}   .p-green .pill-dot{background:var(--g500);}
+.p-gold {background:var(--a50);color:var(--a700);}    .p-gold  .pill-dot{background:var(--a500);}
+.p-blue {background:var(--bluel);color:var(--blue);}  .p-blue  .pill-dot{background:var(--blue);}
+.p-red  {background:var(--redl);color:var(--red);}    .p-red   .pill-dot{background:var(--red);}
+ 
+/* Inputs */
+.input,.select-el{
+  padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--r-sm);
+  font-family:inherit;font-size:13px;color:var(--t900);background:#fff;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.input:focus,.select-el:focus{border-color:var(--g600);box-shadow:0 0 0 3px rgba(44,74,24,.1);}
+.input::placeholder{color:var(--t200);}
+ 
+.search-bar{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;}
+.search-bar input{border:none;outline:none;flex:1;font-family:inherit;font-size:13px;color:var(--t900);background:transparent;}
+.search-bar input::placeholder{color:var(--t200);}
+ 
+.filter-row{display:flex;flex-wrap:wrap;gap:7px;}
+.fchip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#fff;border:.5px solid var(--border);color:var(--t400);cursor:pointer;font-family:inherit;transition:all .15s;}
+.fchip.on{background:var(--g700);color:#fff;border-color:var(--g700);}
+ 
+.empty-state{text-align:center;padding:48px 24px;}
+.empty-icon{font-size:36px;margin-bottom:12px;}
+.empty-title{font-size:15px;font-weight:700;color:var(--t700);}
+.empty-sub{font-size:13px;color:var(--t400);margin-top:4px;}
+ 
+/* Toast */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:9000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--t900);color:#fff;padding:12px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:600;max-width:300px;box-shadow:var(--sh-lg);animation:toast-in .3s ease both;}
+.toast.out{animation:toast-out .3s ease both;}
+.toast.success{background:var(--g700);}.toast.error{background:var(--red);}
+@keyframes toast-in{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toast-out{to{opacity:0;transform:translateY(6px);}}
+ 
+/* ═══ PAGE: OVERVIEW ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:#fff;border-radius:var(--r);border:.5px solid var(--border);padding:18px 20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc-green::before{background:linear-gradient(90deg,var(--g600),var(--g400));}
+.sc-gold::before{background:linear-gradient(90deg,var(--a600),var(--a400));}
+.sc-red::before{background:linear-gradient(90deg,var(--red),#E05050);}
+.sc-blue::before{background:linear-gradient(90deg,var(--blue),#4070E0);}
+.stat-label{font-size:11.5px;font-weight:600;color:var(--t400);letter-spacing:.02em;margin-bottom:8px;}
+.stat-value{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--t900);letter-spacing:-.5px;}
+.stat-change{font-size:12px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:4px;}
+.stat-change.up{color:var(--g500);}.stat-change.dn{color:var(--red);}
+.stat-ico{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.8;}
+ 
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.two-col-6040{display:grid;grid-template-columns:3fr 2fr;gap:16px;}
+ 
+/* Order table */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:11px;font-weight:700;color:var(--t400);letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:.5px solid var(--c200);}
+.tbl td{padding:12px 14px;font-size:13px;color:var(--t700);border-bottom:.5px solid var(--c200);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--cr);}
+.tbl-id{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--t400);}
+.tbl-name{font-weight:700;color:var(--t900);}
+.tbl-amt{font-weight:800;color:var(--t900);}
+ 
+/* Outstanding */
+.out-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:.5px solid var(--c200);}
+.out-row:last-child{border-bottom:none;}
+.out-avatar{width:36px;height:36px;border-radius:50%;background:var(--g50);border:1.5px solid var(--c300);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--g700);flex-shrink:0;}
+.out-info{flex:1;min-width:0;}
+.out-name{font-size:13px;font-weight:700;color:var(--t900);}
+.out-days{font-size:11px;color:var(--t400);margin-top:1px;}
+.out-amt{font-size:14px;font-weight:800;color:var(--red);flex-shrink:0;}
+ 
+/* ═══ PAGE: PRICING / MANDI ═══ */
+.price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.price-card{background:#fff;border-radius:var(--r);border:.5px solid var(--border);padding:16px;transition:border-color .2s,box-shadow .2s;}
+.price-card:hover{border-color:var(--g400);box-shadow:0 4px 16px rgba(36,61,20,.1);}
+.pc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;}
+.pc-name{font-size:14px;font-weight:700;color:var(--t900);}
+.pc-hin{font-size:11px;color:var(--t400);margin-top:1px;}
+.pc-price{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--a700);margin-top:8px;}
+.pc-unit{font-size:11px;color:var(--t400);}
+.pc-edit{margin-top:10px;display:none;gap:6px;align-items:center;}
+.pc-edit.open{display:flex;}
+.pc-edit input{flex:1;padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:inherit;outline:none;}
+.pc-edit input:focus{border-color:var(--g600);}
+ 
+/* ═══ PAGE: RETAILERS ═══ */
+.ret-card{background:#fff;border-radius:var(--r);border:.5px solid var(--border);padding:18px;margin-bottom:10px;transition:border-color .2s;}
+.ret-card:hover{border-color:var(--c400);}
+.ret-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.ret-avatar{width:44px;height:44px;border-radius:50%;background:var(--g50);border:1.5px solid var(--c300);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--g700);flex-shrink:0;}
+.ret-name{font-size:15px;font-weight:700;color:var(--t900);}
+.ret-meta{font-size:12px;color:var(--t400);margin-top:2px;}
+.ret-pills{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.ret-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.rst{background:var(--c100);border-radius:var(--r-sm);padding:9px 12px;}
+.rst-val{font-size:15px;font-weight:800;color:var(--t900);}
+.rst-lbl{font-size:10px;color:var(--t400);margin-top:2px;}
+.ret-actions{display:flex;gap:6px;flex-wrap:wrap;}
+ 
+/* ═══ PAGE: REPORTS ═══ */
+.chart-placeholder{height:180px;background:linear-gradient(135deg,var(--g50),var(--a50));border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--t400);}
+ 
+/* ═══ PAGE: SETTINGS ═══ */
+.set-section{margin-bottom:20px;}
+.set-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:.5px solid var(--c200);cursor:pointer;transition:background .15s;}
+.set-row:hover{background:var(--cr);}
+.set-row:last-child{border-bottom:none;}
+.set-ico{width:36px;height:36px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.set-lbl{font-size:13px;font-weight:700;color:var(--t900);}
+.set-desc{font-size:12px;color:var(--t400);margin-top:2px;}
+.set-chev{margin-left:auto;color:var(--t200);font-size:14px;}
+ 
+/* ═══ MOBILE NAV ═══ */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--g900);border-top:.5px solid rgba(255,255,255,.08);height:62px;align-items:stretch;}
+.mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;background:none;border:none;color:rgba(255,255,255,.45);font-family:inherit;transition:color .2s;}
+.mob-nav-item.active,.mob-nav-item:hover{color:var(--a300);}
+.mob-nav-item span{font-size:9.5px;font-weight:700;}
+ 
+/* ═══ OVERLAY SIDEBAR (mobile) ═══ */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:149;}
+.sidebar.open{transform:translateX(0);}
+ 
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:900px){
+  .sidebar{
+    position:fixed;top:60px;left:0;bottom:0;z-index:150;
+    transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay{display:block;}
+  .hamburger{display:flex;}
+  .mob-nav{display:flex;}
+  .main{padding:20px 16px 80px;}
+  .two-col,.two-col-6040{grid-template-columns:1fr;}
+}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr;}.price-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:400px){.stats-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+ 
+<!-- SPLASH -->
+<div class="spl" id="spl">
+  <img src="assets/logo.png" class="spl-logo" alt="Spicelity" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="spl-fb" style="display:none">S</div>
+  <div class="spl-label"><strong>Spicelity</strong><span>Admin Dashboard</span></div>
+  <div class="spl-bar"><div class="spl-fill"></div></div>
+</div>
+ 
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toast-wrap"></div>
+ 
+<!-- TOP BAR -->
+<header class="topbar">
+  <a href="login.html" class="tb-brand" style="text-decoration:none;">
+    <img src="assets/logo.png" class="tb-logo" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="tb-logo-fb" style="display:none">S</div>
+    <div class="tb-wordmark">
+      <div class="tb-name">Spicelity</div>
+      <div class="tb-sub">Quality Spices</div>
+    </div>
+  </a>
+  <div class="tb-right">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="tb-page-title" id="page-title-label">Overview</span>
+    </div>
+    <div class="tb-actions">
+      <div class="tb-ic" onclick="showPage('notifications')" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="tb-badge" id="badge-top-notifs" style="display:none;">0</div>
+      </div>
+      <div class="tb-avatar" title="Admin Settings" onclick="showPage('settings')">A</div>
+    </div>
+  </div>
+</header>
+ 
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()" style="display:none;"></div>
+ 
+<div class="app-body">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" data-page="overview" onclick="showPage('overview',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-page="orders" onclick="showPage('orders',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+        Orders
+        <span class="nav-badge" id="badge-orders" style="display:none;">0</span>
+      </button>
+      <button class="nav-item" data-page="pricing" onclick="showPage('pricing',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Market Pricing
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Partners</div>
+      <button class="nav-item" data-page="retailers" onclick="showPage('retailers',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Retailers
+      </button>
+      <button class="nav-item" data-page="messages" onclick="showPage('messages',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Messages
+        <span class="nav-badge" id="badge-messages" style="display:none;background:var(--red);">0</span>
+      </button>
+      <button class="nav-item" data-page="reports" onclick="showPage('reports',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">System</div>
+      <button class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        Notifications
+        <span class="nav-badge" id="badge-notifs" style="display:none;">0</span>
+      </button>
+      <button class="nav-item" data-page="settings" onclick="showPage('settings',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="window.location.href='login.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+ 
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+ 
+    <!-- ── OVERVIEW ── -->
+    <section class="page active" id="page-overview">
+      <div class="page-header">
+        <div class="page-title">Good morning, Chirag 👋</div>
+        <div class="page-sub">Here's what's happening on your platform today — May 30, 2025</div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card sc-green">
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-value" id="ov-rev">₹0</div>
+          <div class="stat-change up">↑ Updated now</div>
+          <div class="stat-ico" style="background:var(--g50);">💰</div>
+        </div>
+        <div class="stat-card sc-gold">
+          <div class="stat-label">Total Orders</div>
+          <div class="stat-value" id="ov-orders">0</div>
+          <div class="stat-change up">↑ Updated now</div>
+          <div class="stat-ico" style="background:var(--a50);">📦</div>
+        </div>
+        <div class="stat-card sc-red">
+          <div class="stat-label">Outstanding Dues</div>
+          <div class="stat-value" id="ov-dues">₹0</div>
+          <div class="stat-change dn" id="ov-dues-sub">From 0 retailers</div>
+          <div class="stat-ico" style="background:var(--redl);">⚠️</div>
+        </div>
+        <div class="stat-card sc-blue">
+          <div class="stat-label">Active Retailers</div>
+          <div class="stat-value" id="ov-retailers">0</div>
+          <div class="stat-change up">↑ Total registered</div>
+          <div class="stat-ico" style="background:var(--bluel);">🏪</div>
+        </div>
+      </div>
+ 
+      <div class="two-col-6040">
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Recent Orders</div>
+            <button class="card-action" onclick="showPage('orders')">View all →</button>
+          </div>
+          <table class="tbl" id="overview-orders-tbl"></table>
+        </div>
+        <!-- Outstanding -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Outstanding Dues 🔴</div>
+            <button class="card-action" onclick="showPage('retailers')">All retailers →</button>
+          </div>
+          <div id="overview-outstanding"></div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ── ORDERS ── -->
+    <section class="page" id="page-orders">
+      <div class="page-header">
+        <div class="page-title">All Orders</div>
+        <div class="page-sub">Every order placed across the Spicelity platform</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <div class="search-bar" style="flex:1;min-width:200px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search by ID, retailer, or product…" id="orders-search" oninput="renderOrders()">
+        </div>
+        <select class="select-el" id="orders-status-filter" onchange="renderOrders()">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="transit">In Transit</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="card">
+        <table class="tbl" id="orders-tbl">
+          <thead><tr><th>Order ID</th><th>Retailer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="orders-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+ 
+    <!-- ── MARKET PRICING ── -->
+    <section class="page" id="page-pricing">
+      <div class="page-header">
+        <div class="page-title">Market Pricing</div>
+        <div class="page-sub">Set today's wholesale rates — retailers see updates instantly</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+        <div class="search-bar" style="flex:1;min-width:180px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search spices…" id="price-search" oninput="renderPricing()">
+        </div>
+        <button class="btn btn-primary" onclick="toast('All prices published to retailers','success')">📢 Publish All Rates</button>
+      </div>
+      <div class="price-grid" id="price-grid"></div>
+    </section>
+ 
+    <!-- ── RETAILERS ── -->
+    <section class="page" id="page-retailers">
+      <div class="page-header">
+        <div class="page-title">Retailer Directory</div>
+        <div class="page-sub">47 registered wholesale partners across Rajasthan</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
+        <div class="search-bar" style="flex:1;min-width:200px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search by name or city…" id="ret-search" oninput="renderRetailers()">
+        </div>
+        <button class="btn btn-primary">+ Add Retailer</button>
+      </div>
+      <div class="filter-row" style="margin-bottom:14px;">
+        <button class="fchip on" data-rf="all" onclick="setRetFilter('all',this)">All</button>
+        <button class="fchip" data-rf="overdue" onclick="setRetFilter('overdue',this)">Overdue Dues</button>
+        <button class="fchip" data-rf="active" onclick="setRetFilter('active',this)">No Outstanding</button>
+      </div>
+      <div id="retailers-list"></div>
+    </section>
+ 
+    <!-- ── REPORTS ── -->
+    <section class="page" id="page-reports">
+      <div class="page-header">
+        <div class="page-title">Reports &amp; Analytics</div>
+        <div class="page-sub">Platform performance summary — May 2025</div>
+      </div>
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card" style="padding:20px;">
+          <div class="card-title" style="margin-bottom:14px;">Revenue Trend</div>
+          <div class="chart-placeholder">
+            <span style="font-size:24px;">📈</span>
+            <span style="font-size:13px;font-weight:600;">Connect a charting library<br>to render live data here</span>
+          </div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <div class="card-title" style="margin-bottom:14px;">Order Volume by Category</div>
+          <div class="chart-placeholder">
+            <span style="font-size:24px;">🥧</span>
+            <span style="font-size:13px;font-weight:600;">Pie / donut chart<br>for category breakdown</span>
+          </div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card sc-green"><div class="stat-label">Monthly Revenue</div><div class="stat-value">₹4.2L</div><div class="stat-change up">↑ 18% vs April</div></div>
+        <div class="stat-card sc-gold"><div class="stat-label">Orders Fulfilled</div><div class="stat-value">312</div><div class="stat-change up">↑ 24 more</div></div>
+        <div class="stat-card sc-blue"><div class="stat-label">New Retailers</div><div class="stat-value">6</div><div class="stat-change up">This month</div></div>
+        <div class="stat-card sc-red"><div class="stat-label">Cancellation Rate</div><div class="stat-value">2.1%</div><div class="stat-change dn">↑ 0.3% vs April</div></div>
+      </div>
+    </section>
+ 
+    <!-- ── NOTIFICATIONS ── -->
+    <section class="page" id="page-notifications">
+      <div class="page-header"><div class="page-title">Notifications</div><div class="page-sub">Platform activity and alerts</div></div>
+      <div class="card" id="notif-list"></div>
+    </section>
+ 
+    <!-- ── MESSAGES ── -->
+    <section class="page" id="page-messages">
+      <div class="page-header">
+        <div class="page-title">Messages</div>
+        <div class="page-sub">Direct communication with your retailers</div>
+      </div>
+      <div class="card" style="display:flex; height:600px; padding:0; overflow:hidden;">
+        <!-- Retailers List -->
+        <div style="width:260px; border-right:1px solid var(--border); display:flex; flex-direction:column; background:var(--c50);">
+          <div style="padding:16px; border-bottom:1px solid var(--border);">
+            <div class="search-bar">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input placeholder="Search retailers…" id="msg-search" oninput="renderMessageList()">
+            </div>
+          </div>
+          <div id="msg-retailers-list" style="flex:1; overflow-y:auto; padding:8px 0;"></div>
+        </div>
+        <!-- Chat Window -->
+        <div style="flex:1; display:flex; flex-direction:column; background:var(--page);">
+          <div id="chat-header" style="padding:16px 20px; border-bottom:1px solid var(--border); background:#fff; display:none; align-items:center; gap:12px;">
+            <div id="chat-avatar" class="ret-avatar"></div>
+            <div>
+              <div id="chat-name" style="font-weight:700; color:var(--t900); font-size:15px;"></div>
+              <div id="chat-city" style="font-size:12px; color:var(--t400);"></div>
+            </div>
+          </div>
+          <div id="chat-empty" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; color:var(--t400);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <div style="margin-top:12px; font-weight:600;">Select a retailer to view messages</div>
+          </div>
+          <div id="chat-messages" style="flex:1; padding:20px; overflow-y:auto; display:none; flex-direction:column; gap:12px;"></div>
+          <div id="chat-input-area" style="padding:16px 20px; border-top:1px solid var(--border); background:#fff; display:none; gap:10px;">
+            <input type="text" id="chat-input" class="input" style="flex:1;" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendAdminMessage()">
+            <button class="btn btn-primary" onclick="sendAdminMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS ── -->
+    <section class="page" id="page-settings">
+      <div class="page-header"><div class="page-title">Settings</div><div class="page-sub">Manage your platform and account</div></div>
+      <div class="card set-section">
+        <div class="card-hd"><div class="card-title">Account</div></div>
+        <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0;">CS</div>
+          <div><div style="font-size:15px;font-weight:700;color:var(--t900);">Chirag Shrimali</div><div style="font-size:12px;color:var(--t400);margin-top:2px;">Platform Administrator · chiragshrimali03@gmail.com</div></div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto;">Edit Profile</button>
+        </div>
+      </div>
+      <div class="card set-section">
+        <div class="card-hd"><div class="card-title">Platform</div></div>
+        <div class="set-row" onclick="toast('Feature coming soon')"><div class="set-ico">📊</div><div><div class="set-lbl">Market Price Management</div><div class="set-desc">Configure price update schedule and thresholds</div></div><div class="set-chev">›</div></div>
+        <div class="set-row" onclick="toast('Feature coming soon')"><div class="set-ico">🔔</div><div><div class="set-lbl">Notification Rules</div><div class="set-desc">Control when retailers and consumers receive alerts</div></div><div class="set-chev">›</div></div>
+        <div class="set-row" onclick="toast('Feature coming soon')"><div class="set-ico">☁️</div><div><div class="set-lbl">Firebase Configuration</div><div class="set-desc">Database, Auth and Storage settings</div></div><div class="set-chev">›</div></div>
+      </div>
+      <div class="card set-section">
+        <div class="set-row" onclick="window.location.href='login.html'" style="border-bottom:none;">
+          <div class="set-ico" style="background:var(--redl);">🚪</div>
+          <div><div class="set-lbl" style="color:var(--red);">Sign Out</div><div class="set-desc">Log out of the admin account</div></div>
+          <div class="set-chev">›</div>
+        </div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mob-nav">
+  <button class="mob-nav-item active" data-page="overview" onclick="showPage('overview',this)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Overview</span>
+  </button>
+  <button class="mob-nav-item" data-page="orders" onclick="showPage('orders',this)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+    <span>Orders</span>
+  </button>
+  <button class="mob-nav-item" data-page="pricing" onclick="showPage('pricing',this)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    <span>Prices</span>
+  </button>
+  <button class="mob-nav-item" data-page="retailers" onclick="showPage('retailers',this)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    <span>Retailers</span>
+  </button>
+  <button class="mob-nav-item" data-page="settings" onclick="showPage('settings',this)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    <span>Settings</span>
+  </button>
+</nav>
+ 
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DATA LAYER — Replace fetch() calls here when connecting DB
+   e.g.: const ORDERS = await fetch('/api/orders').then(r=>r.json());
+═══════════════════════════════════════════════════════════ */
+let SPICES = [
+{e:'🌾',n:'Cumin (Jeera)',h:'जीरा',p:145,cat:'seeds',bg:'#FFF5E0'},
+{e:'🟡',n:'Turmeric (Haldi)',h:'हल्दी',p:178,cat:'powder',bg:'#FFF8E0'},
+{e:'🌶️',n:'Red Chilli (Lal Mirch)',h:'लाल मिर्च',p:228,cat:'chilli',bg:'#FFF0E8'},
+{e:'🫚',n:'Coriander (Dhania)',h:'धनिया',p:88,cat:'seeds',bg:'#F0F5E0'},
+{e:'🖤',n:'Black Pepper (Kali Mirch)',h:'काली मिर्च',p:700,cat:'seeds',bg:'#F5F5F0'},
+{e:'🌿',n:'Cardamom (Elaichi)',h:'हरी इलायची',p:1800,cat:'seeds',bg:'#EDF5EA'},
+{e:'🟤',n:'Clove (Laung)',h:'लौंग',p:1100,cat:'seeds',bg:'#F5EDE0'},
+{e:'🫙',n:'Asafoetida (Hing)',h:'हींग',p:2500,cat:'powder',bg:'#FFF0E8'},
+{e:'🌰',n:'Cinnamon (Dalchini)',h:'दालचीनी',p:350,cat:'bark',bg:'#F5EDE0'},
+{e:'🌱',n:'Fenugreek (Methi)',h:'मेथी',p:75,cat:'seeds',bg:'#EDF5EA'},
+{e:'🫛',n:'Fennel Seeds (Saunf)',h:'सौंफ',p:120,cat:'seeds',bg:'#F0F5E8'},
+{e:'🧂',n:'Black Salt (Kala Namak)',h:'काला नमक',p:45,cat:'salt',bg:'#F5F5F5'},
+{e:'🟠',n:'Garam Masala Blend',h:'गरम मसाला',p:280,cat:'blend',bg:'#FFF0E8'},
+{e:'🌾',n:'Mustard Seeds (Sarson)',h:'सरसों',p:110,cat:'seeds',bg:'#FFF8E0'},
+];
+
+let ORDERS = [
+{id:'SPC1260',retailer:'Ramesh Sharma',city:'Jodhpur',product:'Cumin 40kg + Red Chilli 20kg',amount:10800,status:'pending',date:'30 May'},
+{id:'SPC1259',retailer:'Suresh Gupta',city:'Jaipur',product:'Turmeric 50kg',amount:9250,status:'transit',date:'30 May'},
+{id:'SPC1258',retailer:'Meena Devi',city:'Ajmer',product:'Coriander Powder 30kg',amount:4800,status:'delivered',date:'29 May'},
+{id:'SPC1257',retailer:'Kavita Singh',city:'Kota',product:'Asafoetida 5kg + Black Salt 10kg',amount:3200,status:'pending',date:'29 May'},
+{id:'SPC1256',retailer:'Dinesh Patel',city:'Bikaner',product:'Mustard Seeds 25kg',amount:2750,status:'transit',date:'28 May'},
+{id:'SPC1254',retailer:'Geeta Kumari',city:'Udaipur',product:'Black Pepper 8kg',amount:5600,status:'cancelled',date:'27 May'},
+];
+
+let RETAILERS = [
+{init:'RS',name:'Ramesh Sharma',city:'Jodhpur',phone:'+91 98765 43210',orders:24,outstanding:3250,lastOrder:'Today'},
+{init:'PV',name:'Priya Verma',city:'Ajmer',phone:'+91 87654 32109',orders:18,outstanding:1800,lastOrder:'Yesterday'},
+{init:'AS',name:'Amit Singh',city:'Kota',phone:'+91 76543 21098',orders:31,outstanding:5400,lastOrder:'3 days ago'},
+{init:'NK',name:'Neha Kumari',city:'Bikaner',phone:'+91 65432 10987',orders:12,outstanding:0,lastOrder:'Today'},
+{init:'DG',name:'Dinesh Gupta',city:'Jodhpur',phone:'+91 54321 09876',orders:9,outstanding:0,lastOrder:'Yesterday'},
+];
+
+let NOTIFS = [
+{ico:'📦',text:'<strong>Ramesh Sharma</strong> placed a new order of ₹10,800',time:'Today, 11:30 AM',type:'order'},
+{ico:'💰',text:'<strong>Amit Singh</strong> — ₹5,400 due payment is 22 days overdue',time:'Yesterday, 6:00 PM',type:'due'},
+{ico:'✅',text:'<strong>Order #SPC1258</strong> successfully delivered to Meena Devi',time:'Yesterday, 3:45 PM',type:'success'},
+{ico:'📉',text:'<strong>Turmeric</strong> stock running low — consider restocking',time:'2 days ago',type:'warning'},
+{ico:'🆕',text:'<strong>Kavita Singh</strong> registered a new retail account from Kota',time:'3 days ago',type:'info'},
+];
+
+const STATUS_META = {
+  pending:  {cls:'p-gold', label:'Pending'},
+  transit:  {cls:'p-blue', label:'In Transit'},
+  delivered:{cls:'p-green',label:'Delivered'},
+  cancelled:{cls:'p-red',  label:'Cancelled'},
+};
+ 
+let retFilter = 'all';
+
+async function initApp() {
+  try {
+    const [ordersRes, retailersRes, notifsRes] = await Promise.all([
+      fetch('/api/orders'),
+      fetch('/api/retailers'),
+      fetch('/api/notifications/admin')
+    ]);
+    let backendOrders = await ordersRes.json();
+    let backendRetailers = await retailersRes.json();
+    let backendNotifs = await notifsRes.json();
+
+    // Merge Backend Data into Static Data
+    RETAILERS = [...backendRetailers, ...RETAILERS];
+    NOTIFS = [...backendNotifs, ...NOTIFS];
+    
+    // Map Retailers to apply initials parsing
+    RETAILERS = RETAILERS.map(r => ({
+      ...r,
+      init: getInitials(r.name),
+      lastOrder: r.last_order || r.lastOrder
+    }));
+    
+    // Format backend orders and merge
+    backendOrders = backendOrders.map(o => ({
+      id: o.order_id.replace('#', ''),
+      db_id: o.id, // Keep the actual database row ID for updates
+      retailer: o.retailer_name,
+      city: o.city,
+      product: o.product_details,
+      amount: o.amount,
+      status: o.status,
+      date: o.date
+    }));
+    ORDERS = [...backendOrders, ...ORDERS];
+
+    renderOverview();
+    renderNotifications();
+    renderMessageList();
+    updateBadges();
+    
+    // Refresh current view if needed
+    const activePage = document.querySelector('.page.active').id.replace('page-', '');
+    if(activePage === 'orders') renderOrders();
+    if(activePage === 'pricing') renderPricing();
+    if(activePage === 'retailers') renderRetailers();
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    toast('Error connecting to backend', 'error');
+  }
+}
+
+ 
+/* ═══ NAVIGATION ═══ */
+function showPage(id, triggerEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+ 
+  // Sidebar active
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sideEl = document.querySelector(`.nav-item[data-page="${id}"]`);
+  if (sideEl) sideEl.classList.add('active');
+ 
+  // Mobile nav active
+  document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
+  const mobEl = document.querySelector(`.mob-nav-item[data-page="${id}"]`);
+  if (mobEl) mobEl.classList.add('active');
+ 
+  // Page title in topbar
+  const titles = {overview:'Overview',orders:'Orders',pricing:'Market Pricing',retailers:'Retailers',reports:'Reports',notifications:'Notifications',settings:'Settings',messages:'Messages'};
+  document.getElementById('page-title-label').textContent = titles[id] || '';
+ 
+  closeSidebar();
+ 
+  // Lazy render
+  const renders = {orders: renderOrders, pricing: renderPricing, retailers: renderRetailers, messages: initMessages};
+  if (renders[id]) renders[id]();
+}
+ 
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sb-overlay');
+  const open = sb.classList.toggle('open');
+  ov.style.display = open ? 'block' : 'none';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').style.display = 'none';
+}
+
+/* ═══ UTILITIES ═══ */
+function getInitials(fullName) {
+  if (!fullName) return '??';
+  const ignore = ['shri', 'm/s', 'store', 'kirana', 'general', 'merchant', 'traders'];
+  const words = fullName.split(' ').filter(w => !ignore.includes(w.toLowerCase().replace(/[^a-z0-9]/g, '')));
+  if (words.length === 0) return fullName.substring(0,2).toUpperCase();
+  if (words.length === 1) return words[0].substring(0,2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+ 
+/* ═══ RENDERS ═══ */
+function renderOverview() {
+  // Update Top Stats
+  const now = new Date();
+  const dStr = now.getDate() + ' ' + now.toLocaleString('default', { month: 'short' });
+  const todaysOrders = ORDERS.filter(o => o.date === dStr);
+  const todaysRevenue = todaysOrders.reduce((sum, o) => sum + o.amount, 0);
+  
+  const totalOutstanding = RETAILERS.reduce((sum, r) => sum + r.outstanding, 0);
+  const retailersWithDues = RETAILERS.filter(r => r.outstanding > 0).length;
+
+  document.getElementById('ov-rev').textContent = '₹' + todaysRevenue.toLocaleString('en-IN');
+  document.getElementById('ov-orders').textContent = ORDERS.length;
+  document.getElementById('ov-dues').textContent = '₹' + totalOutstanding.toLocaleString('en-IN');
+  document.getElementById('ov-dues-sub').textContent = `From ${retailersWithDues} retailers`;
+  document.getElementById('ov-retailers').textContent = RETAILERS.length;
+
+  // Orders table (overview, 5 latest)
+  const tbl = document.getElementById('overview-orders-tbl');
+  const sm = STATUS_META;
+  tbl.innerHTML = `<thead><tr><th>ID</th><th>Retailer</th><th>Amount</th><th>Status</th></tr></thead><tbody>`
+    + ORDERS.slice(0,5).map(o => `<tr>
+      <td><span class="tbl-id">#${o.id}</span></td>
+      <td><span class="tbl-name">${o.retailer}</span></td>
+      <td><span class="tbl-amt">₹${o.amount.toLocaleString('en-IN')}</span></td>
+      <td><span class="pill ${sm[o.status].cls}"><span class="pill-dot"></span>${sm[o.status].label}</span></td>
+    </tr>`).join('') + `</tbody>`;
+ 
+  // Outstanding
+  const el = document.getElementById('overview-outstanding');
+  const due = RETAILERS.filter(r => r.outstanding > 0);
+  el.innerHTML = due.map(r => `<div class="out-row">
+    <div class="out-avatar">${r.init}</div>
+    <div class="out-info">
+      <div class="out-name">${r.name}</div>
+      <div class="out-days">📍 ${r.city} · Last order: ${r.lastOrder}</div>
+    </div>
+    <div class="out-amt">₹${r.outstanding.toLocaleString('en-IN')}</div>
+    <button class="btn btn-sm btn-ghost" onclick="toast('Payment reminder sent to ${r.name}','success')">Remind</button>
+  </div>`).join('');
+}
+ 
+function renderOrders() {
+  const q = (document.getElementById('orders-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('orders-status-filter')?.value || 'all';
+  let list = ORDERS;
+  if (sf !== 'all') list = list.filter(o => o.status === sf);
+  if (q) list = list.filter(o =>
+    o.id.toLowerCase().includes(q) ||
+    o.retailer.toLowerCase().includes(q) ||
+    o.product.toLowerCase().includes(q));
+ 
+  const sm = STATUS_META;
+  document.getElementById('orders-tbody').innerHTML = list.length
+    ? list.map(o => `<tr>
+        <td><span class="tbl-id">#${o.id}</span></td>
+        <td><div class="tbl-name">${o.retailer}</div><div style="font-size:11px;color:var(--t400);">${o.city}</div></td>
+        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${o.product}</td>
+        <td><span class="tbl-amt">₹${o.amount.toLocaleString('en-IN')}</span></td>
+        <td><span class="pill ${sm[o.status].cls}"><span class="pill-dot"></span>${sm[o.status].label}</span></td>
+        <td style="color:var(--t400);font-size:12px;">${o.date}</td>
+        <td>
+          <button class="btn btn-sm btn-ghost" onclick="toast('Viewing order #${o.id}')">View</button>
+          ${o.status==='pending' ? `<button class="btn btn-sm btn-gold" style="margin-left:4px;" onclick="openDeliveryModal(${o.db_id})">Confirm</button>` : ''}
+        </td>
+      </tr>`).join('')
+    : `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No orders found</div><div class="empty-sub">Try adjusting your filters</div></div></td></tr>`;
+}
+ 
+function renderPricing() {
+  const q = (document.getElementById('price-search')?.value || '').toLowerCase();
+  const list = q ? SPICES.filter(s => s.n.toLowerCase().includes(q) || s.h.includes(q)) : SPICES;
+  document.getElementById('price-grid').innerHTML = list.map((s,i) => `
+    <div class="price-card">
+      <div class="pc-icon" style="background:${s.bg};">${s.e}</div>
+      <div class="pc-name">${s.n}</div>
+      <div class="pc-hin">${s.h}</div>
+      <div class="pc-price">₹${s.p}<span class="pc-unit"> / kg</span></div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-sm btn-ghost" onclick="togglePriceEdit(${i})">Edit Rate</button>
+      </div>
+      <div class="pc-edit" id="pe-${i}">
+        <input class="input" style="flex:1;padding:7px 10px;font-size:12px;" type="number" id="pe-inp-${i}" value="${s.p}" min="1" placeholder="₹/kg">
+        <button class="btn btn-sm btn-primary" onclick="savePrice(${i})">Save</button>
+      </div>
+    </div>`).join('');
+}
+ 
+function togglePriceEdit(i) {
+  document.getElementById('pe-' + i).classList.toggle('open');
+}
+async function savePrice(i) {
+  const val = parseInt(document.getElementById('pe-inp-' + i).value);
+  if (!val || val < 1) { toast('Please enter a valid price','error'); return; }
+  try {
+    await fetch('/api/spices/' + SPICES[i].id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ price: val })
+    });
+    SPICES[i].p = val;
+    renderPricing();
+    toast(`${SPICES[i].n} price updated to ₹${val}/kg`, 'success');
+  } catch(e) {
+    toast('Error saving price','error');
+  }
+}
+ 
+function renderRetailers() {
+  const q = (document.getElementById('ret-search')?.value || '').toLowerCase();
+  let list = RETAILERS;
+  if (retFilter === 'overdue') list = list.filter(r => r.outstanding > 0);
+  if (retFilter === 'active')  list = list.filter(r => r.outstanding === 0);
+  if (q) list = list.filter(r => r.name.toLowerCase().includes(q) || r.city.toLowerCase().includes(q));
+ 
+  document.getElementById('retailers-list').innerHTML = list.length
+    ? list.map(r => `
+      <div class="ret-card">
+        <div class="ret-top">
+          <div class="ret-avatar">${r.init}</div>
+          <div style="flex:1;">
+            <div class="ret-name">${r.name}</div>
+            <div class="ret-meta">📍 ${r.city} · ${r.phone} · Last order: ${r.lastOrder}</div>
+          </div>
+          <div class="ret-pills">
+            ${r.outstanding > 0 ? '<span class="pill p-red"><span class="pill-dot"></span>Overdue</span>' : '<span class="pill p-green"><span class="pill-dot"></span>Cleared</span>'}
+          </div>
+        </div>
+        <div class="ret-stats">
+          <div class="rst"><div class="rst-val">${r.orders}</div><div class="rst-lbl">Total Orders</div></div>
+          <div class="rst"><div class="rst-val" style="color:${r.outstanding>0?'var(--red)':'var(--g500)'};">₹${r.outstanding.toLocaleString('en-IN')}</div><div class="rst-lbl">Outstanding</div></div>
+          <div class="rst"><div class="rst-val" style="color:var(--g500);">Active</div><div class="rst-lbl">Status</div></div>
+        </div>
+        <div class="ret-actions">
+          <button class="btn btn-sm btn-ghost" onclick="toast('Opening chat with ${r.name}')">💬 Message</button>
+          <button class="btn btn-sm btn-ghost" onclick="toast('Calling ${r.phone}')">📞 Call</button>
+          ${r.outstanding > 0 ? `<button class="btn btn-sm btn-danger" onclick="toast('Payment reminder sent to ${r.name}','success')">⚠️ Send Reminder</button>` : ''}
+          <button class="btn btn-sm btn-primary" style="margin-left:auto;" onclick="toast('Opening ${r.name} account')">View Account →</button>
+        </div>
+      </div>`).join('')
+    : `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No retailers found</div><div class="empty-sub">Try a different search or filter</div></div>`;
+}
+ 
+function setRetFilter(f, el) {
+  retFilter = f;
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderRetailers();
+}
+ 
+function renderNotifications() {
+  document.getElementById('notif-list').innerHTML = NOTIFS.map(n => `
+    <div class="out-row" style="${n.is_read ? 'opacity:0.7;' : 'background:var(--c50);'}" onclick="markNotifRead(${n.id})">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${n.ico}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--t700);line-height:1.4;">${n.text}</div>
+        <div style="font-size:11px;color:var(--t200);margin-top:3px;">${n.time}</div>
+      </div>
+      ${!n.is_read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--red);"></div>' : ''}
+    </div>`).join('');
+    
+  updateBadges();
+}
+
+async function markNotifRead(id) {
+  try {
+    await fetch('/api/notifications/' + id + '/read', { method: 'PUT' });
+    initApp();
+  } catch (e) {}
+}
+
+/* ═══ MESSAGING ═══ */
+let MESSAGES = [];
+let ACTIVE_CHAT_RETAILER = null;
+
+async function fetchAllMessages() {
+  // To avoid adding a complex endpoint to fetch all messages grouped, we will fetch retailers and aggregate if needed.
+  // Actually, for the admin, it's easier to just fetch /api/messages/:retailer_name on demand, 
+  // but to show unread badges we need a global count. Let's assume we poll.
+}
+
+function renderMessageList() {
+  const q = (document.getElementById('msg-search')?.value || '').toLowerCase();
+  const list = RETAILERS.filter(r => r.name.toLowerCase().includes(q) || r.city.toLowerCase().includes(q));
+  
+  document.getElementById('msg-retailers-list').innerHTML = list.map(r => `
+    <div style="padding:12px 16px; border-bottom:1px solid var(--c200); cursor:pointer; display:flex; align-items:center; gap:12px; transition:background .2s;" 
+         onclick="openChat('${r.name}', '${r.init}', '${r.city}')"
+         onmouseover="this.style.background='var(--c100)'" onmouseout="this.style.background='transparent'">
+      <div class="ret-avatar">${r.init}</div>
+      <div style="flex:1;">
+        <div style="font-size:13.5px; font-weight:700; color:var(--t900);">${r.name}</div>
+        <div style="font-size:11px; color:var(--t400);">${r.city}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function openChat(rName, rInit, rCity) {
+  ACTIVE_CHAT_RETAILER = rName;
+  document.getElementById('chat-empty').style.display = 'none';
+  document.getElementById('chat-header').style.display = 'flex';
+  document.getElementById('chat-messages').style.display = 'flex';
+  document.getElementById('chat-input-area').style.display = 'flex';
+  
+  document.getElementById('chat-avatar').textContent = rInit;
+  document.getElementById('chat-name').textContent = rName;
+  document.getElementById('chat-city').textContent = rCity;
+  
+  await fetchAdminMessages();
+  // Mark read
+  try {
+    await fetch('/api/messages/read/' + encodeURIComponent(rName), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reader: 'admin' })
+    });
+  } catch(e) {}
+}
+
+async function fetchAdminMessages() {
+  if (!ACTIVE_CHAT_RETAILER) return;
+  try {
+    const res = await fetch('/api/messages/' + encodeURIComponent(ACTIVE_CHAT_RETAILER));
+    const msgs = await res.json();
+    
+    document.getElementById('chat-messages').innerHTML = msgs.map(m => `
+      <div style="display:flex; flex-direction:column; align-items:${m.sender === 'admin' ? 'flex-end' : 'flex-start'};">
+        <div style="background:${m.sender === 'admin' ? 'var(--g600)' : '#fff'}; color:${m.sender === 'admin' ? '#fff' : 'var(--t900)'}; 
+                    padding:10px 14px; border-radius:16px; border:${m.sender === 'admin' ? 'none' : '1px solid var(--bdr)'};
+                    max-width:80%; font-size:13.5px; line-height:1.4;">
+          ${m.text}
+        </div>
+        <div style="font-size:10px; color:var(--t400); margin-top:4px; margin-right:4px; margin-left:4px;">${m.timestamp}</div>
+      </div>
+    `).join('');
+    
+    const chatBox = document.getElementById('chat-messages');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch(e) {}
+}
+
+async function sendAdminMessage() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text || !ACTIVE_CHAT_RETAILER) return;
+  
+  const now = new Date();
+  const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  
+  inp.value = '';
+  try {
+    await fetch('/api/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        retailer_name: ACTIVE_CHAT_RETAILER,
+        sender: 'admin',
+        text: text,
+        timestamp: time
+      })
+    });
+    await fetchAdminMessages();
+  } catch(e) {}
+}
+
+/* ═══ POLLING & BADGES ═══ */
+async function updateBadges() {
+  const unreadNotifs = NOTIFS.filter(n => !n.is_read).length;
+  const bTop = document.getElementById('badge-top-notifs');
+  const bSide = document.getElementById('badge-notifs');
+  
+  if (unreadNotifs > 0) {
+    bTop.textContent = unreadNotifs; bTop.style.display = 'flex';
+    bSide.textContent = unreadNotifs; bSide.style.display = 'flex';
+  } else {
+    bTop.style.display = 'none'; bSide.style.display = 'none';
+  }
+  
+  try {
+    const res = await fetch('/api/messages/all');
+    const allMsgs = await res.json();
+    const unreadMsgs = allMsgs.filter(m => !m.is_read && m.sender !== 'admin').length;
+    const bMsg = document.getElementById('badge-messages');
+    if (unreadMsgs > 0) {
+      bMsg.textContent = unreadMsgs; bMsg.style.display = 'flex';
+    } else {
+      bMsg.style.display = 'none';
+    }
+  } catch(e) {}
+}
+
+setInterval(() => {
+  if (ACTIVE_CHAT_RETAILER) fetchAdminMessages();
+  updateBadges();
+}, 5000);
+ 
+/* ═══ TOAST ═══ */
+let _toastId = 0;
+function toast(msg, type = '') {
+  const wrap = document.getElementById('toast-wrap');
+  const id = ++_toastId;
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  el.id = 'toast-' + id;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 350);
+  }, 2800);
+}
+ 
+/* ═══ SPLASH ═══ */
+document.getElementById('spl').addEventListener('animationend', function(e) {
+  if (e.animationName === 'spl-out') this.style.display = 'none';
+});
+ 
+/* ═══ DELIVERY MODAL LOGIC ═══ */
+let currentConfirmOrderId = null;
+
+function openDeliveryModal(dbId) {
+  currentConfirmOrderId = dbId;
+  const ov = document.getElementById('delivery-overlay');
+  ov.style.display = 'flex';
+}
+
+function closeDeliveryModal() {
+  document.getElementById('delivery-overlay').style.display = 'none';
+  currentConfirmOrderId = null;
+}
+
+async function confirmOrderWithDelivery(deliveryOption) {
+  if (!currentConfirmOrderId) return;
+  
+  try {
+    await fetch('/api/orders/' + currentConfirmOrderId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'transit',
+        delivery: deliveryOption
+      })
+    });
+    
+    closeDeliveryModal();
+    toast('Order confirmed successfully', 'success');
+    initApp(); // refresh data
+    
+  } catch (e) {
+    toast('Error confirming order', 'error');
+  }
+}
+
+/* ═══ INIT ═══ */
+initApp();
+</script>
+
+<!-- DELIVERY MODAL HTML -->
+<div id="delivery-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+  <div style="background:#fff;border-radius:16px;padding:24px;width:90%;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+    <h3 style="margin-bottom:8px;font-size:18px;color:var(--t1);">Confirm Order</h3>
+    <p style="margin-bottom:20px;font-size:13px;color:var(--t3);">When will the delivery take place?</p>
+    
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-primary" onclick="confirmOrderWithDelivery('Today')">🚚 Today</button>
+      <button class="btn btn-ghost" style="border:1px solid var(--bdr);" onclick="confirmOrderWithDelivery('Tomorrow')">📅 Tomorrow</button>
+      <button class="btn btn-ghost" style="border:1px solid var(--bdr);" onclick="confirmOrderWithDelivery('3rd day')">🗓️ 3rd Day</button>
+      <button class="btn btn-ghost" style="border:1px dashed var(--bdr);" onclick="confirmOrderWithDelivery('Not fix yet')">⏳ Not fix yet</button>
+    </div>
+    
+    <div style="margin-top:20px;text-align:center;">
+      <button class="btn btn-sm btn-ghost" style="color:var(--t3);" onclick="closeDeliveryModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+ 
+
+
+
