@@ -30,16 +30,11 @@ const initialSpices = [
 
 function readDB() {
   if (!fs.existsSync(dbPath)) {
-    const defaultData = { spices: initialSpices, retailers: [], orders: [], notifications: [], messages: [] };
+    const defaultData = { spices: initialSpices, retailers: [], orders: [], notifications: [] };
     fs.writeFileSync(dbPath, JSON.stringify(defaultData, null, 2));
     return defaultData;
   }
-  const data = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-  if (!data.messages) {
-    data.messages = [];
-    writeDB(data);
-  }
-  return data;
+  return JSON.parse(fs.readFileSync(dbPath, 'utf8'));
 }
 
 function writeDB(data) {

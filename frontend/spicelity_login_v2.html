@@ -1,688 +1,1337 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SpiceLity – Login</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --g900:#0F1E08; --g800:#1A3010; --g700:#243D14; --g600:#2C4A18; --g500:#3A6020; --g400:#558535; --g300:#78AD55; --g100:#D0E8BD; --g50:#EDF5E6;
-  --a900:#2F220B; --a800:#4A3715; --a600:#785A20; --a500:#A37B2B; --a400:#CCA041; --a200:#F2D07C; --a50:#FCF8EE;
-  --c900:#1A1918; --c800:#33312E; --c500:#7A746E; --c300:#B8B2AA; --c100:#F5F2EB; --c50:#FAFAF7;
-  --card:#FFFFFF; --page:var(--c100);
-  --t1:var(--c900); --t2:var(--c800); --t3:var(--c500);
-  --bdr:var(--c300); --r:16px;
-  --or:var(--g700); --or2:var(--g600); --or3:var(--g500);
-  --orl:var(--g50); --orb:var(--c50);
-  --grn:var(--g600); --grnl:var(--g50);
-  --red:#B03010; --redl:#FDE8E8;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body {
-  background:var(--page);
-  font-family:'DM Sans',sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-  padding:20px;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SpiceLity – Login</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --g900: #0F1E08;
+      --g800: #1A3010;
+      --g700: #243D14;
+      --g600: #2C4A18;
+      --g500: #3A6020;
+      --g400: #558535;
+      --g300: #78AD55;
+      --g100: #D0E8BD;
+      --g50: #EDF5E6;
+      --a900: #2F220B;
+      --a800: #4A3715;
+      --a600: #785A20;
+      --a500: #A37B2B;
+      --a400: #CCA041;
+      --a200: #F2D07C;
+      --a50: #FCF8EE;
+      --c900: #1A1918;
+      --c800: #33312E;
+      --c500: #7A746E;
+      --c300: #B8B2AA;
+      --c100: #F5F2EB;
+      --c50: #FAFAF7;
+      --card: #FFFFFF;
+      --page: var(--c100);
+      --t1: var(--c900);
+      --t2: var(--c800);
+      --t3: var(--c500);
+      --bdr: var(--c300);
+      --r: 16px;
+      --or: var(--g700);
+      --or2: var(--g600);
+      --or3: var(--g500);
+      --orl: var(--g50);
+      --orb: var(--c50);
+      --grn: var(--g600);
+      --grnl: var(--g50);
+      --red: #B03010;
+      --redl: #FDE8E8;
+    }
 
-/* ── RESPONSIVE CONTAINER ── */
-.phone {
-  width:100%;
-  max-width:440px;
-  min-height: 80vh;
-  max-height: 95vh;
-  border-radius:24px;
-  overflow:hidden;
-  background:var(--c50);
-  box-shadow:0 12px 40px rgba(0,0,0,.08);
-  border:1px solid rgba(0,0,0,0.05);
-  display:flex;
-  flex-direction:column;
-  position:relative;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* ── STATUS BAR ── */
-.sbar { display:none; }
+    body {
+      background: var(--page);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-/* ── SCROLL ── */
-.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
-.scroll::-webkit-scrollbar{display:none;}
+    /* ── RESPONSIVE CONTAINER ── */
+    .phone {
+      width: 100%;
+      max-width: 440px;
+      min-height: 80vh;
+      max-height: 95vh;
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--c50);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-/* ── SCREEN MANAGER ── */
-.screen{display:none;animation:fadeUp .32s ease;}
-.screen.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+    /* ── STATUS BAR ── */
+    .sbar {
+      display: none;
+    }
 
-/* ── HERO BRAND STRIP ── */
-.hero-strip {
-  background:linear-gradient(135deg,var(--g700) 0%,var(--g600) 55%,var(--g500) 100%);
-  padding:40px 24px 52px;
-  position:relative;
-  overflow:hidden;
-}
-.hero-strip::after {
-  content:'';
-  position:absolute;
-  right:-40px;top:-40px;
-  width:200px;height:200px;
-  border-radius:50%;
-  background:var(--a400);
-  opacity: 0.1;
-}
-.hero-strip::before {
-  content:'';
-  position:absolute;
-  left:-30px;bottom:-30px;
-  width:140px;height:140px;
-  border-radius:50%;
-  background:var(--a200);
-  opacity: 0.05;
-}
-.brand-row{display:flex;align-items:center;gap:11px;position:relative;}
-.mono {
-  width:42px;height:42px;border-radius:14px;
-  background:rgba(255,255,255,.1);
-  border:1.5px solid rgba(255,255,255,.2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;color:var(--a200);letter-spacing:.5px;
-  font-family:'JetBrains Mono', monospace;
-}
-.brand-name{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.5px;font-family:'Playfair Display', serif;}
-.brand-name span{color:var(--a400);font-style:italic;}
-.hero-sub{
-  position:relative;
-  font-size:14px;font-weight:500;color:var(--c100);
-  margin-top:6px;
-}
-.spice-tags{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap;position:relative;}
-.stag{
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:20px;
-  padding:4px 11px;
-  font-size:11px;font-weight:700;color:var(--c50);
-}
+    /* ── SCROLL ── */
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
 
-/* ── CARD ── */
-.card {
-  background:var(--card);
-  border-radius:20px;
-  border:1px solid var(--c300);
-  margin:0 16px 20px;
-  box-shadow:0 8px 30px rgba(0,0,0,.04);
-  overflow:hidden;
-}
-.card-pull{margin-top:-30px;position:relative;z-index:2;}
+    .scroll::-webkit-scrollbar {
+      display: none;
+    }
 
-/* card header */
-.card-hdr {
-  padding:20px 20px 0;
-}
-.card-title{font-size:18px;font-weight:800;color:var(--t1);letter-spacing:-.3px;}
-.card-sub{font-size:13px;font-weight:500;color:var(--t3);margin-top:4px;}
+    /* ── SCREEN MANAGER ── */
+    .screen {
+      display: none;
+      animation: fadeUp .32s ease;
+    }
 
-/* card body */
-.card-body{padding:16px 20px 20px;}
+    .screen.active {
+      display: block;
+    }
 
-/* ── FORM ELEMENTS ── */
-.f-field{margin-bottom:16px;}
-.f-label{font-size:11px;font-weight:800;color:var(--t2);letter-spacing:.4px;display:block;margin-bottom:6px;text-transform:uppercase;}
-.f-wrap{position:relative;}
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
 
-/* phone input */
-.phone-input-row{display:flex;gap:8px;}
-.country-code{
-  width:70px;
-  padding:13px 10px;
-  border:1.5px solid var(--bdr);
-  border-radius:12px;
-  background:var(--c50);
-  font-size:14px;font-weight:800;
-  color:var(--t1);font-family:'DM Sans',sans-serif;
-  text-align:center;
-  flex-shrink:0;
-  outline:none;
-}
-.f-input {
-  width:100%;
-  padding:13px 44px 13px 14px;
-  border:1.5px solid var(--bdr);
-  border-radius:12px;
-  background:var(--c50);
-  font-size:15px;font-weight:600;
-  color:var(--t1);
-  font-family:'DM Sans',sans-serif;
-  outline:none;
-  transition:border-color .2s,background .2s;
-  -webkit-appearance:none;
-}
-.f-input:focus{border-color:var(--g500);background:var(--card);}
-.f-input.err{border-color:var(--red);background:var(--redl);}
-.f-input::placeholder{color:var(--t3);font-weight:500;}
-.f-ico{
-  position:absolute;right:13px;top:50%;transform:translateY(-50%);
-  font-size:17px;pointer-events:none;
-}
-.err-msg{font-size:11px;font-weight:600;color:var(--red);margin-top:4px;display:none;}
-.err-msg.show{display:block;}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-/* OTP field */
-.otp-row{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:flex-end;}
-.otp-send-btn{
-  padding:13px 15px;
-  background:var(--a500);color:#fff;
-  border:none;border-radius:12px;
-  font-size:13px;font-weight:700;
-  font-family:'DM Sans',sans-serif;
-  cursor:pointer;white-space:nowrap;
-  transition:background .2s,transform .1s;
-}
-.otp-send-btn:active{transform:scale(.97);}
-.otp-send-btn.sent{background:var(--g500);}
-.otp-timer{font-size:12px;font-weight:600;color:var(--g500);margin-top:6px;display:none;}
-.otp-timer.show{display:block;}
+    /* ── HERO BRAND STRIP ── */
+    .hero-strip {
+      background: linear-gradient(135deg, var(--g700) 0%, var(--g600) 55%, var(--g500) 100%);
+      padding: 40px 24px 52px;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* OTP digit boxes */
-.otp-digits{display:flex;gap:9px;justify-content:space-between;margin-top:14px;}
-.otp-digit{
-  flex:1;height:54px;
-  border:1.5px solid var(--bdr);
-  border-radius:12px;
-  text-align:center;
-  font-size:22px;font-weight:800;
-  font-family:'DM Sans',sans-serif;
-  color:var(--t1);background:var(--c50);
-  outline:none;
-  transition:border-color .2s,background .2s;
-}
-.otp-digit:focus{border-color:var(--g500);background:var(--card);}
+    .hero-strip::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: var(--a400);
+      opacity: 0.1;
+    }
 
-/* ── BUTTONS ── */
-.btn-primary {
-  width:100%;padding:15px;
-  background:linear-gradient(135deg,var(--g700),var(--g600));
-  color:#fff;border:none;border-radius:14px;
-  font-size:15px;font-weight:700;
-  font-family:'DM Sans',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 6px 20px rgba(36,61,20,.15);
-  transition:transform .15s,box-shadow .15s;
-  letter-spacing:.2px;margin-top:4px;
-}
-.btn-primary:active{transform:scale(.98);box-shadow:0 3px 10px rgba(36,61,20,.1);}
-.btn-primary.loading{background:linear-gradient(135deg,var(--g800),var(--g700));pointer-events:none;}
+    .hero-strip::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      bottom: -30px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: var(--a200);
+      opacity: 0.05;
+    }
 
-.btn-outline{
-  width:100%;padding:14px;
-  background:transparent;color:var(--g700);
-  border:1.5px solid var(--g700);border-radius:14px;
-  font-size:14px;font-weight:700;
-  font-family:'DM Sans',sans-serif;cursor:pointer;
-  transition:background .2s;margin-top:10px;
-}
-.btn-outline:hover{background:var(--g50);}
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      position: relative;
+    }
 
-/* spinner */
-.spin{
-  width:18px;height:18px;
-  border:2.5px solid rgba(255,255,255,.35);
-  border-top-color:#fff;
-  border-radius:50%;
-  animation:sp .65s linear infinite;display:none;
-}
-.spin.show{display:block;}
-@keyframes sp{to{transform:rotate(360deg);}}
+    .mono {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .1);
+      border: 1.5px solid rgba(255, 255, 255, .2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--a200);
+      letter-spacing: .5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
 
-/* divider */
-.or-div{display:flex;align-items:center;gap:10px;margin:14px 0;}
-.or-line{flex:1;height:1px;background:var(--bdr);}
-.or-txt{font-size:11px;font-weight:700;color:var(--t3);}
+    .brand-name {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.5px;
+      font-family: 'Playfair Display', serif;
+    }
 
-/* ── CARD 2: ROLE SELECTION ── */
-.role-big-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.role-card{
-  background:var(--card);
-  border:1px solid var(--c300);
-  border-radius:16px;
-  padding:20px 14px 16px;
-  text-align:center;cursor:pointer;
-  transition:border-color .2s,background .2s,transform .15s,box-shadow .15s;
-}
-.role-card:hover{
-  border-color:var(--g500);background:var(--g50);
-  transform:translateY(-2px);
-  box-shadow:0 8px 20px rgba(36,61,20,.08);
-}
-.role-card:active{transform:scale(.97);}
-.role-emoji{font-size:36px;display:block;margin-bottom:9px;}
-.role-lbl{font-size:14px;font-weight:800;color:var(--t1);}
-.role-desc{font-size:11.5px;font-weight:500;color:var(--t3);margin-top:4px;line-height:1.4;}
+    .brand-name span {
+      color: var(--a400);
+      font-style: italic;
+    }
 
-/* Admin small button */
-.admin-hint{
-  text-align:center;padding-top:2px;
-  font-size:12px;font-weight:600;color:var(--t3);
-  margin-bottom:6px;
-}
-.btn-admin{
-  width:100%;padding:12px;
-  background:var(--c100);color:var(--t2);
-  border:1px dashed var(--c300);border-radius:14px;
-  font-size:13px;font-weight:700;
-  font-family:'DM Sans',sans-serif;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:background .2s,border-color .2s,color .2s;
-}
-.btn-admin:hover{background:var(--c50);border-color:var(--a600);color:var(--a600);}
+    .hero-sub {
+      position: relative;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--c100);
+      margin-top: 6px;
+    }
 
-/* back link */
-.back-link{
-  display:flex;align-items:center;gap:6px;
-  font-size:13px;font-weight:700;color:var(--t3);
-  background:none;border:none;cursor:pointer;
-  font-family:'DM Sans',sans-serif;
-  padding:14px 20px 0;
-}
-.back-link:hover{color:var(--g700);}
+    .spice-tags {
+      display: flex;
+      gap: 7px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      position: relative;
+    }
 
-/* ── CARD 3: REGISTRATION ── */
-.reg-role-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  background:var(--g50);border:1px solid var(--g100);
-  border-radius:20px;padding:6px 14px;
-  font-size:12px;font-weight:700;color:var(--g700);
-  margin-bottom:16px;
-}
-/* steps */
-.step-bar{
-  display:flex;align-items:center;gap:0;
-  margin-bottom:20px;
-}
-.step-item{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;
-}
-.step-item:not(:last-child)::after{
-  content:'';position:absolute;
-  top:14px;left:60%;width:80%;height:2px;
-  background:var(--c300);z-index:0;
-  transition:background .3s;
-}
-.step-item.done:not(:last-child)::after{background:var(--g400);}
-.step-circle{
-  width:28px;height:28px;border-radius:50%;
-  background:var(--c100);color:var(--t3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;z-index:1;
-  transition:background .25s,color .25s;
-  border: 1px solid var(--c300);
-}
-.step-item.active .step-circle{background:var(--g700);color:#fff;border-color:var(--g700);}
-.step-item.done .step-circle{background:var(--g400);color:#fff;font-size:11px;border-color:var(--g400);}
-.step-lbl{font-size:11px;font-weight:600;color:var(--t3);}
-.step-item.active .step-lbl{color:var(--g700);font-weight:700;}
-.step-item.done .step-lbl{color:var(--g400);}
+    .stag {
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 20px;
+      padding: 4px 11px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--c50);
+    }
 
-/* reg step panels */
-.reg-step{display:none;}
-.reg-step.active{display:block;}
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      border: 1px solid var(--c300);
+      margin: 0 16px 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .04);
+      overflow: hidden;
+    }
 
-/* admin code field */
-.admin-code-wrap{
-  background:var(--c50);
-  border:1px dashed var(--a400);
-  border-radius:14px;
-  padding:14px;margin-bottom:14px;
-}
-.admin-code-title{
-  font-size:12px;font-weight:700;color:var(--a800);
-  display:flex;align-items:center;gap:7px;margin-bottom:10px;
-}
-.admin-code-digits{display:flex;gap:8px;}
-.ac-digit{
-  flex:1;height:46px;
-  border:1.5px solid var(--a400);border-radius:10px;
-  text-align:center;font-size:18px;font-weight:800;
-  font-family:'DM Sans',sans-serif;color:var(--t1);
-  background:var(--card);outline:none;letter-spacing:3px;
-}
-.ac-digit:focus{border-color:var(--a600);}
+    .card-pull {
+      margin-top: -30px;
+      position: relative;
+      z-index: 2;
+    }
 
-/* success */
-.success-wrap{
-  text-align:center;padding:24px 0 8px;
-  display:none;
-}
-.success-wrap.show{display:block;}
-.suc-icon{
-  width:76px;height:76px;
-  background:var(--g100);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;margin:0 auto 14px;
-  border:2px solid var(--g300);
-}
-.suc-title{font-size:20px;font-weight:800;color:var(--t1);letter-spacing:-.3px;margin-bottom:6px;}
-.suc-sub{font-size:13px;font-weight:500;color:var(--t3);line-height:1.6;margin-bottom:20px;}
-.suc-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--g50);border:1px solid var(--g300);
-  border-radius:20px;padding:7px 16px;
-  font-size:13px;font-weight:700;color:var(--g600);
-  margin-bottom:18px;
-}
+    /* card header */
+    .card-hdr {
+      padding: 20px 20px 0;
+    }
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:32px;left:50%;
-  transform:translateX(-50%) translateY(14px);
-  background:#1A1A1A;color:#fff;
-  padding:10px 20px;border-radius:24px;
-  font-size:12px;font-weight:700;
-  opacity:0;transition:opacity .25s,transform .25s;
-  pointer-events:none;white-space:nowrap;z-index:9999;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--t1);
+      letter-spacing: -.3px;
+    }
 
-/* ── TERMS ── */
-.terms{font-size:10.5px;font-weight:600;color:var(--t3);text-align:center;margin-top:14px;line-height:1.6;}
-.terms a{color:var(--or);font-weight:800;text-decoration:none;}
+    .card-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t3);
+      margin-top: 4px;
+    }
 
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-</style>
+    /* card body */
+    .card-body {
+      padding: 16px 20px 20px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .f-field {
+      margin-bottom: 16px;
+    }
+
+    .f-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--t2);
+      letter-spacing: .4px;
+      display: block;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .f-wrap {
+      position: relative;
+    }
+
+    /* phone input */
+    .phone-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .country-code {
+      width: 70px;
+      padding: 13px 10px;
+      border: 1.5px solid var(--bdr);
+      border-radius: 12px;
+      background: var(--c50);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--t1);
+      font-family: 'DM Sans', sans-serif;
+      text-align: center;
+      flex-shrink: 0;
+      outline: none;
+    }
+
+    .f-input {
+      width: 100%;
+      padding: 13px 44px 13px 14px;
+      border: 1.5px solid var(--bdr);
+      border-radius: 12px;
+      background: var(--c50);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--t1);
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+
+    .f-input:focus {
+      border-color: var(--g500);
+      background: var(--card);
+    }
+
+    .f-input.err {
+      border-color: var(--red);
+      background: var(--redl);
+    }
+
+    .f-input::placeholder {
+      color: var(--t3);
+      font-weight: 500;
+    }
+
+    .f-ico {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    .err-msg {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .err-msg.show {
+      display: block;
+    }
+
+    /* OTP field */
+    .otp-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 9px;
+      align-items: flex-end;
+    }
+
+    .otp-send-btn {
+      padding: 13px 15px;
+      background: var(--a500);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s, transform .1s;
+    }
+
+    .otp-send-btn:active {
+      transform: scale(.97);
+    }
+
+    .otp-send-btn.sent {
+      background: var(--g500);
+    }
+
+    .otp-timer {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--g500);
+      margin-top: 6px;
+      display: none;
+    }
+
+    .otp-timer.show {
+      display: block;
+    }
+
+    /* OTP digit boxes */
+    .otp-digits {
+      display: flex;
+      gap: 9px;
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+
+    .otp-digit {
+      flex: 1;
+      height: 54px;
+      border: 1.5px solid var(--bdr);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--t1);
+      background: var(--c50);
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+
+    .otp-digit:focus {
+      border-color: var(--g500);
+      background: var(--card);
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--g700), var(--g600));
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(36, 61, 20, .15);
+      transition: transform .15s, box-shadow .15s;
+      letter-spacing: .2px;
+      margin-top: 4px;
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+      box-shadow: 0 3px 10px rgba(36, 61, 20, .1);
+    }
+
+    .btn-primary.loading {
+      background: linear-gradient(135deg, var(--g800), var(--g700));
+      pointer-events: none;
+    }
+
+    .btn-outline {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      color: var(--g700);
+      border: 1.5px solid var(--g700);
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background .2s;
+      margin-top: 10px;
+    }
+
+    .btn-outline:hover {
+      background: var(--g50);
+    }
+
+    /* spinner */
+    .spin {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, .35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: sp .65s linear infinite;
+      display: none;
+    }
+
+    .spin.show {
+      display: block;
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* divider */
+    .or-div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .or-line {
+      flex: 1;
+      height: 1px;
+      background: var(--bdr);
+    }
+
+    .or-txt {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--t3);
+    }
+
+    /* ── CARD 2: ROLE SELECTION ── */
+    .role-big-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .role-card {
+      background: var(--card);
+      border: 1px solid var(--c300);
+      border-radius: 16px;
+      padding: 20px 14px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s, box-shadow .15s;
+    }
+
+    .role-card:hover {
+      border-color: var(--g500);
+      background: var(--g50);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(36, 61, 20, .08);
+    }
+
+    .role-card:active {
+      transform: scale(.97);
+    }
+
+    .role-emoji {
+      font-size: 36px;
+      display: block;
+      margin-bottom: 9px;
+    }
+
+    .role-lbl {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--t1);
+    }
+
+    .role-desc {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--t3);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Admin small button */
+    .admin-hint {
+      text-align: center;
+      padding-top: 2px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--t3);
+      margin-bottom: 6px;
+    }
+
+    .btn-admin {
+      width: 100%;
+      padding: 12px;
+      background: var(--c100);
+      color: var(--t2);
+      border: 1px dashed var(--c300);
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+
+    .btn-admin:hover {
+      background: var(--c50);
+      border-color: var(--a600);
+      color: var(--a600);
+    }
+
+    /* back link */
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t3);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      padding: 14px 20px 0;
+    }
+
+    .back-link:hover {
+      color: var(--g700);
+    }
+
+    /* ── CARD 3: REGISTRATION ── */
+    .reg-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--g50);
+      border: 1px solid var(--g100);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--g700);
+      margin-bottom: 16px;
+    }
+
+    /* steps */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 20px;
+    }
+
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 60%;
+      width: 80%;
+      height: 2px;
+      background: var(--c300);
+      z-index: 0;
+      transition: background .3s;
+    }
+
+    .step-item.done:not(:last-child)::after {
+      background: var(--g400);
+    }
+
+    .step-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--c100);
+      color: var(--t3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      z-index: 1;
+      transition: background .25s, color .25s;
+      border: 1px solid var(--c300);
+    }
+
+    .step-item.active .step-circle {
+      background: var(--g700);
+      color: #fff;
+      border-color: var(--g700);
+    }
+
+    .step-item.done .step-circle {
+      background: var(--g400);
+      color: #fff;
+      font-size: 11px;
+      border-color: var(--g400);
+    }
+
+    .step-lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t3);
+    }
+
+    .step-item.active .step-lbl {
+      color: var(--g700);
+      font-weight: 700;
+    }
+
+    .step-item.done .step-lbl {
+      color: var(--g400);
+    }
+
+    /* reg step panels */
+    .reg-step {
+      display: none;
+    }
+
+    .reg-step.active {
+      display: block;
+    }
+
+    /* admin code field */
+    .admin-code-wrap {
+      background: var(--c50);
+      border: 1px dashed var(--a400);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .admin-code-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--a800);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .admin-code-digits {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ac-digit {
+      flex: 1;
+      height: 46px;
+      border: 1.5px solid var(--a400);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--t1);
+      background: var(--card);
+      outline: none;
+      letter-spacing: 3px;
+    }
+
+    .ac-digit:focus {
+      border-color: var(--a600);
+    }
+
+    /* success */
+    .success-wrap {
+      text-align: center;
+      padding: 24px 0 8px;
+      display: none;
+    }
+
+    .success-wrap.show {
+      display: block;
+    }
+
+    .suc-icon {
+      width: 76px;
+      height: 76px;
+      background: var(--g100);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin: 0 auto 14px;
+      border: 2px solid var(--g300);
+    }
+
+    .suc-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--t1);
+      letter-spacing: -.3px;
+      margin-bottom: 6px;
+    }
+
+    .suc-sub {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--t3);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .suc-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--g50);
+      border: 1px solid var(--g300);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--g600);
+      margin-bottom: 18px;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      background: #1A1A1A;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 24px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── TERMS ── */
+    .terms {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--t3);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .terms a {
+      color: var(--or);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      25% {
+        transform: translateX(-6px)
+      }
+
+      75% {
+        transform: translateX(6px)
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="phone">
+  <div class="phone">
 
-  <div class="scroll">
+    <div class="scroll">
 
-    <!-- ════════════════════════════════
+      <!-- ════════════════════════════════
          SCREEN 1 — LOGIN CARD
     ════════════════════════════════ -->
-    <div class="screen active" id="s1">
+      <div class="screen active" id="s1">
 
-      <!-- Brand Hero -->
-      <div class="hero-strip">
-        <div class="brand-row">
-          <div class="mono">SL</div>
-          <div class="brand-name">Spice<span>Lity</span></div>
+        <!-- Brand Hero -->
+        <div class="hero-strip">
+          <div class="brand-row">
+            <div class="mono">SL</div>
+            <div class="brand-name">Spice<span>Lity</span></div>
+          </div>
+          <div class="hero-sub">India's B2B Spice Marketplace</div>
+          <div class="spice-tags">
+            <span class="stag">🌶️ Chilli</span>
+            <span class="stag">🟡 Turmeric</span>
+            <span class="stag">🟤 Cumin</span>
+            <span class="stag">🌿 Cardamom</span>
+          </div>
         </div>
-        <div class="hero-sub">India's B2B Spice Marketplace</div>
-        <div class="spice-tags">
-          <span class="stag">🌶️ Chilli</span>
-          <span class="stag">🟡 Turmeric</span>
-          <span class="stag">🟤 Cumin</span>
-          <span class="stag">🌿 Cardamom</span>
-        </div>
-      </div>
 
-      <!-- LOGIN CARD (pulls up over hero) -->
-      <div class="card card-pull">
-        <div class="card-hdr">
-          <div class="card-title">Login to SpiceLity</div>
-          <div class="card-sub">Enter your mobile number to receive an OTP</div>
-        </div>
-        <div class="card-body">
+        <!-- LOGIN CARD (pulls up over hero) -->
+        <div class="card card-pull">
+          <div class="card-hdr">
+            <div class="card-title">Login to SpiceLity</div>
+            <div class="card-sub">Enter your mobile number to receive an OTP</div>
+          </div>
+          <div class="card-body">
 
-          <!-- Mobile Number -->
-          <div class="f-field">
-            <label class="f-label">MOBILE NUMBER</label>
-            <div class="phone-input-row">
-              <input class="country-code" type="text" value="+91" readonly>
-              <div class="f-wrap" style="flex:1;">
-                <input class="f-input" id="loginPhone" type="tel" placeholder="98765 43210" maxlength="10">
-                <span class="f-ico">📱</span>
+            <!-- Mobile Number -->
+            <div class="f-field">
+              <label class="f-label">MOBILE NUMBER</label>
+              <div class="phone-input-row">
+                <input class="country-code" type="text" value="+91" readonly>
+                <div class="f-wrap" style="flex:1;">
+                  <input class="f-input" id="loginPhone" type="tel" placeholder="98765 43210" maxlength="10">
+                  <span class="f-ico">📱</span>
+                </div>
               </div>
+              <div class="err-msg" id="phoneErr">Enter a valid 10-digit mobile number</div>
             </div>
-            <div class="err-msg" id="phoneErr">Enter a valid 10-digit mobile number</div>
-          </div>
 
-          <!-- OTP send -->
-          <div class="f-field" id="otpSection" style="display:none;">
-            <label class="f-label">ENTER OTP</label>
-            <div class="otp-row">
-              <div class="f-wrap">
-                <input class="f-input" id="otpInput" type="tel" placeholder="6-digit OTP" maxlength="6">
-                <span class="f-ico">🔒</span>
+            <!-- OTP send -->
+            <div class="f-field" id="otpSection" style="display:none;">
+              <label class="f-label">ENTER OTP</label>
+              <div class="otp-row">
+                <div class="f-wrap">
+                  <input class="f-input" id="otpInput" type="tel" placeholder="6-digit OTP" maxlength="6">
+                  <span class="f-ico">🔒</span>
+                </div>
+                <button class="otp-send-btn" id="resendBtn" onclick="resendOTP()" style="display:none;">Resend</button>
               </div>
-              <button class="otp-send-btn" id="resendBtn" onclick="resendOTP()" style="display:none;">Resend</button>
+              <div class="otp-timer show" id="otpTimer">⏱ Resend in <span id="cd">60</span>s</div>
+              <div class="err-msg" id="otpErr">Incorrect OTP. Please try again.</div>
             </div>
-            <div class="otp-timer show" id="otpTimer">⏱ Resend in <span id="cd">60</span>s</div>
-            <div class="err-msg" id="otpErr">Incorrect OTP. Please try again.</div>
-          </div>
 
-          <!-- Send OTP button / Login button -->
-          <button class="btn-primary" id="mainLoginBtn" onclick="handleLoginBtn()">
-            <span id="mainBtnTxt">Send OTP</span>
-            <span id="mainBtnArrow">→</span>
-            <div class="spin" id="mainSpin"></div>
-          </button>
+            <!-- Send OTP button / Login button -->
+            <button class="btn-primary" id="mainLoginBtn" onclick="handleLoginBtn()">
+              <span id="mainBtnTxt">Send OTP</span>
+              <span id="mainBtnArrow">→</span>
+              <div class="spin" id="mainSpin"></div>
+            </button>
 
-          <!-- OR divider -->
-          <div class="or-div">
-            <div class="or-line"></div>
-            <span class="or-txt">New to SpiceLity?</span>
-            <div class="or-line"></div>
-          </div>
+            <!-- OR divider -->
+            <div class="or-div">
+              <div class="or-line"></div>
+              <span class="or-txt">New to SpiceLity?</span>
+              <div class="or-line"></div>
+            </div>
 
-          <!-- Register button → Card 2 -->
-          <button class="btn-outline" onclick="goTo('s2')">
-            Create New Account →
-          </button>
+            <!-- Register button → Card 2 -->
+            <button class="btn-outline" onclick="goTo('s2')">
+              Create New Account →
+            </button>
 
-          <div class="terms">
-            By continuing you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+            <div class="terms">
+              By continuing you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+            </div>
           </div>
         </div>
-      </div>
 
-    </div><!-- /s1 -->
+      </div><!-- /s1 -->
 
 
-    <!-- ════════════════════════════════
+      <!-- ════════════════════════════════
          SCREEN 2 — ROLE SELECTION CARD
     ════════════════════════════════ -->
-    <div class="screen" id="s2">
+      <div class="screen" id="s2">
 
-      <div class="hero-strip" style="padding-bottom:48px;">
-        <div class="brand-row">
-          <div class="mono">SL</div>
-          <div class="brand-name">Spice<span>Lity</span></div>
-        </div>
-        <div class="hero-sub">Who are you joining as?</div>
-      </div>
-
-      <button class="back-link" onclick="goTo('s1')">← Back to Login</button>
-
-      <!-- ROLE SELECTION CARD -->
-      <div class="card" style="margin-top:10px;">
-        <div class="card-hdr">
-          <div class="card-title">Register In SpiceLity</div>
-          <div class="card-sub">Select your role to continue</div>
-        </div>
-        <div class="card-body">
-
-          <!-- TWO BIG ROLE CARDS -->
-          <div class="role-big-row">
-            <div class="role-card" onclick="selectRole('consumer')">
-              <span class="role-emoji">👤</span>
-              <div class="role-lbl">Consumer</div>
-              <div class="role-desc">Buy spices from nearby retailers</div>
-            </div>
-            <div class="role-card" onclick="selectRole('retailer')">
-              <span class="role-emoji">🏪</span>
-              <div class="role-lbl">Retailer</div>
-              <div class="role-desc">Order wholesale from SpiceLity</div>
-            </div>
+        <div class="hero-strip" style="padding-bottom:48px;">
+          <div class="brand-row">
+            <div class="mono">SL</div>
+            <div class="brand-name">Spice<span>Lity</span></div>
           </div>
-
-          <!-- SMALL ADMIN BUTTON -->
-          <div class="admin-hint">Are you an Admin?</div>
-          <button class="btn-admin" onclick="selectRole('admin')">
-            🛡️ Continue as Admin
-          </button>
-
+          <div class="hero-sub">Who are you joining as?</div>
         </div>
-      </div>
-    </div><!-- /s2 -->
+
+        <button class="back-link" onclick="goTo('s1')">← Back to Login</button>
+
+        <!-- ROLE SELECTION CARD -->
+        <div class="card" style="margin-top:10px;">
+          <div class="card-hdr">
+            <div class="card-title">Register In SpiceLity</div>
+            <div class="card-sub">Select your role to continue</div>
+          </div>
+          <div class="card-body">
+
+            <!-- TWO BIG ROLE CARDS -->
+            <div class="role-big-row">
+              <div class="role-card" onclick="selectRole('consumer')">
+                <span class="role-emoji">👤</span>
+                <div class="role-lbl">Consumer</div>
+                <div class="role-desc">Buy spices from nearby retailers</div>
+              </div>
+              <div class="role-card" onclick="selectRole('retailer')">
+                <span class="role-emoji">🏪</span>
+                <div class="role-lbl">Retailer</div>
+                <div class="role-desc">Order wholesale from SpiceLity</div>
+              </div>
+            </div>
+
+            <!-- SMALL ADMIN BUTTON -->
+            <div class="admin-hint">Are you an Admin?</div>
+            <button class="btn-admin" onclick="selectRole('admin')">
+              🛡️ Continue as Admin
+            </button>
+
+          </div>
+        </div>
+      </div><!-- /s2 -->
 
 
-    <!-- ════════════════════════════════
+      <!-- ════════════════════════════════
          SCREEN 3A — CONSUMER REGISTRATION
     ════════════════════════════════ -->
-    <div class="screen" id="s3consumer">
+      <div class="screen" id="s3consumer">
 
-      <div class="hero-strip" style="padding-bottom:48px;">
-        <div class="brand-row">
-          <div class="mono">SL</div>
-          <div class="brand-name">Spice<span>Lity</span></div>
-        </div>
-        <div class="hero-sub">Consumer Registration</div>
-      </div>
-
-      <button class="back-link" onclick="goTo('s2')">← Change Role</button>
-
-      <div class="card" style="margin-top:10px;">
-        <div class="card-hdr">
-          <div class="card-title">Create Your Account</div>
-          <div class="card-sub">Fill in your details below</div>
-        </div>
-        <div class="card-body">
-
-          <div class="reg-role-badge">👤 Consumer Account</div>
-
-          <!-- Step progress -->
-          <div class="step-bar" id="cStepBar">
-            <div class="step-item active" id="cS1"><div class="step-circle">1</div><span class="step-lbl">Details</span></div>
-            <div class="step-item" id="cS2"><div class="step-circle">2</div><span class="step-lbl">Verify</span></div>
-            <div class="step-item" id="cS3"><div class="step-circle">3</div><span class="step-lbl">Done</span></div>
+        <div class="hero-strip" style="padding-bottom:48px;">
+          <div class="brand-row">
+            <div class="mono">SL</div>
+            <div class="brand-name">Spice<span>Lity</span></div>
           </div>
+          <div class="hero-sub">Consumer Registration</div>
+        </div>
 
-          <!-- Step 1: Details -->
-          <div class="reg-step active" id="cStep1">
-            <div class="f-field">
-              <label class="f-label">FULL NAME</label>
-              <div class="f-wrap">
-                <input class="f-input" id="cName" type="text" placeholder="e.g. Ramesh Kumar">
-                <span class="f-ico">👤</span>
+        <button class="back-link" onclick="goTo('s2')">← Change Role</button>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="card-hdr">
+            <div class="card-title">Create Your Account</div>
+            <div class="card-sub">Fill in your details below</div>
+          </div>
+          <div class="card-body">
+
+            <div class="reg-role-badge">👤 Consumer Account</div>
+
+            <!-- Step progress -->
+            <div class="step-bar" id="cStepBar">
+              <div class="step-item active" id="cS1">
+                <div class="step-circle">1</div><span class="step-lbl">Details</span>
               </div>
-              <div class="err-msg" id="cNameErr">Name is required</div>
+              <div class="step-item" id="cS2">
+                <div class="step-circle">2</div><span class="step-lbl">Verify</span>
+              </div>
+              <div class="step-item" id="cS3">
+                <div class="step-circle">3</div><span class="step-lbl">Done</span>
+              </div>
             </div>
-            <div class="f-field">
-              <label class="f-label">MOBILE NUMBER</label>
-              <div class="phone-input-row">
-                <input class="country-code" type="text" value="+91" readonly>
-                <div class="f-wrap" style="flex:1;">
-                  <input class="f-input" id="cPhone" type="tel" placeholder="98765 43210" maxlength="10">
+
+            <!-- Step 1: Details -->
+            <div class="reg-step active" id="cStep1">
+              <div class="f-field">
+                <label class="f-label">FULL NAME</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cName" type="text" placeholder="e.g. Ramesh Kumar">
+                  <span class="f-ico">👤</span>
+                </div>
+                <div class="err-msg" id="cNameErr">Name is required</div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">MOBILE NUMBER</label>
+                <div class="phone-input-row">
+                  <input class="country-code" type="text" value="+91" readonly>
+                  <div class="f-wrap" style="flex:1;">
+                    <input class="f-input" id="cPhone" type="tel" placeholder="98765 43210" maxlength="10">
+                  </div>
+                </div>
+                <div class="err-msg" id="cPhoneErr">Enter valid mobile</div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">CITY</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cCity" type="text" placeholder="e.g. Jaipur">
+                  <span class="f-ico">🏙️</span>
                 </div>
               </div>
-              <div class="err-msg" id="cPhoneErr">Enter valid mobile</div>
+              <div class="f-field">
+                <label class="f-label">ADDRESS</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cAddr" type="text" placeholder="Street, Area, PIN">
+                  <span class="f-ico">📍</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">EMAIL (optional)</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cEmail" type="email" placeholder="you@example.com">
+                  <span class="f-ico">📧</span>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="cNext(1)">Continue →</button>
             </div>
-            <div class="f-field">
-              <label class="f-label">CITY</label>
-              <div class="f-wrap">
-                <input class="f-input" id="cCity" type="text" placeholder="e.g. Jaipur">
-                <span class="f-ico">🏙️</span>
+
+            <!-- Step 2: OTP Verify -->
+            <div class="reg-step" id="cStep2">
+              <div style="text-align:center;margin-bottom:20px;">
+                <div style="font-size:42px;margin-bottom:8px;">📲</div>
+                <div style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:4px;">Verify Mobile Number
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--t3);line-height:1.6;">OTP sent to <strong
+                    id="cPhoneDisplay" style="color:var(--t1);"></strong></div>
+              </div>
+              <div class="otp-digits">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'c')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'c')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'c')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,3,'c')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,4,'c')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'c')">
+              </div>
+              <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
+                Didn't get it? <button onclick=""
+                  style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend
+                  OTP</button>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button
+                  style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;"
+                  onclick="cBack(2)">← Back</button>
+                <button class="btn-primary" style="flex:1;margin-top:0;" onclick="cNext(2)">
+                  <span id="cVerifyTxt">Register as Consumer</span>
+                  <div class="spin" id="cSpin"></div>
+                </button>
               </div>
             </div>
-            <div class="f-field">
-              <label class="f-label">ADDRESS</label>
-              <div class="f-wrap">
-                <input class="f-input" id="cAddr" type="text" placeholder="Street, Area, PIN">
-                <span class="f-ico">📍</span>
-              </div>
-            </div>
-            <div class="f-field">
-              <label class="f-label">EMAIL (optional)</label>
-              <div class="f-wrap">
-                <input class="f-input" id="cEmail" type="email" placeholder="you@example.com">
-                <span class="f-ico">📧</span>
-              </div>
-            </div>
-            <button class="btn-primary" onclick="cNext(1)">Continue →</button>
-          </div>
 
-          <!-- Step 2: OTP Verify -->
-          <div class="reg-step" id="cStep2">
-            <div style="text-align:center;margin-bottom:20px;">
-              <div style="font-size:42px;margin-bottom:8px;">📲</div>
-              <div style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:4px;">Verify Mobile Number</div>
-              <div style="font-size:12px;font-weight:600;color:var(--t3);line-height:1.6;">OTP sent to <strong id="cPhoneDisplay" style="color:var(--t1);"></strong></div>
+            <!-- Success -->
+            <div class="success-wrap" id="cSuccess">
+              <div class="suc-icon">✅</div>
+              <div class="suc-title">Welcome to SpiceLity!</div>
+              <div class="suc-badge">👤 Consumer Account Active</div>
+              <div class="suc-sub">You can now browse nearby retailers and check live spice prices.</div>
+              <button class="btn-primary" onclick="showToast('🚀 Opening Consumer Dashboard…')">Go to Dashboard
+                →</button>
             </div>
-            <div class="otp-digits">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'c')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'c')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'c')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,3,'c')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,4,'c')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'c')">
-            </div>
-            <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
-              Didn't get it? <button onclick="" style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend OTP</button>
-            </div>
-            <div style="display:flex;gap:10px;">
-              <button style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="cBack(2)">← Back</button>
-              <button class="btn-primary" style="flex:1;margin-top:0;" onclick="cNext(2)">
-                <span id="cVerifyTxt">Register as Consumer</span>
-                <div class="spin" id="cSpin"></div>
-              </button>
-            </div>
-          </div>
 
-          <!-- Success -->
-          <div class="success-wrap" id="cSuccess">
-            <div class="suc-icon">✅</div>
-            <div class="suc-title">Welcome to SpiceLity!</div>
-            <div class="suc-badge">👤 Consumer Account Active</div>
-            <div class="suc-sub">You can now browse nearby retailers and check live spice prices.</div>
-            <button class="btn-primary" onclick="showToast('🚀 Opening Consumer Dashboard…')">Go to Dashboard →</button>
           </div>
-
         </div>
-      </div>
-    </div><!-- /s3consumer -->
+      </div><!-- /s3consumer -->
 
 
-    <!-- ════════════════════════════════
+      <!-- ════════════════════════════════
          SCREEN 3B — RETAILER REGISTRATION
     ════════════════════════════════ -->
-    <div class="screen" id="s3retailer">
+      <div class="screen" id="s3retailer">
 
-      <div class="hero-strip" style="padding-bottom:48px;">
-        <div class="brand-row">
-          <div class="mono">SL</div>
-          <div class="brand-name">Spice<span>Lity</span></div>
-        </div>
-        <div class="hero-sub">Retailer Registration</div>
-      </div>
-
-      <button class="back-link" onclick="goTo('s2')">← Change Role</button>
-
-      <div class="card" style="margin-top:10px;">
-        <div class="card-hdr">
-          <div class="card-title">Create Retailer Account</div>
-          <div class="card-sub">Set up your shop on SpiceLity</div>
-        </div>
-        <div class="card-body">
-
-          <div class="reg-role-badge">🏪 Retailer Account</div>
-
-          <div class="step-bar">
-            <div class="step-item active" id="rS1"><div class="step-circle">1</div><span class="step-lbl">Info</span></div>
-            <div class="step-item" id="rS2"><div class="step-circle">2</div><span class="step-lbl">Shop</span></div>
-            <div class="step-item" id="rS3"><div class="step-circle">3</div><span class="step-lbl">Verify</span></div>
+        <div class="hero-strip" style="padding-bottom:48px;">
+          <div class="brand-row">
+            <div class="mono">SL</div>
+            <div class="brand-name">Spice<span>Lity</span></div>
           </div>
+          <div class="hero-sub">Retailer Registration</div>
+        </div>
 
-          <!-- Step 1: Personal Info -->
-          <div class="reg-step active" id="rStep1">
+        <button class="back-link" onclick="goTo('s2')">← Change Role</button>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="card-hdr">
+            <div class="card-title">Create Retailer Account</div>
+            <div class="card-sub">Set up your shop on SpiceLity</div>
+          </div>
+          <div class="card-body">
+
+            <div class="reg-role-badge">🏪 Retailer Account</div>
+
+            <div class="step-bar">
+              <div class="step-item active" id="rS1">
+                <div class="step-circle">1</div><span class="step-lbl">Info</span>
+              </div>
+              <div class="step-item" id="rS2">
+                <div class="step-circle">2</div><span class="step-lbl">Shop</span>
+              </div>
+              <div class="step-item" id="rS3">
+                <div class="step-circle">3</div><span class="step-lbl">Verify</span>
+              </div>
+            </div>
+
+            <!-- Step 1: Personal Info -->
+            <div class="reg-step active" id="rStep1">
+              <div class="f-field">
+                <label class="f-label">FULL NAME</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rName" type="text" placeholder="e.g. Vikram Patel">
+                  <span class="f-ico">👤</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">MOBILE NUMBER</label>
+                <div class="phone-input-row">
+                  <input class="country-code" type="text" value="+91" readonly>
+                  <div class="f-wrap" style="flex:1;">
+                    <input class="f-input" id="rPhone" type="tel" placeholder="98765 43210" maxlength="10">
+                  </div>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">CITY</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rCity" type="text" placeholder="e.g. Jaipur">
+                  <span class="f-ico">🏙️</span>
+                </div>
+              </div>
+              <button class="btn-primary" onclick="rNext(1)">Continue →</button>
+            </div>
+
+            <!-- Step 2: Shop Details -->
+            <div class="reg-step" id="rStep2">
+              <div class="f-field">
+                <label class="f-label">SHOP NAME</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rShop" type="text" placeholder="e.g. Patel Masala Store">
+                  <span class="f-ico">🏪</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">SHOP ADDRESS</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rAddr" type="text" placeholder="Street, Area, PIN Code">
+                  <span class="f-ico">📍</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">EMAIL</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rEmail" type="email" placeholder="shop@example.com">
+                  <span class="f-ico">📧</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">GSTIN <span style="color:var(--t3);font-weight:600;">(optional)</span></label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rGst" type="text" placeholder="22AAAAA0000A1Z5">
+                  <span class="f-ico">🧾</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button
+                  style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;"
+                  onclick="rBack(2)">← Back</button>
+                <button class="btn-primary" style="flex:1;margin-top:0;" onclick="rNext(2)">Continue →</button>
+              </div>
+            </div>
+
+            <!-- Step 3: OTP -->
+            <div class="reg-step" id="rStep3">
+              <div style="text-align:center;margin-bottom:20px;">
+                <div style="font-size:42px;margin-bottom:8px;">📲</div>
+                <div style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:4px;">Verify Mobile Number
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--t3);">OTP sent to <strong id="rPhoneDisplay"
+                    style="color:var(--t1);"></strong></div>
+              </div>
+              <div class="otp-digits">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'r')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'r')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'r')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,3,'r')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,4,'r')">
+                <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'r')">
+              </div>
+              <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
+                Didn't get it? <button
+                  style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend
+                  OTP</button>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button
+                  style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;"
+                  onclick="rBack(3)">← Back</button>
+                <button class="btn-primary" style="flex:1;margin-top:0;" onclick="rFinish()">
+                  <span id="rFinishTxt">Register as Retailer ✓</span>
+                  <div class="spin" id="rSpin"></div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Success -->
+            <div class="success-wrap" id="rSuccess">
+              <div class="suc-icon">✅</div>
+              <div class="suc-title">Shop Registered!</div>
+              <div class="suc-badge">🏪 Retailer Account Created</div>
+              <div class="suc-sub">Your account is under review.<br>You'll get an SMS once approved.</div>
+              <div
+                style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px 14px;margin-bottom:16px;text-align:left;">
+                <div style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:6px;">✓ What's next?</div>
+                <div style="font-size:12px;font-weight:500;color:var(--g600);line-height:1.8;">• KYC check: 1–2 business
+                  days<br>• Wholesale pricing enabled on approval<br>• Orders: minimum 10 kg per product</div>
+              </div>
+              <button class="btn-primary"
+                onclick="showToast('🚀 Opening Retailer Dashboard…'); setTimeout(() => window.location.href = 'retailer.html', 800)">Go
+                to Dashboard →</button>
+            </div>
+
+          </div>
+        </div>
+      </div><!-- /s3retailer -->
+
+
+      <!-- ════════════════════════════════
+         SCREEN 3C — ADMIN REGISTRATION
+    ════════════════════════════════ -->
+      <div class="screen" id="s3admin">
+
+        <div class="hero-strip"
+          style="padding-bottom:48px;background:linear-gradient(135deg,#1A1A1A 0%,#333 60%,#555 100%);">
+          <div class="brand-row">
+            <div class="mono">SL</div>
+            <div class="brand-name">Spice<span>Lity</span></div>
+          </div>
+          <div class="hero-sub">Admin Access Portal</div>
+        </div>
+
+        <button class="back-link" onclick="goTo('s2')">← Change Role</button>
+
+        <div class="card" style="margin-top:10px;">
+          <div class="card-hdr">
+            <div class="card-title">Welcome, Admin 🛡️</div>
+            <div class="card-sub">This area is restricted. Enter your admin credentials.</div>
+          </div>
+          <div class="card-body">
+
+            <div class="reg-role-badge" style="background:#F0EBE3;border-color:#C8BFB0;color:var(--t2);">🛡️ Admin
+              Registration</div>
+
+            <!-- Admin Code -->
+            <div class="admin-code-wrap">
+              <div class="admin-code-title">🔐 Admin Secret Code</div>
+              <div class="admin-code-digits">
+                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,0)" placeholder="•">
+                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,1)" placeholder="•">
+                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,2)" placeholder="•">
+                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,3)" placeholder="•">
+              </div>
+              <div style="font-size:10.5px;font-weight:600;color:var(--t3);margin-top:8px;">4-digit code provided by
+                owner</div>
+            </div>
+
             <div class="f-field">
-              <label class="f-label">FULL NAME</label>
+              <label class="f-label">ADMIN NAME</label>
               <div class="f-wrap">
-                <input class="f-input" id="rName" type="text" placeholder="e.g. Vikram Patel">
-                <span class="f-ico">👤</span>
+                <input class="f-input" id="aName" type="text" placeholder="Your full name">
+                <span class="f-ico">🛡️</span>
               </div>
             </div>
             <div class="f-field">
@@ -690,398 +1339,262 @@ body {
               <div class="phone-input-row">
                 <input class="country-code" type="text" value="+91" readonly>
                 <div class="f-wrap" style="flex:1;">
-                  <input class="f-input" id="rPhone" type="tel" placeholder="98765 43210" maxlength="10">
+                  <input class="f-input" id="aPhone" type="tel" placeholder="98765 43210" maxlength="10">
                 </div>
               </div>
             </div>
-            <div class="f-field">
-              <label class="f-label">CITY</label>
-              <div class="f-wrap">
-                <input class="f-input" id="rCity" type="text" placeholder="e.g. Jaipur">
-                <span class="f-ico">🏙️</span>
-              </div>
-            </div>
-            <button class="btn-primary" onclick="rNext(1)">Continue →</button>
-          </div>
 
-          <!-- Step 2: Shop Details -->
-          <div class="reg-step" id="rStep2">
-            <div class="f-field">
-              <label class="f-label">SHOP NAME</label>
-              <div class="f-wrap">
-                <input class="f-input" id="rShop" type="text" placeholder="e.g. Patel Masala Store">
-                <span class="f-ico">🏪</span>
-              </div>
+            <!-- Success wrap -->
+            <div class="success-wrap" id="aSuccess">
+              <div class="suc-icon">🛡️</div>
+              <div class="suc-title">Admin Access Granted</div>
+              <div class="suc-badge" style="background:var(--c100);border-color:var(--c300);color:var(--t2);">🛡️ Admin
+                Account Active</div>
+              <div class="suc-sub">You have full access to SpiceLity control panel.</div>
+              <button class="btn-primary"
+                style="background:linear-gradient(135deg,var(--c900),var(--c800));box-shadow:0 5px 18px rgba(0,0,0,.3);"
+                onclick="showToast('🚀 Opening Admin Dashboard…'); setTimeout(() => window.location.href = 'admin.html', 800)">Open
+                Admin Panel →</button>
             </div>
-            <div class="f-field">
-              <label class="f-label">SHOP ADDRESS</label>
-              <div class="f-wrap">
-                <input class="f-input" id="rAddr" type="text" placeholder="Street, Area, PIN Code">
-                <span class="f-ico">📍</span>
-              </div>
-            </div>
-            <div class="f-field">
-              <label class="f-label">EMAIL</label>
-              <div class="f-wrap">
-                <input class="f-input" id="rEmail" type="email" placeholder="shop@example.com">
-                <span class="f-ico">📧</span>
-              </div>
-            </div>
-            <div class="f-field">
-              <label class="f-label">GSTIN <span style="color:var(--t3);font-weight:600;">(optional)</span></label>
-              <div class="f-wrap">
-                <input class="f-input" id="rGst" type="text" placeholder="22AAAAA0000A1Z5">
-                <span class="f-ico">🧾</span>
-              </div>
-            </div>
-            <div style="display:flex;gap:10px;">
-              <button style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="rBack(2)">← Back</button>
-              <button class="btn-primary" style="flex:1;margin-top:0;" onclick="rNext(2)">Continue →</button>
-            </div>
-          </div>
 
-          <!-- Step 3: OTP -->
-          <div class="reg-step" id="rStep3">
-            <div style="text-align:center;margin-bottom:20px;">
-              <div style="font-size:42px;margin-bottom:8px;">📲</div>
-              <div style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:4px;">Verify Mobile Number</div>
-              <div style="font-size:12px;font-weight:600;color:var(--t3);">OTP sent to <strong id="rPhoneDisplay" style="color:var(--t1);"></strong></div>
-            </div>
-            <div class="otp-digits">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'r')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'r')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'r')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,3,'r')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,4,'r')">
-              <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'r')">
-            </div>
-            <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
-              Didn't get it? <button style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend OTP</button>
-            </div>
-            <div style="display:flex;gap:10px;">
-              <button style="flex:0 0 auto;padding:13px 18px;background:var(--c100);color:var(--t2);border:none;border-radius:14px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;" onclick="rBack(3)">← Back</button>
-              <button class="btn-primary" style="flex:1;margin-top:0;" onclick="rFinish()">
-                <span id="rFinishTxt">Register as Retailer ✓</span>
-                <div class="spin" id="rSpin"></div>
+            <div id="adminFormBtns">
+              <button class="btn-primary"
+                style="background:linear-gradient(135deg,var(--c900),var(--c800));box-shadow:0 5px 18px rgba(0,0,0,.3);"
+                onclick="aFinish()">
+                <span id="aFinishTxt">Register as Admin →</span>
+                <div class="spin" id="aSpin"></div>
               </button>
             </div>
-          </div>
 
-          <!-- Success -->
-          <div class="success-wrap" id="rSuccess">
-            <div class="suc-icon">✅</div>
-            <div class="suc-title">Shop Registered!</div>
-            <div class="suc-badge">🏪 Retailer Account Created</div>
-            <div class="suc-sub">Your account is under review.<br>You'll get an SMS once approved.</div>
-            <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:12px 14px;margin-bottom:16px;text-align:left;">
-              <div style="font-size:12px;font-weight:700;color:var(--g700);margin-bottom:6px;">✓ What's next?</div>
-              <div style="font-size:12px;font-weight:500;color:var(--g600);line-height:1.8;">• KYC check: 1–2 business days<br>• Wholesale pricing enabled on approval<br>• Orders: minimum 10 kg per product</div>
-            </div>
-            <button class="btn-primary" onclick="showToast('🚀 Opening Retailer Dashboard…'); setTimeout(() => window.location.href = 'retailer.html', 800)">Go to Dashboard →</button>
           </div>
-
         </div>
-      </div>
-    </div><!-- /s3retailer -->
+      </div><!-- /s3admin -->
 
+      <div style="height:32px;"></div>
+    </div><!-- /scroll -->
+  </div><!-- /phone -->
 
-    <!-- ════════════════════════════════
-         SCREEN 3C — ADMIN REGISTRATION
-    ════════════════════════════════ -->
-    <div class="screen" id="s3admin">
+  <div class="toast" id="toast"></div>
 
-      <div class="hero-strip" style="padding-bottom:48px;background:linear-gradient(135deg,#1A1A1A 0%,#333 60%,#555 100%);">
-        <div class="brand-row">
-          <div class="mono">SL</div>
-          <div class="brand-name">Spice<span>Lity</span></div>
-        </div>
-        <div class="hero-sub">Admin Access Portal</div>
-      </div>
-
-      <button class="back-link" onclick="goTo('s2')">← Change Role</button>
-
-      <div class="card" style="margin-top:10px;">
-        <div class="card-hdr">
-          <div class="card-title">Welcome, Admin 🛡️</div>
-          <div class="card-sub">This area is restricted. Enter your admin credentials.</div>
-        </div>
-        <div class="card-body">
-
-          <div class="reg-role-badge" style="background:#F0EBE3;border-color:#C8BFB0;color:var(--t2);">🛡️ Admin Registration</div>
-
-          <!-- Admin Code -->
-          <div class="admin-code-wrap">
-            <div class="admin-code-title">🔐 Admin Secret Code</div>
-            <div class="admin-code-digits">
-              <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,0)" placeholder="•">
-              <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,1)" placeholder="•">
-              <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,2)" placeholder="•">
-              <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,3)" placeholder="•">
-            </div>
-            <div style="font-size:10.5px;font-weight:600;color:var(--t3);margin-top:8px;">4-digit code provided by owner</div>
-          </div>
-
-          <div class="f-field">
-            <label class="f-label">ADMIN NAME</label>
-            <div class="f-wrap">
-              <input class="f-input" id="aName" type="text" placeholder="Your full name">
-              <span class="f-ico">🛡️</span>
-            </div>
-          </div>
-          <div class="f-field">
-            <label class="f-label">MOBILE NUMBER</label>
-            <div class="phone-input-row">
-              <input class="country-code" type="text" value="+91" readonly>
-              <div class="f-wrap" style="flex:1;">
-                <input class="f-input" id="aPhone" type="tel" placeholder="98765 43210" maxlength="10">
-              </div>
-            </div>
-          </div>
-
-          <!-- Success wrap -->
-          <div class="success-wrap" id="aSuccess">
-            <div class="suc-icon">🛡️</div>
-            <div class="suc-title">Admin Access Granted</div>
-            <div class="suc-badge" style="background:var(--c100);border-color:var(--c300);color:var(--t2);">🛡️ Admin Account Active</div>
-            <div class="suc-sub">You have full access to SpiceLity control panel.</div>
-            <button class="btn-primary" style="background:linear-gradient(135deg,var(--c900),var(--c800));box-shadow:0 5px 18px rgba(0,0,0,.3);" onclick="showToast('🚀 Opening Admin Dashboard…'); setTimeout(() => window.location.href = 'admin.html', 800)">Open Admin Panel →</button>
-          </div>
-
-          <div id="adminFormBtns">
-            <button class="btn-primary" style="background:linear-gradient(135deg,var(--c900),var(--c800));box-shadow:0 5px 18px rgba(0,0,0,.3);" onclick="aFinish()">
-              <span id="aFinishTxt">Register as Admin →</span>
-              <div class="spin" id="aSpin"></div>
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </div><!-- /s3admin -->
-
-    <div style="height:32px;"></div>
-  </div><!-- /scroll -->
-</div><!-- /phone -->
-
-<div class="toast" id="toast"></div>
-
-<script>
-// ── NAVIGATION ──
-function goTo(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  // scroll phone to top
-  document.querySelector('.scroll').scrollTop = 0;
-}
-
-// ── ROLE SELECTION ──
-function selectRole(role) {
-  goTo('s3' + role);
-}
-
-// ── SCREEN 1: LOGIN OTP FLOW ──
-let loginStep = 1; // 1 = enter phone, 2 = enter OTP
-let cdTimer;
-
-function handleLoginBtn() {
-  if (loginStep === 1) {
-    const ph = document.getElementById('loginPhone').value.replace(/\s/g,'');
-    if (!ph || ph.length < 10 || isNaN(ph)) {
-      showErr('phoneErr');
-      shake(document.getElementById('loginPhone'));
-      return;
+  <script>
+    // ── NAVIGATION ──
+    function goTo(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      // scroll phone to top
+      document.querySelector('.scroll').scrollTop = 0;
     }
-    hideErr('phoneErr');
-    // Show OTP section
-    const btn = document.getElementById('mainLoginBtn');
-    const sp = document.getElementById('mainSpin');
-    const txt = document.getElementById('mainBtnTxt');
-    const arr = document.getElementById('mainBtnArrow');
-    btn.classList.add('loading'); sp.classList.add('show'); txt.textContent='Sending OTP…'; arr.style.display='none';
-    setTimeout(() => {
-      btn.classList.remove('loading'); sp.classList.remove('show');
-      document.getElementById('otpSection').style.display = 'block';
-      txt.textContent = 'Login →'; arr.style.display='inline';
-      loginStep = 2;
-      startLoginTimer();
-      showToast('✅ OTP sent to +91 ' + ph);
-    }, 1400);
-  } else {
-    // Verify OTP
-    const otp = document.getElementById('otpInput').value;
-    if (!otp || otp.length < 6) { showErr('otpErr'); return; }
-    hideErr('otpErr');
-    const btn = document.getElementById('mainLoginBtn');
-    const sp = document.getElementById('mainSpin');
-    const txt = document.getElementById('mainBtnTxt');
-    const arr = document.getElementById('mainBtnArrow');
-    btn.classList.add('loading'); sp.classList.add('show'); txt.textContent='Verifying…'; arr.style.display='none';
-    setTimeout(() => {
-      btn.classList.remove('loading'); sp.classList.remove('show');
-      showToast('✅ Login successful! Redirecting…');
-      txt.textContent = 'Login →'; arr.style.display='inline';
-      setTimeout(() => {
-        // Redirect to retailer dashboard by default
-        window.location.href = 'retailer.html';
-      }, 800);
-    }, 1600);
-  }
-}
 
-function startLoginTimer() {
-  let t = 60;
-  const timer = document.getElementById('otpTimer');
-  const cd = document.getElementById('cd');
-  timer.classList.add('show');
-  clearInterval(cdTimer);
-  cdTimer = setInterval(() => {
-    t--;
-    cd.textContent = t;
-    if (t <= 0) {
+    // ── ROLE SELECTION ──
+    function selectRole(role) {
+      goTo('s3' + role);
+    }
+
+    // ── SCREEN 1: LOGIN OTP FLOW ──
+    let loginStep = 1; // 1 = enter phone, 2 = enter OTP
+    let cdTimer;
+
+    function handleLoginBtn() {
+      if (loginStep === 1) {
+        const ph = document.getElementById('loginPhone').value.replace(/\s/g, '');
+        if (!ph || ph.length < 10 || isNaN(ph)) {
+          showErr('phoneErr');
+          shake(document.getElementById('loginPhone'));
+          return;
+        }
+        hideErr('phoneErr');
+        // Show OTP section
+        const btn = document.getElementById('mainLoginBtn');
+        const sp = document.getElementById('mainSpin');
+        const txt = document.getElementById('mainBtnTxt');
+        const arr = document.getElementById('mainBtnArrow');
+        btn.classList.add('loading'); sp.classList.add('show'); txt.textContent = 'Sending OTP…'; arr.style.display = 'none';
+        setTimeout(() => {
+          btn.classList.remove('loading'); sp.classList.remove('show');
+          document.getElementById('otpSection').style.display = 'block';
+          txt.textContent = 'Login →'; arr.style.display = 'inline';
+          loginStep = 2;
+          startLoginTimer();
+          showToast('✅ OTP sent to +91 ' + ph);
+        }, 1400);
+      } else {
+        // Verify OTP
+        const otp = document.getElementById('otpInput').value;
+        if (!otp || otp.length < 6) { showErr('otpErr'); return; }
+        hideErr('otpErr');
+        const btn = document.getElementById('mainLoginBtn');
+        const sp = document.getElementById('mainSpin');
+        const txt = document.getElementById('mainBtnTxt');
+        const arr = document.getElementById('mainBtnArrow');
+        btn.classList.add('loading'); sp.classList.add('show'); txt.textContent = 'Verifying…'; arr.style.display = 'none';
+        setTimeout(() => {
+          btn.classList.remove('loading'); sp.classList.remove('show');
+          showToast('✅ Login successful! Redirecting…');
+          txt.textContent = 'Login →'; arr.style.display = 'inline';
+          setTimeout(() => {
+            // Redirect to retailer dashboard by default
+            window.location.href = 'retailer.html';
+          }, 800);
+        }, 1600);
+      }
+    }
+
+    function startLoginTimer() {
+      let t = 60;
+      const timer = document.getElementById('otpTimer');
+      const cd = document.getElementById('cd');
+      timer.classList.add('show');
       clearInterval(cdTimer);
-      timer.classList.remove('show');
-      document.getElementById('resendBtn').style.display='block';
+      cdTimer = setInterval(() => {
+        t--;
+        cd.textContent = t;
+        if (t <= 0) {
+          clearInterval(cdTimer);
+          timer.classList.remove('show');
+          document.getElementById('resendBtn').style.display = 'block';
+        }
+      }, 1000);
     }
-  }, 1000);
-}
 
-function resendOTP() {
-  document.getElementById('resendBtn').style.display='none';
-  startLoginTimer();
-  showToast('📲 OTP resent!');
-}
+    function resendOTP() {
+      document.getElementById('resendBtn').style.display = 'none';
+      startLoginTimer();
+      showToast('📲 OTP resent!');
+    }
 
-// ── OTP DIGIT AUTO-FOCUS ──
-function dMove(el, idx, prefix) {
-  if (el.value.length === 1) {
-    const boxes = el.closest('.otp-digits').querySelectorAll('.otp-digit');
-    if (idx < 5) boxes[idx+1].focus();
-  }
-}
+    // ── OTP DIGIT AUTO-FOCUS ──
+    function dMove(el, idx, prefix) {
+      if (el.value.length === 1) {
+        const boxes = el.closest('.otp-digits').querySelectorAll('.otp-digit');
+        if (idx < 5) boxes[idx + 1].focus();
+      }
+    }
 
-function acMove(el, idx) {
-  if (el.value.length === 1 && idx < 3) {
-    const boxes = el.closest('.admin-code-digits').querySelectorAll('.ac-digit');
-    boxes[idx+1].focus();
-  }
-}
+    function acMove(el, idx) {
+      if (el.value.length === 1 && idx < 3) {
+        const boxes = el.closest('.admin-code-digits').querySelectorAll('.ac-digit');
+        boxes[idx + 1].focus();
+      }
+    }
 
-// ── CONSUMER REGISTRATION STEPS ──
-function cNext(step) {
-  if (step === 1) {
-    const name = document.getElementById('cName').value;
-    const phone = document.getElementById('cPhone').value;
-    if (!name) { showErr('cNameErr'); return; } hideErr('cNameErr');
-    if (!phone || phone.length < 10) { showErr('cPhoneErr'); return; } hideErr('cPhoneErr');
-    document.getElementById('cPhoneDisplay').textContent = '+91 ' + phone;
-    setStep('c', 2);
-  } else if (step === 2) {
-    const sp = document.getElementById('cSpin');
-    const txt = document.getElementById('cVerifyTxt');
-    sp.classList.add('show'); txt.style.display='none';
-    setTimeout(() => {
-      sp.classList.remove('show'); txt.style.display='';
-      setStep('c', 3);
-      document.getElementById('cStep2').style.display='none';
-      document.getElementById('cStepBar').style.display='none';
-      document.querySelector('.reg-role-badge').style.display='none';
-      document.getElementById('cSuccess').classList.add('show');
-    }, 1600);
-  }
-}
-function cBack(step) {
-  if (step === 2) setStep('c', 1);
-}
+    // ── CONSUMER REGISTRATION STEPS ──
+    function cNext(step) {
+      if (step === 1) {
+        const name = document.getElementById('cName').value;
+        const phone = document.getElementById('cPhone').value;
+        if (!name) { showErr('cNameErr'); return; } hideErr('cNameErr');
+        if (!phone || phone.length < 10) { showErr('cPhoneErr'); return; } hideErr('cPhoneErr');
+        document.getElementById('cPhoneDisplay').textContent = '+91 ' + phone;
+        setStep('c', 2);
+      } else if (step === 2) {
+        const sp = document.getElementById('cSpin');
+        const txt = document.getElementById('cVerifyTxt');
+        sp.classList.add('show'); txt.style.display = 'none';
+        setTimeout(() => {
+          sp.classList.remove('show'); txt.style.display = '';
+          setStep('c', 3);
+          document.getElementById('cStep2').style.display = 'none';
+          document.getElementById('cStepBar').style.display = 'none';
+          document.querySelector('.reg-role-badge').style.display = 'none';
+          document.getElementById('cSuccess').classList.add('show');
+        }, 1600);
+      }
+    }
+    function cBack(step) {
+      if (step === 2) setStep('c', 1);
+    }
 
-// ── RETAILER REGISTRATION STEPS ──
-function rNext(step) {
-  if (step === 1) {
-    document.getElementById('rPhoneDisplay').textContent = '+91 ' + document.getElementById('rPhone').value;
-    setStep('r', 2);
-  } else if (step === 2) {
-    setStep('r', 3);
-  }
-}
-function rBack(step) {
-  if (step === 2) setStep('r', 1);
-  else if (step === 3) setStep('r', 2);
-}
-async function rFinish() {
-  const sp = document.getElementById('rSpin');
-  const txt = document.getElementById('rFinishTxt');
-  sp.classList.add('show'); txt.style.display='none';
-  
-  try {
-    const name = document.getElementById('rName').value || 'New Retailer';
-    const phone = document.getElementById('rPhone').value || '0000000000';
-    const city = document.getElementById('rCity').value || 'Unknown City';
-    const shop = document.getElementById('rShop').value || name;
-    
-    // Create initials
-    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'NR';
-    
-    // Send to API
-    await fetch('/api/retailers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        initials,
-        name: shop + ' (' + name + ')',
-        city,
-        phone: '+91 ' + phone
-      })
-    });
-    
-    sp.classList.remove('show'); txt.style.display='';
-    document.getElementById('rStep3').style.display='none';
-    document.getElementById('rSuccess').classList.add('show');
-    
-  } catch (error) {
-    console.error('Registration failed:', error);
-    showToast('Failed to complete registration');
-    sp.classList.remove('show'); txt.style.display='';
-  }
-}
+    // ── RETAILER REGISTRATION STEPS ──
+    function rNext(step) {
+      if (step === 1) {
+        document.getElementById('rPhoneDisplay').textContent = '+91 ' + document.getElementById('rPhone').value;
+        setStep('r', 2);
+      } else if (step === 2) {
+        setStep('r', 3);
+      }
+    }
+    function rBack(step) {
+      if (step === 2) setStep('r', 1);
+      else if (step === 3) setStep('r', 2);
+    }
+    async function rFinish() {
+      const sp = document.getElementById('rSpin');
+      const txt = document.getElementById('rFinishTxt');
+      sp.classList.add('show'); txt.style.display = 'none';
 
-// ── ADMIN REGISTER ──
-function aFinish() {
-  const sp = document.getElementById('aSpin');
-  const txt = document.getElementById('aFinishTxt');
-  sp.classList.add('show'); txt.style.display='none';
-  setTimeout(() => {
-    document.getElementById('adminFormBtns').style.display='none';
-    document.getElementById('aSuccess').classList.add('show');
-    // Hide form fields
-    document.querySelectorAll('#s3admin .f-field, #s3admin .admin-code-wrap, #s3admin .reg-role-badge').forEach(el => el.style.display='none');
-  }, 1600);
-}
+      try {
+        const name = document.getElementById('rName').value || 'New Retailer';
+        const phone = document.getElementById('rPhone').value || '0000000000';
+        const city = document.getElementById('rCity').value || 'Unknown City';
+        const shop = document.getElementById('rShop').value || name;
 
-// ── STEP MANAGER ──
-function setStep(prefix, step) {
-  [1,2,3].forEach(i => {
-    const panel = document.getElementById(prefix+'Step'+i);
-    const dot = document.getElementById(prefix+'S'+i);
-    if (panel) panel.style.display = 'none';
-    if (dot) { dot.classList.remove('active','done'); if(i<step) dot.classList.add('done'); }
-  });
-  const activePanel = document.getElementById(prefix+'Step'+step);
-  const activeDot = document.getElementById(prefix+'S'+step);
-  if (activePanel) activePanel.style.display = 'block';
-  if (activeDot) activeDot.classList.add('active');
-}
+        // Create initials
+        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'NR';
 
-// ── HELPERS ──
-function showErr(id) { document.getElementById(id).classList.add('show'); }
-function hideErr(id) { document.getElementById(id).classList.remove('show'); }
-function shake(el) {
-  el.style.animation='shake .3s';
-  setTimeout(()=>el.style.animation='',400);
-}
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
-}
-</script>
+        // Send to API
+        await fetch('/api/retailers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            initials,
+            name: shop + ' (' + name + ')',
+            city,
+            phone: '+91 ' + phone
+          })
+        });
+
+        sp.classList.remove('show'); txt.style.display = '';
+        document.getElementById('rStep3').style.display = 'none';
+        document.getElementById('rSuccess').classList.add('show');
+
+      } catch (error) {
+        console.error('Registration failed:', error);
+        showToast('Failed to complete registration');
+        sp.classList.remove('show'); txt.style.display = '';
+      }
+    }
+
+    // ── ADMIN REGISTER ──
+    function aFinish() {
+      const sp = document.getElementById('aSpin');
+      const txt = document.getElementById('aFinishTxt');
+      sp.classList.add('show'); txt.style.display = 'none';
+      setTimeout(() => {
+        document.getElementById('adminFormBtns').style.display = 'none';
+        document.getElementById('aSuccess').classList.add('show');
+        // Hide form fields
+        document.querySelectorAll('#s3admin .f-field, #s3admin .admin-code-wrap, #s3admin .reg-role-badge').forEach(el => el.style.display = 'none');
+      }, 1600);
+    }
+
+    // ── STEP MANAGER ──
+    function setStep(prefix, step) {
+      [1, 2, 3].forEach(i => {
+        const panel = document.getElementById(prefix + 'Step' + i);
+        const dot = document.getElementById(prefix + 'S' + i);
+        if (panel) panel.style.display = 'none';
+        if (dot) { dot.classList.remove('active', 'done'); if (i < step) dot.classList.add('done'); }
+      });
+      const activePanel = document.getElementById(prefix + 'Step' + step);
+      const activeDot = document.getElementById(prefix + 'S' + step);
+      if (activePanel) activePanel.style.display = 'block';
+      if (activeDot) activeDot.classList.add('active');
+    }
+
+    // ── HELPERS ──
+    function showErr(id) { document.getElementById(id).classList.add('show'); }
+    function hideErr(id) { document.getElementById(id).classList.remove('show'); }
+    function shake(el) {
+      el.style.animation = 'shake .3s';
+      setTimeout(() => el.style.animation = '', 400);
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+  </script>
 </body>
+
 </html>

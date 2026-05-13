@@ -1,2257 +1,638 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Spicelity — Retailer Portal</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
-    rel="stylesheet">
-  <style>
-    :root {
-      --g900: #0F1E08;
-      --g800: #1A3010;
-      --g700: #243D14;
-      --g600: #2C4A18;
-      --g500: #3A6020;
-      --g400: #4A7828;
-      --g200: #90C060;
-      --g50: #EBF5E0;
-      --a700: #7A5010;
-      --a600: #9A6818;
-      --a500: #B88020;
-      --a400: #CCA040;
-      --a200: #EDCE90;
-      --a100: #F5E4BC;
-      --a50: #FBF4E0;
-      --cr: #FDFAF4;
-      --c100: #F5F0E5;
-      --c200: #EDE5D4;
-      --c300: #DDD0BC;
-      --c400: #C8BEA8;
-      --t900: #1A2A0A;
-      --t700: #2C4018;
-      --t500: #4A5A30;
-      --t400: #6A7858;
-      --t200: #AAB898;
-      --red: #B82020;
-      --redl: #FDEAEA;
-      --blue: #1040A0;
-      --bluel: #E8EFFD;
-      --border: #D8CEB8;
-      --r: 12px;
-      --r-sm: 8px;
-      --r-lg: 18px;
-      --sh: 0 2px 12px rgba(0, 0, 0, .08);
-      --sh-lg: 0 6px 30px rgba(0, 0, 0, .12);
-      --sidebar: 240px;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--c100);
-      color: var(--t900);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* SPLASH */
-    .spl {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: linear-gradient(160deg, var(--g900), var(--g800));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      animation: spl-out .5s ease 1.6s both;
-      pointer-events: none;
-    }
-
-    .spl-logo {
-      width: 70px;
-      height: 70px;
-      object-fit: contain;
-      animation: spl-pop .65s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
-
-    .spl-fb {
-      width: 70px;
-      height: 70px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, var(--g500), var(--a500));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      font-weight: 800;
-      color: #fff;
-      animation: spl-pop .65s cubic-bezier(.34, 1.56, .64, 1) both;
-    }
-
-    .spl-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      animation: spl-up .5s ease both .3s;
-      opacity: 0;
-    }
-
-    .spl-label strong {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      color: var(--a200);
-      font-weight: 800;
-    }
-
-    .spl-label span {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: rgba(237, 206, 144, .45);
-    }
-
-    .spl-bar {
-      width: 100px;
-      height: 2px;
-      background: rgba(255, 255, 255, .1);
-      border-radius: 2px;
-      overflow: hidden;
-      animation: spl-up .4s ease both .5s;
-      opacity: 0;
-    }
-
-    .spl-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--a500), var(--a300));
-      animation: bar-grow 1.4s ease .5s both;
-    }
-
-    @keyframes spl-pop {
-      from {
-        opacity: 0;
-        transform: scale(.3) rotate(-15deg);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-      }
-    }
-
-    @keyframes spl-up {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes spl-out {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
-    }
-
-    @keyframes bar-grow {
-      from {
-        width: 0;
-      }
-
-      to {
-        width: 100%;
-      }
-    }
-
-    /* TOPBAR */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--g900);
-      border-bottom: 1px solid rgba(255, 255, 255, .08);
-      display: flex;
-      align-items: center;
-      height: 60px;
-      flex-shrink: 0;
-    }
-
-    .tb-brand {
-      width: var(--sidebar);
-      flex-shrink: 0;
-      padding: 0 22px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-right: 1px solid rgba(255, 255, 255, .07);
-      text-decoration: none;
-    }
-
-    .tb-logo {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-    }
-
-    .tb-logo-fb {
-      width: 30px;
-      height: 30px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, var(--g500), var(--a500));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 11px;
-      font-weight: 800;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .tb-wordmark .tb-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--a200);
-    }
-
-    .tb-wordmark .tb-sub {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(237, 206, 144, .4);
-    }
-
-    .tb-right {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 22px;
-    }
-
-    .tb-page-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, .7);
-    }
-
-    .tb-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .tb-ic {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, .07);
-      border: .5px solid rgba(255, 255, 255, .1);
-      display: flex;
-      align-items: center;
-      justify-content: middle;
-      cursor: pointer;
-      position: relative;
-      color: rgba(255, 255, 255, .7);
-    }
-
-    .tb-ic:hover {
-      background: rgba(255, 255, 255, .13);
-    }
-
-    .tb-ic svg {
-      margin: auto;
-      display: block;
-      margin-top: 10px;
-    }
-
-    .tb-badge {
-      position: absolute;
-      top: -3px;
-      right: -3px;
-      width: 14px;
-      height: 14px;
-      background: var(--a500);
-      border-radius: 50%;
-      border: 2px solid var(--g900);
-      font-size: 7.5px;
-      font-weight: 800;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .tb-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--a600), var(--a700));
-      border: 1.5px solid var(--a400);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--a100);
-      cursor: pointer;
-    }
-
-    .hamburger {
-      display: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      color: rgba(255, 255, 255, .8);
-    }
-
-    /* LAYOUT */
-    .app-body {
-      display: flex;
-      flex: 1;
-      min-height: 0;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: var(--sidebar);
-      flex-shrink: 0;
-      background: var(--g900);
-      border-right: 1px solid rgba(255, 255, 255, .07);
-      display: flex;
-      flex-direction: column;
-      padding: 16px 0;
-      position: sticky;
-      top: 60px;
-      height: calc(100vh - 60px);
-      overflow-y: auto;
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 0;
-    }
-
-    .nav-section {
-      margin-bottom: 6px;
-    }
-
-    .nav-label {
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, .25);
-      padding: 0 22px;
-      margin-bottom: 4px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 10px 22px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, .55);
-      border: none;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-      font-family: inherit;
-      transition: all .18s;
-      border-left: 2px solid transparent;
-    }
-
-    .nav-item:hover {
-      color: rgba(255, 255, 255, .9);
-      background: rgba(255, 255, 255, .05);
-    }
-
-    .nav-item.active {
-      color: #fff;
-      background: rgba(255, 255, 255, .08);
-      border-left-color: var(--a400);
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      min-width: 18px;
-      height: 18px;
-      background: var(--a500);
-      border-radius: 9px;
-      font-size: 9px;
-      font-weight: 800;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 4px;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 14px 22px;
-      border-top: 1px solid rgba(255, 255, 255, .07);
-    }
-
-    .logout-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, .4);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      padding: 8px 0;
-      width: 100%;
-      transition: color .2s;
-    }
-
-    .logout-btn:hover {
-      color: rgba(255, 255, 255, .8);
-    }
-
-    /* MAIN */
-    .main {
-      flex: 1;
-      min-width: 0;
-      padding: 28px;
-      overflow-y: auto;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    /* SHARED */
-    .page-header {
-      margin-bottom: 22px;
-    }
-
-    .page-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--t900);
-      letter-spacing: -.3px;
-    }
-
-    .page-sub {
-      font-size: 13px;
-      color: var(--t400);
-      margin-top: 4px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: var(--r);
-      border: .5px solid var(--border);
-    }
-
-    .card-hd {
-      padding: 14px 18px;
-      border-bottom: .5px solid var(--c200);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .card-action {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--a600);
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: inherit;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: var(--r-sm);
-      border: none;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .18s;
-    }
-
-    .btn-primary {
-      background: var(--g700);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: var(--g600);
-    }
-
-    .btn-gold {
-      background: var(--a600);
-      color: #fff;
-    }
-
-    .btn-gold:hover {
-      background: var(--a500);
-    }
-
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .btn-ghost {
-      background: var(--c100);
-      color: var(--t700);
-      border: .5px solid var(--border);
-    }
-
-    .btn-ghost:hover {
-      background: var(--c200);
-    }
-
-    .btn-outline {
-      background: #fff;
-      border: 1.5px solid var(--border);
-      color: var(--t700);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .pill-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .p-green {
-      background: var(--g50);
-      color: var(--g600);
-    }
-
-    .p-green .pill-dot {
-      background: var(--g500);
-    }
-
-    .p-gold {
-      background: var(--a50);
-      color: var(--a700);
-    }
-
-    .p-gold .pill-dot {
-      background: var(--a500);
-    }
-
-    .p-blue {
-      background: var(--bluel);
-      color: var(--blue);
-    }
-
-    .p-blue .pill-dot {
-      background: var(--blue);
-    }
-
-    .p-red {
-      background: var(--redl);
-      color: var(--red);
-    }
-
-    .p-red .pill-dot {
-      background: var(--red);
-    }
-
-    .input,
-    .select-el {
-      padding: 9px 13px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r-sm);
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--t900);
-      background: #fff;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-    }
-
-    .input:focus,
-    .select-el:focus {
-      border-color: var(--g600);
-      box-shadow: 0 0 0 3px rgba(44, 74, 24, .1);
-    }
-
-    .input::placeholder {
-      color: var(--t200);
-    }
-
-    .search-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #fff;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r-sm);
-      padding: 8px 13px;
-    }
-
-    .search-bar input {
-      border: none;
-      outline: none;
-      flex: 1;
-      font-family: inherit;
-      font-size: 13px;
-      background: transparent;
-      color: var(--t900);
-    }
-
-    .search-bar input::placeholder {
-      color: var(--t200);
-    }
-
-    .filter-tabs {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .ftab {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      border: .5px solid var(--border);
-      background: #fff;
-      color: var(--t400);
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .15s;
-    }
-
-    .ftab.on {
-      background: var(--g700);
-      color: #fff;
-      border-color: var(--g700);
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    /* TOAST */
-    .toast-wrap {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      z-index: 9000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-    }
-
-    .toast {
-      background: var(--t900);
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: var(--r-sm);
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: var(--sh-lg);
-      animation: toast-in .3s ease both;
-    }
-
-    .toast.out {
-      animation: toast-out .3s ease both;
-    }
-
-    .toast.success {
-      background: var(--g700);
-    }
-
-    .toast.error {
-      background: var(--red);
-    }
-
-    @keyframes toast-in {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes toast-out {
-      to {
-        opacity: 0;
-        transform: translateY(6px);
-      }
-    }
-
-    /* ── OVERVIEW ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .scard {
-      background: #fff;
-      border-radius: var(--r);
-      border: .5px solid var(--border);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scard::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-    }
-
-    .sc-g::before {
-      background: linear-gradient(90deg, var(--g600), var(--g400));
-    }
-
-    .sc-a::before {
-      background: linear-gradient(90deg, var(--a600), var(--a400));
-    }
-
-    .sc-r::before {
-      background: linear-gradient(90deg, var(--red), #D06060);
-    }
-
-    .scard-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--t400);
-      margin-bottom: 6px;
-    }
-
-    .scard-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--t900);
-    }
-
-    .scard-value.red {
-      color: var(--red);
-    }
-
-    .scard-value.grn {
-      color: var(--g600);
-    }
-
-    .scard-sub {
-      font-size: 11px;
-      color: var(--t200);
-      margin-top: 5px;
-    }
-
-    /* Alert banner */
-    .alert-banner {
-      background: var(--a50);
-      border: .5px solid var(--a200);
-      border-radius: var(--r);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .alert-ico {
-      width: 34px;
-      height: 34px;
-      background: var(--a100);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .alert-text {
-      flex: 1;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--a700);
-      line-height: 1.4;
-    }
-
-    .alert-action {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--a600);
-      background: #fff;
-      border: .5px solid var(--a300);
-      border-radius: 20px;
-      padding: 6px 13px;
-      cursor: pointer;
-      font-family: inherit;
-      flex-shrink: 0;
-    }
-
-    /* Price ticker */
-    .price-scroll-wrap {
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 4px;
-    }
-
-    .price-scroll-wrap::-webkit-scrollbar {
-      display: none;
-    }
-
-    .price-ticker {
-      display: flex;
-      gap: 10px;
-      min-width: max-content;
-    }
-
-    .ptick {
-      background: #fff;
-      border: .5px solid var(--border);
-      border-radius: var(--r-sm);
-      padding: 12px 14px;
-      min-width: 110px;
-      text-align: center;
-    }
-
-    .ptick-ico {
-      font-size: 22px;
-      margin-bottom: 5px;
-    }
-
-    .ptick-name {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--t700);
-    }
-
-    .ptick-price {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--t900);
-      margin-top: 3px;
-    }
-
-    .ptick-unit {
-      font-size: 10px;
-      color: var(--t400);
-    }
-
-    .ptick-chg {
-      font-size: 11px;
-      font-weight: 700;
-      margin-top: 3px;
-    }
-
-    .chg-up {
-      color: var(--g500);
-    }
-
-    .chg-dn {
-      color: var(--red);
-    }
-
-    .chg-fl {
-      color: var(--t200);
-    }
-
-    /* Order history rows */
-    .ord-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      border-bottom: .5px solid var(--c200);
-    }
-
-    .ord-row:last-child {
-      border-bottom: none;
-    }
-
-    .ord-ico {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: var(--c100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .ord-id {
-      font-size: 10.5px;
-      color: var(--t400);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .ord-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .ord-amt {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--t900);
-      margin-left: auto;
-      margin-right: 8px;
-    }
-
-    /* ── ORDER FORM ── */
-    .spice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .spice-item {
-      background: #fff;
-      border: .5px solid var(--border);
-      border-radius: var(--r-sm);
-      padding: 12px;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      position: relative;
-    }
-
-    .spice-item.sel {
-      border: 2px solid var(--g600);
-      background: var(--g50);
-    }
-
-    .spice-item:hover {
-      border-color: var(--c400);
-    }
-
-    .si-ico {
-      font-size: 24px;
-      margin-bottom: 6px;
-    }
-
-    .si-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .si-hin {
-      font-size: 10px;
-      color: var(--t400);
-      margin-top: 1px;
-    }
-
-    .si-price {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--a700);
-      margin-top: 5px;
-    }
-
-    .si-sel-badge {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 18px;
-      height: 18px;
-      background: var(--g600);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Order cart */
-    .order-cart {
-      background: #fff;
-      border-radius: var(--r);
-      border: .5px solid var(--border);
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .cart-item-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: .5px solid var(--c200);
-    }
-
-    .cart-item-row:last-child {
-      border-bottom: none;
-    }
-
-    .ci-ico {
-      font-size: 20px;
-      width: 36px;
-      height: 36px;
-      background: var(--c100);
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .ci-info {
-      flex: 1;
-    }
-
-    .ci-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .ci-price {
-      font-size: 11px;
-      color: var(--t400);
-      margin-top: 2px;
-    }
-
-    .ci-qty-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-    }
-
-    .qty-label {
-      font-size: 10px;
-      color: var(--t400);
-      font-weight: 600;
-    }
-
-    .qty-input {
-      width: 80px;
-      padding: 6px 10px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r-sm);
-      font-size: 13px;
-      font-family: inherit;
-      text-align: center;
-      outline: none;
-    }
-
-    .qty-input:focus {
-      border-color: var(--g600);
-    }
-
-    .ci-remove {
-      width: 26px;
-      height: 26px;
-      background: var(--redl);
-      border-radius: 7px;
-      border: none;
-      color: var(--red);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .cart-total-strip {
-      background: var(--g50);
-      border-radius: var(--r-sm);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-    }
-
-    .ct-label {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--g700);
-    }
-
-    .ct-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--g800);
-    }
-
-    .place-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--g700), var(--g600));
-      color: #fff;
-      border: none;
-      border-radius: var(--r-sm);
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 12px;
-      box-shadow: 0 5px 20px rgba(36, 61, 20, .25);
-      transition: all .2s;
-    }
-
-    .place-btn:hover {
-      box-shadow: 0 8px 28px rgba(36, 61, 20, .35);
-    }
-
-    .place-btn:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .cart-note {
-      font-size: 11px;
-      color: var(--t400);
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    /* ── LEDGER ── */
-    .ledger-summary {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .lsum-card {
-      background: #fff;
-      border-radius: var(--r-sm);
-      border: .5px solid var(--border);
-      padding: 14px;
-    }
-
-    .lsum-label {
-      font-size: 11px;
-      color: var(--t400);
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .lsum-value {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--t900);
-    }
-
-    .lsum-value.grn {
-      color: var(--g600);
-    }
-
-    .lsum-value.red {
-      color: var(--red);
-    }
-
-    .ledger-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 18px;
-      border-bottom: .5px solid var(--c200);
-    }
-
-    .ledger-row:last-child {
-      border-bottom: none;
-    }
-
-    .ledger-ico {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .l-credit {
-      background: var(--g50);
-    }
-
-    .l-debit {
-      background: var(--redl);
-    }
-
-    .ledger-info {
-      flex: 1;
-    }
-
-    .ledger-type {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .ledger-party {
-      font-size: 11px;
-      color: var(--t400);
-      margin-top: 1px;
-    }
-
-    .ledger-date {
-      font-size: 11px;
-      color: var(--t200);
-    }
-
-    .ledger-amt {
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-    .l-cr-amt {
-      color: var(--g600);
-    }
-
-    .l-dr-amt {
-      color: var(--red);
-    }
-
-    /* Selling price editor */
-    .sell-price-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-    }
-
-    .sp-card {
-      background: #fff;
-      border-radius: var(--r-sm);
-      border: .5px solid var(--border);
-      padding: 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sp-ico {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .sp-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .sp-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .sp-buy {
-      font-size: 11px;
-      color: var(--t400);
-    }
-
-    .sp-input {
-      width: 80px;
-      padding: 6px 10px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r-sm);
-      font-size: 12px;
-      font-family: inherit;
-      outline: none;
-      text-align: right;
-    }
-
-    .sp-input:focus {
-      border-color: var(--g600);
-    }
-
-    /* CHAT */
-    .chat-layout {
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-      border-radius: var(--r);
-      border: .5px solid var(--border);
-      height: 500px;
-      max-height: calc(100vh - 200px);
-    }
-
-    .chat-hdr {
-      padding: 12px 18px;
-      border-bottom: .5px solid var(--c200);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .chat-av {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--g600), var(--g700));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .chat-msgs {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: var(--c100);
-    }
-
-    .chat-msgs::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .chat-msgs::-webkit-scrollbar-thumb {
-      background: var(--c300);
-      border-radius: 4px;
-    }
-
-    .mrow {
-      display: flex;
-    }
-
-    .mrow.me {
-      justify-content: flex-end;
-    }
-
-    .mbub {
-      max-width: 72%;
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .mbub.adm {
-      background: #fff;
-      color: var(--t700);
-      border-bottom-left-radius: 4px;
-      border: .5px solid var(--border);
-    }
-
-    .mbub.mine {
-      background: var(--g700);
-      color: #fff;
-      border-bottom-right-radius: 4px;
-    }
-
-    .mbub .mtime {
-      font-size: 10px;
-      opacity: .55;
-      margin-left: 8px;
-    }
-
-    .chat-inp-bar {
-      padding: 10px 14px;
-      border-top: .5px solid var(--c200);
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .chat-inp {
-      flex: 1;
-      border: 1.5px solid var(--border);
-      border-radius: 22px;
-      padding: 9px 14px;
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      background: var(--c100);
-    }
-
-    .chat-inp:focus {
-      border-color: var(--g600);
-    }
-
-    .chat-send {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--g700);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .chat-send:hover {
-      background: var(--g600);
-    }
-
-    /* Profile */
-    .prof-hero {
-      background: linear-gradient(135deg, var(--g900), var(--g800));
-      border-radius: var(--r);
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .prof-av {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--a600), var(--a700));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--a100);
-      flex-shrink: 0;
-    }
-
-    .prof-name {
-      font-size: 20px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -.3px;
-    }
-
-    .prof-shop {
-      font-size: 13px;
-      color: var(--a200);
-      margin-top: 3px;
-      font-weight: 600;
-    }
-
-    .prof-city {
-      font-size: 12px;
-      color: rgba(255, 255, 255, .4);
-      margin-top: 2px;
-    }
-
-    .set-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 13px 18px;
-      border-bottom: .5px solid var(--c200);
-      cursor: pointer;
-      transition: background .15s;
-    }
-
-    .set-row:hover {
-      background: var(--cr);
-    }
-
-    .set-row:last-child {
-      border-bottom: none;
-    }
-
-    .set-ico {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--c100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-
-    .set-lbl {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--t900);
-    }
-
-    .set-desc {
-      font-size: 11.5px;
-      color: var(--t400);
-      margin-top: 1px;
-    }
-
-    .set-chev {
-      margin-left: auto;
-      color: var(--t200);
-    }
-
-    /* MOBILE */
-    .mob-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-      background: var(--g900);
-      border-top: .5px solid rgba(255, 255, 255, .08);
-      height: 62px;
-      align-items: stretch;
-    }
-
-    .mob-nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      color: rgba(255, 255, 255, .4);
-      font-family: inherit;
-      transition: color .2s;
-    }
-
-    .mob-nav-item.active,
-    .mob-nav-item:hover {
-      color: var(--a300);
-    }
-
-    .mob-nav-item span {
-      font-size: 9.5px;
-      font-weight: 700;
-    }
-
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .5);
-      z-index: 149;
-    }
-
-    @media(max-width:900px) {
-      .sidebar {
-        position: fixed;
-        top: 60px;
-        left: 0;
-        bottom: 0;
-        z-index: 150;
-        transform: translateX(-100%);
-        transition: transform .28s cubic-bezier(.4, 0, .2, 1);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .sidebar-overlay {
-        display: block;
-      }
-
-      .hamburger {
-        display: flex;
-      }
-
-      .mob-nav {
-        display: flex;
-      }
-
-      .main {
-        padding: 20px 16px 80px;
-      }
-
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-row,
-      .ledger-summary {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    @media(max-width:500px) {
-
-      .stats-row,
-      .ledger-summary {
-        grid-template-columns: 1fr;
-      }
-
-      .spice-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Spicelity — Retailer Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g900:#0F1E08;--g800:#1A3010;--g700:#243D14;--g600:#2C4A18;
+  --g500:#3A6020;--g400:#4A7828;--g200:#90C060;--g50:#EBF5E0;
+  --a700:#7A5010;--a600:#9A6818;--a500:#B88020;--a400:#CCA040;
+  --a200:#EDCE90;--a100:#F5E4BC;--a50:#FBF4E0;
+  --cr:#FDFAF4;--c100:#F5F0E5;--c200:#EDE5D4;--c300:#DDD0BC;--c400:#C8BEA8;
+  --t900:#1A2A0A;--t700:#2C4018;--t500:#4A5A30;--t400:#6A7858;--t200:#AAB898;
+  --red:#B82020;--redl:#FDEAEA;--blue:#1040A0;--bluel:#E8EFFD;
+  --border:#D8CEB8;--r:12px;--r-sm:8px;--r-lg:18px;
+  --sh:0 2px 12px rgba(0,0,0,.08);--sh-lg:0 6px 30px rgba(0,0,0,.12);
+  --sidebar:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);min-height:100vh;display:flex;flex-direction:column;}
+ 
+/* SPLASH */
+.spl{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--g900),var(--g800));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:spl-out .5s ease 1.6s both;pointer-events:none;}
+.spl-logo{width:70px;height:70px;object-fit:contain;animation:spl-pop .65s cubic-bezier(.34,1.56,.64,1) both;}
+.spl-fb{width:70px;height:70px;border-radius:20px;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:#fff;animation:spl-pop .65s cubic-bezier(.34,1.56,.64,1) both;}
+.spl-label{display:flex;flex-direction:column;align-items:center;gap:3px;animation:spl-up .5s ease both .3s;opacity:0;}
+.spl-label strong{font-family:'Playfair Display',serif;font-size:26px;color:var(--a200);font-weight:800;}
+.spl-label span{font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(237,206,144,.45);}
+.spl-bar{width:100px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;animation:spl-up .4s ease both .5s;opacity:0;}
+.spl-fill{height:100%;background:linear-gradient(90deg,var(--a500),var(--a300));animation:bar-grow 1.4s ease .5s both;}
+@keyframes spl-pop{from{opacity:0;transform:scale(.3) rotate(-15deg);}to{opacity:1;transform:scale(1) rotate(0);}}
+@keyframes spl-up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spl-out{to{opacity:0;visibility:hidden;}}
+@keyframes bar-grow{from{width:0;}to{width:100%;}}
+ 
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:var(--g900);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;height:60px;flex-shrink:0;}
+.tb-brand{width:var(--sidebar);flex-shrink:0;padding:0 22px;display:flex;align-items:center;gap:10px;border-right:1px solid rgba(255,255,255,.07);text-decoration:none;}
+.tb-logo{width:30px;height:30px;object-fit:contain;}
+.tb-logo-fb{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+.tb-wordmark .tb-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:var(--a200);}
+.tb-wordmark .tb-sub{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,206,144,.4);}
+.tb-right{flex:1;display:flex;align-items:center;justify-content:space-between;padding:0 22px;}
+.tb-page-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.7);}
+.tb-actions{display:flex;align-items:center;gap:10px;}
+.tb-ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:middle;cursor:pointer;position:relative;color:rgba(255,255,255,.7);}
+.tb-ic:hover{background:rgba(255,255,255,.13);}
+.tb-ic svg{margin:auto;display:block;margin-top:10px;}
+.tb-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--a500);border-radius:50%;border:2px solid var(--g900);font-size:7.5px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;}
+.tb-avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--a600),var(--a700));border:1.5px solid var(--a400);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--a100);cursor:pointer;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:rgba(255,255,255,.8);}
+ 
+/* LAYOUT */
+.app-body{display:flex;flex:1;min-height:0;}
+ 
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--g900);border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;padding:16px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:0;}
+.nav-section{margin-bottom:6px;}
+.nav-label{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:0 22px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 22px;cursor:pointer;font-size:13px;font-weight:600;color:rgba(255,255,255,.55);border:none;background:transparent;width:100%;text-align:left;font-family:inherit;transition:all .18s;border-left:2px solid transparent;}
+.nav-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05);}
+.nav-item.active{color:#fff;background:rgba(255,255,255,.08);border-left-color:var(--a400);}
+.nav-badge{margin-left:auto;min-width:18px;height:18px;background:var(--a500);border-radius:9px;font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.sidebar-footer{margin-top:auto;padding:14px 22px;border-top:1px solid rgba(255,255,255,.07);}
+.logout-btn{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:rgba(255,255,255,.4);background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 0;width:100%;transition:color .2s;}
+.logout-btn:hover{color:rgba(255,255,255,.8);}
+ 
+/* MAIN */
+.main{flex:1;min-width:0;padding:28px;overflow-y:auto;}
+.page{display:none;}.page.active{display:block;}
+ 
+/* SHARED */
+.page-header{margin-bottom:22px;}
+.page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:var(--t900);letter-spacing:-.3px;}
+.page-sub{font-size:13px;color:var(--t400);margin-top:4px;}
+.card{background:#fff;border-radius:var(--r);border:.5px solid var(--border);}
+.card-hd{padding:14px 18px;border-bottom:.5px solid var(--c200);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;color:var(--t900);}
+.card-action{font-size:12px;font-weight:700;color:var(--a600);cursor:pointer;background:none;border:none;font-family:inherit;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-sm);border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .18s;}
+.btn-primary{background:var(--g700);color:#fff;}
+.btn-primary:hover{background:var(--g600);}
+.btn-gold{background:var(--a600);color:#fff;}
+.btn-gold:hover{background:var(--a500);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-ghost{background:var(--c100);color:var(--t700);border:.5px solid var(--border);}
+.btn-ghost:hover{background:var(--c200);}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--t700);}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.p-green{background:var(--g50);color:var(--g600);}.p-green .pill-dot{background:var(--g500);}
+.p-gold{background:var(--a50);color:var(--a700);}.p-gold .pill-dot{background:var(--a500);}
+.p-blue{background:var(--bluel);color:var(--blue);}.p-blue .pill-dot{background:var(--blue);}
+.p-red{background:var(--redl);color:var(--red);}.p-red .pill-dot{background:var(--red);}
+.input,.select-el{padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:inherit;font-size:13px;color:var(--t900);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;}
+.input:focus,.select-el:focus{border-color:var(--g600);box-shadow:0 0 0 3px rgba(44,74,24,.1);}
+.input::placeholder{color:var(--t200);}
+.search-bar{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;}
+.search-bar input{border:none;outline:none;flex:1;font-family:inherit;font-size:13px;background:transparent;color:var(--t900);}
+.search-bar input::placeholder{color:var(--t200);}
+.filter-tabs{display:flex;gap:7px;flex-wrap:wrap;}
+.ftab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:.5px solid var(--border);background:#fff;color:var(--t400);cursor:pointer;font-family:inherit;transition:all .15s;}
+.ftab.on{background:var(--g700);color:#fff;border-color:var(--g700);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+ 
+/* TOAST */
+.toast-wrap{position:fixed;bottom:28px;right:28px;z-index:9000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--t900);color:#fff;padding:12px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:600;box-shadow:var(--sh-lg);animation:toast-in .3s ease both;}
+.toast.out{animation:toast-out .3s ease both;}
+.toast.success{background:var(--g700);}.toast.error{background:var(--red);}
+@keyframes toast-in{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@keyframes toast-out{to{opacity:0;transform:translateY(6px);}}
+ 
+/* ── OVERVIEW ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.scard{background:#fff;border-radius:var(--r);border:.5px solid var(--border);padding:16px 18px;position:relative;overflow:hidden;}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc-g::before{background:linear-gradient(90deg,var(--g600),var(--g400));}
+.sc-a::before{background:linear-gradient(90deg,var(--a600),var(--a400));}
+.sc-r::before{background:linear-gradient(90deg,var(--red),#D06060);}
+.scard-label{font-size:11px;font-weight:600;color:var(--t400);margin-bottom:6px;}
+.scard-value{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--t900);}
+.scard-value.red{color:var(--red);}.scard-value.grn{color:var(--g600);}
+.scard-sub{font-size:11px;color:var(--t200);margin-top:5px;}
+ 
+/* Alert banner */
+.alert-banner{background:var(--a50);border:.5px solid var(--a200);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.alert-ico{width:34px;height:34px;background:var(--a100);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.alert-text{flex:1;font-size:13px;font-weight:600;color:var(--a700);line-height:1.4;}
+.alert-action{font-size:12px;font-weight:700;color:var(--a600);background:#fff;border:.5px solid var(--a300);border-radius:20px;padding:6px 13px;cursor:pointer;font-family:inherit;flex-shrink:0;}
+ 
+/* Price ticker */
+.price-scroll-wrap{overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.price-scroll-wrap::-webkit-scrollbar{display:none;}
+.price-ticker{display:flex;gap:10px;min-width:max-content;}
+.ptick{background:#fff;border:.5px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;min-width:110px;text-align:center;}
+.ptick-ico{font-size:22px;margin-bottom:5px;}
+.ptick-name{font-size:11px;font-weight:700;color:var(--t700);}
+.ptick-price{font-size:16px;font-weight:800;color:var(--t900);margin-top:3px;}
+.ptick-unit{font-size:10px;color:var(--t400);}
+.ptick-chg{font-size:11px;font-weight:700;margin-top:3px;}
+.chg-up{color:var(--g500);}.chg-dn{color:var(--red);}.chg-fl{color:var(--t200);}
+ 
+/* Order history rows */
+.ord-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:.5px solid var(--c200);}
+.ord-row:last-child{border-bottom:none;}
+.ord-ico{width:36px;height:36px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ord-id{font-size:10.5px;color:var(--t400);font-family:'JetBrains Mono',monospace;}
+.ord-name{font-size:13px;font-weight:700;color:var(--t900);}
+.ord-amt{font-size:14px;font-weight:800;color:var(--t900);margin-left:auto;margin-right:8px;}
+ 
+/* ── ORDER FORM ── */
+.spice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px;}
+.spice-item{background:#fff;border:.5px solid var(--border);border-radius:var(--r-sm);padding:12px;cursor:pointer;transition:border-color .15s,background .15s;position:relative;}
+.spice-item.sel{border:2px solid var(--g600);background:var(--g50);}
+.spice-item:hover{border-color:var(--c400);}
+.si-ico{font-size:24px;margin-bottom:6px;}
+.si-name{font-size:12px;font-weight:700;color:var(--t900);}
+.si-hin{font-size:10px;color:var(--t400);margin-top:1px;}
+.si-price{font-size:14px;font-weight:800;color:var(--a700);margin-top:5px;}
+.si-sel-badge{position:absolute;top:6px;right:6px;width:18px;height:18px;background:var(--g600);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+ 
+/* Order cart */
+.order-cart{background:#fff;border-radius:var(--r);border:.5px solid var(--border);padding:18px;margin-bottom:16px;}
+.cart-item-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:.5px solid var(--c200);}
+.cart-item-row:last-child{border-bottom:none;}
+.ci-ico{font-size:20px;width:36px;height:36px;background:var(--c100);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-name{font-size:13px;font-weight:700;color:var(--t900);}
+.ci-price{font-size:11px;color:var(--t400);margin-top:2px;}
+.ci-qty-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.qty-label{font-size:10px;color:var(--t400);font-weight:600;}
+.qty-input{width:80px;padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:inherit;text-align:center;outline:none;}
+.qty-input:focus{border-color:var(--g600);}
+.ci-remove{width:26px;height:26px;background:var(--redl);border-radius:7px;border:none;color:var(--red);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+ 
+.cart-total-strip{background:var(--g50);border-radius:var(--r-sm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+.ct-label{font-size:14px;font-weight:700;color:var(--g700);}
+.ct-value{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--g800);}
+.place-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--g700),var(--g600));color:#fff;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;box-shadow:0 5px 20px rgba(36,61,20,.25);transition:all .2s;}
+.place-btn:hover{box-shadow:0 8px 28px rgba(36,61,20,.35);}
+.place-btn:disabled{opacity:.5;cursor:not-allowed;}
+.cart-note{font-size:11px;color:var(--t400);text-align:center;margin-top:8px;}
+ 
+/* ── LEDGER ── */
+.ledger-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.lsum-card{background:#fff;border-radius:var(--r-sm);border:.5px solid var(--border);padding:14px;}
+.lsum-label{font-size:11px;color:var(--t400);font-weight:600;margin-bottom:5px;}
+.lsum-value{font-size:18px;font-weight:800;color:var(--t900);}
+.lsum-value.grn{color:var(--g600);}.lsum-value.red{color:var(--red);}
+.ledger-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:.5px solid var(--c200);}
+.ledger-row:last-child{border-bottom:none;}
+.ledger-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.l-credit{background:var(--g50);}.l-debit{background:var(--redl);}
+.ledger-info{flex:1;}
+.ledger-type{font-size:12px;font-weight:700;color:var(--t900);}
+.ledger-party{font-size:11px;color:var(--t400);margin-top:1px;}
+.ledger-date{font-size:11px;color:var(--t200);}
+.ledger-amt{font-size:14px;font-weight:800;}
+.l-cr-amt{color:var(--g600);}.l-dr-amt{color:var(--red);}
+ 
+/* Selling price editor */
+.sell-price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.sp-card{background:#fff;border-radius:var(--r-sm);border:.5px solid var(--border);padding:13px;display:flex;align-items:center;gap:10px;}
+.sp-ico{font-size:20px;flex-shrink:0;}
+.sp-info{flex:1;min-width:0;}
+.sp-name{font-size:12px;font-weight:700;color:var(--t900);}
+.sp-buy{font-size:11px;color:var(--t400);}
+.sp-input{width:80px;padding:6px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:12px;font-family:inherit;outline:none;text-align:right;}
+.sp-input:focus{border-color:var(--g600);}
+ 
+/* CHAT */
+.chat-layout{display:flex;flex-direction:column;background:#fff;border-radius:var(--r);border:.5px solid var(--border);height:500px;max-height:calc(100vh - 200px);}
+.chat-hdr{padding:12px 18px;border-bottom:.5px solid var(--c200);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--g600),var(--g700));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--c100);}
+.chat-msgs::-webkit-scrollbar{width:4px;}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--c300);border-radius:4px;}
+.mrow{display:flex;}
+.mrow.me{justify-content:flex-end;}
+.mbub{max-width:72%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.45;}
+.mbub.adm{background:#fff;color:var(--t700);border-bottom-left-radius:4px;border:.5px solid var(--border);}
+.mbub.mine{background:var(--g700);color:#fff;border-bottom-right-radius:4px;}
+.mbub .mtime{font-size:10px;opacity:.55;margin-left:8px;}
+.chat-inp-bar{padding:10px 14px;border-top:.5px solid var(--c200);display:flex;gap:8px;flex-shrink:0;}
+.chat-inp{flex:1;border:1.5px solid var(--border);border-radius:22px;padding:9px 14px;font-size:13px;font-family:inherit;outline:none;background:var(--c100);}
+.chat-inp:focus{border-color:var(--g600);}
+.chat-send{width:38px;height:38px;border-radius:50%;background:var(--g700);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.chat-send:hover{background:var(--g600);}
+ 
+/* Profile */
+.prof-hero{background:linear-gradient(135deg,var(--g900),var(--g800));border-radius:var(--r);padding:24px;display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+.prof-av{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--a600),var(--a700));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--a100);flex-shrink:0;}
+.prof-name{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.prof-shop{font-size:13px;color:var(--a200);margin-top:3px;font-weight:600;}
+.prof-city{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;}
+.set-row{display:flex;align-items:center;gap:14px;padding:13px 18px;border-bottom:.5px solid var(--c200);cursor:pointer;transition:background .15s;}
+.set-row:hover{background:var(--cr);}
+.set-row:last-child{border-bottom:none;}
+.set-ico{width:34px;height:34px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.set-lbl{font-size:13px;font-weight:700;color:var(--t900);}
+.set-desc{font-size:11.5px;color:var(--t400);margin-top:1px;}
+.set-chev{margin-left:auto;color:var(--t200);}
+ 
+/* MOBILE */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--g900);border-top:.5px solid rgba(255,255,255,.08);height:62px;align-items:stretch;}
+.mob-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;background:none;border:none;color:rgba(255,255,255,.4);font-family:inherit;transition:color .2s;}
+.mob-nav-item.active,.mob-nav-item:hover{color:var(--a300);}
+.mob-nav-item span{font-size:9.5px;font-weight:700;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:149;}
+ 
+@media(max-width:900px){
+  .sidebar{position:fixed;top:60px;left:0;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay{display:block;}
+  .hamburger{display:flex;}
+  .mob-nav{display:flex;}
+  .main{padding:20px 16px 80px;}
+  .two-col{grid-template-columns:1fr;}
+  .stats-row,.ledger-summary{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:500px){.stats-row,.ledger-summary{grid-template-columns:1fr;}.spice-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
 </head>
-
 <body>
-
-  <div class="spl" id="spl">
-    <img src="assets/logo.png" class="spl-logo" alt="Spicelity"
-      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="spl-fb" style="display:none">S</div>
-    <div class="spl-label"><strong>Spicelity</strong><span>Retailer Portal</span></div>
-    <div class="spl-bar">
-      <div class="spl-fill"></div>
+ 
+<div class="spl" id="spl">
+  <img src="assets/logo.png" class="spl-logo" alt="Spicelity" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="spl-fb" style="display:none">S</div>
+  <div class="spl-label"><strong>Spicelity</strong><span>Retailer Portal</span></div>
+  <div class="spl-bar"><div class="spl-fill"></div></div>
+</div>
+ 
+<div class="toast-wrap" id="toast-wrap"></div>
+ 
+<header class="topbar">
+  <a href="login.html" class="tb-brand">
+    <img src="assets/logo.png" class="tb-logo" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="tb-logo-fb" style="display:none">S</div>
+    <div class="tb-wordmark"><div class="tb-name">Spicelity</div><div class="tb-sub">Retailer Portal</div></div>
+  </a>
+  <div class="tb-right">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="hamburger" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <span class="tb-page-title" id="page-title-label">Overview</span>
+    </div>
+    <div class="tb-actions">
+      <div class="tb-ic" onclick="showPage('notifications')" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="tb-badge">2</div>
+      </div>
+      <div class="tb-avatar" onclick="showPage('profile')" title="My Profile">RS</div>
     </div>
   </div>
-
-  <div class="toast-wrap" id="toast-wrap"></div>
-
-  <header class="topbar">
-    <a href="login.html" class="tb-brand">
-      <img src="assets/logo.png" class="tb-logo" alt=""
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="tb-logo-fb" style="display:none">S</div>
-      <div class="tb-wordmark">
-        <div class="tb-name">Spicelity</div>
-        <div class="tb-sub">Retailer Portal</div>
-      </div>
-    </a>
-    <div class="tb-right">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <button class="hamburger" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg></button>
-        <span class="tb-page-title" id="page-title-label">Overview</span>
-      </div>
-      <div class="tb-actions">
-        <div class="tb-ic" onclick="showPage('notifications')" title="Notifications">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
-          </svg>
-          <div class="tb-badge">2</div>
-        </div>
-        <div class="tb-avatar" onclick="showPage('profile')" title="My Profile">RS</div>
-      </div>
+</header>
+ 
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()" style="display:none;"></div>
+ 
+<div class="app-body">
+  <aside class="sidebar" id="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" data-page="overview" onclick="showPage('overview',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-page="place-order" onclick="showPage('place-order',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Place Bulk Order
+      </button>
+      <button class="nav-item" data-page="order-history" onclick="showPage('order-history',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+        Order History
+        <span class="nav-badge">3</span>
+      </button>
     </div>
-  </header>
-
-  <div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()" style="display:none;"></div>
-
-  <div class="app-body">
-    <aside class="sidebar" id="sidebar">
-      <div class="nav-section">
-        <div class="nav-label">Main</div>
-        <button class="nav-item active" data-page="overview" onclick="showPage('overview',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-          </svg>
-          Overview
-        </button>
-        <button class="nav-item" data-page="place-order" onclick="showPage('place-order',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 01-8 0" />
-          </svg>
-          Place Bulk Order
-        </button>
-        <button class="nav-item" data-page="order-history" onclick="showPage('order-history',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-            <rect x="9" y="3" width="6" height="4" rx="2" />
-          </svg>
-          Order History
-          <span class="nav-badge">3</span>
-        </button>
+    <div class="nav-section">
+      <div class="nav-label">Finance</div>
+      <button class="nav-item" data-page="ledger" onclick="showPage('ledger',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Ledger &amp; Accounts
+      </button>
+      <button class="nav-item" data-page="pricing" onclick="showPage('pricing',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Market Rates
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Support</div>
+      <button class="nav-item" data-page="chat" onclick="showPage('chat',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Message Admin
+      </button>
+      <button class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        Notifications
+        <span class="nav-badge">2</span>
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <button class="nav-item" data-page="profile" onclick="showPage('profile',this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        My Profile
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="window.location.href='login.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+ 
+  <main class="main">
+ 
+    <!-- OVERVIEW -->
+    <section class="page active" id="page-overview">
+      <div class="page-header">
+        <div class="page-title">Welcome, Ramesh Sharma 👋</div>
+        <div class="page-sub">Sharma Masala &amp; Spices · Jodhpur · May 30, 2025</div>
       </div>
-      <div class="nav-section">
-        <div class="nav-label">Finance</div>
-        <button class="nav-item" data-page="ledger" onclick="showPage('ledger',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-          </svg>
-          Ledger &amp; Accounts
-        </button>
-        <button class="nav-item" data-page="pricing" onclick="showPage('pricing',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <line x1="12" y1="1" x2="12" y2="23" />
-            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-          </svg>
-          Market Rates
-        </button>
+      <div class="alert-banner">
+        <div class="alert-ico">📈</div>
+        <div class="alert-text">Cumin (Jeera) wholesale price has risen by <strong>₹12/kg</strong> since yesterday. Review your selling price.</div>
+        <button class="alert-action" onclick="showPage('pricing')">View Rates</button>
       </div>
-      <div class="nav-section">
-        <div class="nav-label">Support</div>
-        <button class="nav-item" data-page="chat" onclick="showPage('chat',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-          </svg>
-          Message Admin
-        </button>
-        <button class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
-          </svg>
-          Notifications
-          <span class="nav-badge">2</span>
-        </button>
+      <div class="stats-row">
+        <div class="scard sc-g"><div class="scard-label">Orders This Week</div><div class="scard-value">8</div><div class="scard-sub">↑ 2 vs last week</div></div>
+        <div class="scard sc-a"><div class="scard-label">Monthly Purchase</div><div class="scard-value grn">₹1.25L</div><div class="scard-sub">Est. margin ₹53,500</div></div>
+        <div class="scard sc-r"><div class="scard-label">Outstanding Dues</div><div class="scard-value red">₹3,250</div><div class="scard-sub">Due to Spicelity</div></div>
       </div>
-      <div class="nav-section">
-        <div class="nav-label">Account</div>
-        <button class="nav-item" data-page="profile" onclick="showPage('profile',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-          My Profile
-        </button>
+ 
+      <div class="two-col" style="margin-bottom:16px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Today's Market Rates</div>
+          <div class="price-scroll-wrap"><div class="price-ticker" id="overview-prices"></div></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-direction:column;">
+          <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="showPage('place-order')">📦 Place Bulk Order</button>
+          <button class="btn btn-gold" style="width:100%;justify-content:center;padding:12px;" onclick="showPage('ledger')">📒 View Ledger</button>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:12px;" onclick="showPage('chat')">💬 Message Admin</button>
+        </div>
       </div>
-      <div class="sidebar-footer">
-        <button class="logout-btn" onclick="window.location.href='login.html'">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Sign Out
-        </button>
+ 
+      <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Recent Orders</div>
+      <div class="card" id="overview-orders"></div>
+    </section>
+ 
+    <!-- PLACE ORDER -->
+    <section class="page" id="page-place-order">
+      <div class="page-header">
+        <div class="page-title">Place Bulk Order</div>
+        <div class="page-sub">Select products, set quantities, and submit — minimum 10kg per item</div>
       </div>
-    </aside>
-
-    <main class="main">
-
-      <!-- OVERVIEW -->
-      <section class="page active" id="page-overview">
-        <div class="page-header">
-          <div class="page-title">Welcome, Ramesh Sharma 👋</div>
-          <div class="page-sub">Sharma Masala &amp; Spices · Jodhpur · May 30, 2025</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:14px;font-weight:700;color:var(--t700);">Select Products</div>
+        <div id="sel-count" style="font-size:13px;font-weight:600;color:var(--g600);"></div>
+      </div>
+      <div class="spice-grid" id="spice-select-grid"></div>
+ 
+      <div id="order-form-wrap" style="display:none;">
+        <div style="font-size:14px;font-weight:700;color:var(--t700);margin-bottom:10px;">Order Details</div>
+        <div class="order-cart" id="order-cart-items"></div>
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Delivery Note (optional)</div>
+          <textarea class="input" style="width:100%;resize:vertical;min-height:80px;" placeholder="Any special instructions for the admin…" id="order-note"></textarea>
+          <button class="place-btn" onclick="submitOrder()" id="place-btn">✅ Submit Bulk Order</button>
+          <div class="cart-note">Payment on delivery · Admin will confirm within 2 hours</div>
         </div>
-        <div class="alert-banner">
-          <div class="alert-ico">📈</div>
-          <div class="alert-text">Cumin (Jeera) wholesale price has risen by <strong>₹12/kg</strong> since yesterday.
-            Review your selling price.</div>
-          <button class="alert-action" onclick="showPage('pricing')">View Rates</button>
+      </div>
+    </section>
+ 
+    <!-- ORDER HISTORY -->
+    <section class="page" id="page-order-history">
+      <div class="page-header"><div class="page-title">Order History</div><div class="page-sub">All your purchases from Spicelity</div></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+        <div class="search-bar" style="flex:1;min-width:180px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search by product or ID…" id="hist-search" oninput="renderHistory()">
         </div>
-        <div class="stats-row">
-          <div class="scard sc-g">
-            <div class="scard-label">Orders This Week</div>
-            <div class="scard-value">8</div>
-            <div class="scard-sub">↑ 2 vs last week</div>
-          </div>
-          <div class="scard sc-a">
-            <div class="scard-label">Monthly Purchase</div>
-            <div class="scard-value grn">₹1.25L</div>
-            <div class="scard-sub">Est. margin ₹53,500</div>
-          </div>
-          <div class="scard sc-r">
-            <div class="scard-label">Outstanding Dues</div>
-            <div class="scard-value red">₹3,250</div>
-            <div class="scard-sub">Due to Spicelity</div>
-          </div>
+        <div class="filter-tabs">
+          <button class="ftab on" data-sf="all" onclick="setHistFilter('all',this)">All</button>
+          <button class="ftab" data-sf="pending" onclick="setHistFilter('pending',this)">Pending</button>
+          <button class="ftab" data-sf="transit" onclick="setHistFilter('transit',this)">In Transit</button>
+          <button class="ftab" data-sf="delivered" onclick="setHistFilter('delivered',this)">Delivered</button>
         </div>
-
-        <div class="two-col" style="margin-bottom:16px;">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Today's Market Rates</div>
-            <div class="price-scroll-wrap">
-              <div class="price-ticker" id="overview-prices"></div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;flex-direction:column;">
-            <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;"
-              onclick="showPage('place-order')">📦 Place Bulk Order</button>
-            <button class="btn btn-gold" style="width:100%;justify-content:center;padding:12px;"
-              onclick="showPage('ledger')">📒 View Ledger</button>
-            <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:12px;"
-              onclick="showPage('chat')">💬 Message Admin</button>
-          </div>
+      </div>
+      <div id="hist-list"></div>
+    </section>
+ 
+    <!-- LEDGER -->
+    <section class="page" id="page-ledger">
+      <div class="page-header"><div class="page-title">Ledger &amp; Accounts</div><div class="page-sub">Your financial summary and transaction history — May 2025</div></div>
+      <div class="ledger-summary">
+        <div class="lsum-card"><div class="lsum-label">Total Purchases</div><div class="lsum-value">₹1,25,000</div></div>
+        <div class="lsum-card"><div class="lsum-label">Est. Sales Revenue</div><div class="lsum-value grn">₹1,78,500</div></div>
+        <div class="lsum-card"><div class="lsum-label">Net Margin</div><div class="lsum-value grn">₹53,500 (30%)</div></div>
+        <div class="lsum-card"><div class="lsum-label">Outstanding to Spicelity</div><div class="lsum-value red">₹3,250</div></div>
+        <div class="lsum-card"><div class="lsum-label">Average Order Value</div><div class="lsum-value">₹3,472</div></div>
+        <div class="lsum-card"><div class="lsum-label">Total Transactions</div><div class="lsum-value">36</div></div>
+      </div>
+ 
+      <div class="two-col">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Transaction Log</div>
+          <div class="card" id="ledger-transactions"></div>
         </div>
-
-        <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Recent Orders</div>
-        <div class="card" id="overview-orders"></div>
-      </section>
-
-      <!-- PLACE ORDER -->
-      <section class="page" id="page-place-order">
-        <div class="page-header">
-          <div class="page-title">Place Bulk Order</div>
-          <div class="page-sub">Select products, set quantities, and submit — minimum 10kg per item</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">My Selling Prices (₹/kg)</div>
+          <div class="sell-price-grid" id="sell-prices"></div>
+          <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center;" onclick="toast('Selling prices saved','success')">Save Prices</button>
         </div>
-        <div
-          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:14px;font-weight:700;color:var(--t700);">Select Products</div>
-          <div id="sel-count" style="font-size:13px;font-weight:600;color:var(--g600);"></div>
+      </div>
+    </section>
+ 
+    <!-- MARKET RATES -->
+    <section class="page" id="page-pricing">
+      <div class="page-header"><div class="page-title">Live Market Rates</div><div class="page-sub">Wholesale buying rates published by Spicelity today</div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;" id="full-price-grid"></div>
+    </section>
+ 
+    <!-- NOTIFICATIONS -->
+    <section class="page" id="page-notifications">
+      <div class="page-header"><div class="page-title">Notifications</div><div class="page-sub">Price alerts and order updates</div></div>
+      <div class="card" id="notif-list"></div>
+    </section>
+ 
+    <!-- CHAT -->
+    <section class="page" id="page-chat">
+      <div class="page-header"><div class="page-title">Message Admin</div><div class="page-sub">Direct channel with the Spicelity platform manager</div></div>
+      <div class="chat-layout">
+        <div class="chat-hdr">
+          <div class="chat-av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div style="flex:1;margin-left:8px;"><div style="font-size:13px;font-weight:700;color:var(--t900);">Spicelity Admin</div><div style="font-size:11px;color:var(--g500);font-weight:600;">● Online</div></div>
         </div>
-        <div class="spice-grid" id="spice-select-grid"></div>
-
-        <div id="order-form-wrap" style="display:none;">
-          <div style="font-size:14px;font-weight:700;color:var(--t700);margin-bottom:10px;">Order Details</div>
-          <div class="order-cart" id="order-cart-items"></div>
-          <div class="card" style="padding:18px;">
-            <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Delivery Note (optional)
-            </div>
-            <textarea class="input" style="width:100%;resize:vertical;min-height:80px;"
-              placeholder="Any special instructions for the admin…" id="order-note"></textarea>
-            <button class="place-btn" onclick="submitOrder()" id="place-btn">✅ Submit Bulk Order</button>
-            <div class="cart-note">Payment on delivery · Admin will confirm within 2 hours</div>
-          </div>
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="mrow"><div class="mbub adm">Hello Ramesh ji! How can I help you today? 🙏<span class="mtime">9:30 AM</span></div></div>
+          <div class="mrow"><div class="mbub adm">Feel free to ask about pricing, orders, or account queries.<span class="mtime">9:30 AM</span></div></div>
         </div>
-      </section>
-
-      <!-- ORDER HISTORY -->
-      <section class="page" id="page-order-history">
-        <div class="page-header">
-          <div class="page-title">Order History</div>
-          <div class="page-sub">All your purchases from Spicelity</div>
+        <div class="chat-inp-bar">
+          <input class="chat-inp" id="chat-inp" placeholder="Type your message…" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="chat-send" onclick="sendMsg()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
-          <div class="search-bar" style="flex:1;min-width:180px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2"
-              stroke-linecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input placeholder="Search by product or ID…" id="hist-search" oninput="renderHistory()">
-          </div>
-          <div class="filter-tabs">
-            <button class="ftab on" data-sf="all" onclick="setHistFilter('all',this)">All</button>
-            <button class="ftab" data-sf="pending" onclick="setHistFilter('pending',this)">Pending</button>
-            <button class="ftab" data-sf="transit" onclick="setHistFilter('transit',this)">In Transit</button>
-            <button class="ftab" data-sf="delivered" onclick="setHistFilter('delivered',this)">Delivered</button>
-          </div>
+      </div>
+    </section>
+ 
+    <!-- PROFILE -->
+    <section class="page" id="page-profile">
+      <div class="page-header"><div class="page-title">My Profile</div></div>
+      <div class="prof-hero">
+        <div class="prof-av">RS</div>
+        <div>
+          <div class="prof-name">Ramesh Sharma</div>
+          <div class="prof-shop">Sharma Masala &amp; Spices</div>
+          <div class="prof-city">📍 Nai Sarak, Jodhpur, Rajasthan · +91 98765 43210</div>
         </div>
-        <div id="hist-list"></div>
-      </section>
+      </div>
+      <div class="card">
+        <div class="set-row" onclick="toast('Edit profile — coming soon')"><div class="set-ico">👤</div><div><div class="set-lbl">Personal Information</div><div class="set-desc">Update name, phone, shop address</div></div><div class="set-chev">›</div></div>
+        <div class="set-row" onclick="toast('Payment settings')"><div class="set-ico">💳</div><div><div class="set-lbl">Payment Settings</div><div class="set-desc">UPI, NEFT or cash payment preferences</div></div><div class="set-chev">›</div></div>
+        <div class="set-row" onclick="toast('Notification preferences')"><div class="set-ico">🔔</div><div><div class="set-lbl">Notification Preferences</div><div class="set-desc">Price alerts, order updates, WhatsApp</div></div><div class="set-chev">›</div></div>
+        <div class="set-row" onclick="window.location.href='login.html'"><div class="set-ico" style="background:var(--redl);">🚪</div><div><div class="set-lbl" style="color:var(--red);">Sign Out</div><div class="set-desc">Log out of your retailer account</div></div><div class="set-chev">›</div></div>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<nav class="mob-nav">
+  <button class="mob-nav-item active" data-page="overview" onclick="showPage('overview',this)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Home</span></button>
+  <button class="mob-nav-item" data-page="place-order" onclick="showPage('place-order',this)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Order</span></button>
+  <button class="mob-nav-item" data-page="order-history" onclick="showPage('order-history',this)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg><span>Orders</span></button>
+  <button class="mob-nav-item" data-page="ledger" onclick="showPage('ledger',this)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span>Ledger</span></button>
+  <button class="mob-nav-item" data-page="profile" onclick="showPage('profile',this)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></button>
+</nav>
+ 
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA — TODO: replace with API calls
+   e.g. const SPICES = await fetch('/api/spices').then(r=>r.json())
+═══════════════════════════════════════════════════════ */
+let SPICES = [];
+let PRICE_CHANGES = [];
+let ORDERS_HIST = [];
+let LEDGER_ENTRIES = [];
+let NOTIFS_R = [];
 
-      <!-- LEDGER -->
-      <section class="page" id="page-ledger">
-        <div class="page-header">
-          <div class="page-title">Ledger &amp; Accounts</div>
-          <div class="page-sub">Your financial summary and transaction history — May 2025</div>
-        </div>
-        <div class="ledger-summary">
-          <div class="lsum-card">
-            <div class="lsum-label">Total Purchases</div>
-            <div class="lsum-value">₹1,25,000</div>
-          </div>
-          <div class="lsum-card">
-            <div class="lsum-label">Est. Sales Revenue</div>
-            <div class="lsum-value grn">₹1,78,500</div>
-          </div>
-          <div class="lsum-card">
-            <div class="lsum-label">Net Margin</div>
-            <div class="lsum-value grn">₹53,500 (30%)</div>
-          </div>
-          <div class="lsum-card">
-            <div class="lsum-label">Outstanding to Spicelity</div>
-            <div class="lsum-value red">₹3,250</div>
-          </div>
-          <div class="lsum-card">
-            <div class="lsum-label">Average Order Value</div>
-            <div class="lsum-value">₹3,472</div>
-          </div>
-          <div class="lsum-card">
-            <div class="lsum-label">Total Transactions</div>
-            <div class="lsum-value">36</div>
-          </div>
-        </div>
+const STATUS_META = {
+  pending:  {cls:'p-gold', label:'Pending'},
+  transit:  {cls:'p-blue', label:'In Transit'},
+  delivered:{cls:'p-green',label:'Delivered'},
+  cancelled:{cls:'p-red',  label:'Cancelled'},
+};
+ 
+let selectedSpices = new Set();
+let histFilter = 'all';
 
-        <div class="two-col">
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">Transaction Log</div>
-            <div class="card" id="ledger-transactions"></div>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--t700);margin-bottom:10px;">My Selling Prices (₹/kg)
-            </div>
-            <div class="sell-price-grid" id="sell-prices"></div>
-            <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center;"
-              onclick="toast('Selling prices saved','success')">Save Prices</button>
-          </div>
-        </div>
-      </section>
+async function initApp() {
+  try {
+    const [spicesRes, ordersRes, notifsRes] = await Promise.all([
+      fetch('/api/spices'),
+      fetch('/api/orders'),
+      fetch('/api/notifications/retailer')
+    ]);
+    SPICES = await spicesRes.json();
+    let allOrders = await ordersRes.json();
+    NOTIFS_R = await notifsRes.json();
+    
+    // Map spices
+    SPICES = SPICES.map(s => ({
+      id: s.id, e: s.emoji, n: s.name, h: s.hindi_name, p: s.price, bg: s.bg_color
+    }));
+    PRICE_CHANGES = Array(SPICES.length).fill(0);
 
-      <!-- MARKET RATES -->
-      <section class="page" id="page-pricing">
-        <div class="page-header">
-          <div class="page-title">Live Market Rates</div>
-          <div class="page-sub">Wholesale buying rates published by Spicelity today</div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;"
-          id="full-price-grid"></div>
-      </section>
+    // Filter and map orders for "Ramesh Sharma"
+    ORDERS_HIST = allOrders.filter(o => o.retailer_name === 'Ramesh Sharma').map(o => ({
+      id: o.order_id.replace('#', ''),
+      product: o.product_details,
+      qty: parseInt(o.product_details.match(/(\\d+)kg/)?.[1] || '0'),
+      rate: Math.round(o.amount / (parseInt(o.product_details.match(/(\\d+)kg/)?.[1] || '1') || 1)),
+      total: o.amount,
+      status: o.status,
+      delivery: o.delivery,
+      date: o.date,
+      time: o.time
+    }));
 
-      <!-- NOTIFICATIONS -->
-      <section class="page" id="page-notifications">
-        <div class="page-header">
-          <div class="page-title">Notifications</div>
-          <div class="page-sub">Price alerts and order updates</div>
-        </div>
-        <div class="card" id="notif-list"></div>
-      </section>
+    LEDGER_ENTRIES = ORDERS_HIST.map(o => ({
+      party: 'Spicelity',
+      type: `Bulk Purchase — ${o.product}`,
+      amount: o.total,
+      credit: false,
+      date: o.date
+    }));
 
-      <!-- CHAT -->
-      <section class="page" id="page-chat">
-        <div class="page-header">
-          <div class="page-title">Message Admin</div>
-          <div class="page-sub">Direct channel with the Spicelity platform manager</div>
-        </div>
-        <div class="chat-layout">
-          <div class="chat-hdr">
-            <div class="chat-av"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff"
-                stroke-width="2" stroke-linecap="round">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg></div>
-            <div style="flex:1;margin-left:8px;">
-              <div style="font-size:13px;font-weight:700;color:var(--t900);">Spicelity Admin</div>
-              <div style="font-size:11px;color:var(--g500);font-weight:600;">● Online</div>
-            </div>
-          </div>
-          <div class="chat-msgs" id="chat-msgs">
-            <div class="mrow">
-              <div class="mbub adm">Hello Ramesh ji! How can I help you today? 🙏<span class="mtime">9:30 AM</span>
-              </div>
-            </div>
-            <div class="mrow">
-              <div class="mbub adm">Feel free to ask about pricing, orders, or account queries.<span class="mtime">9:30
-                  AM</span></div>
-            </div>
-          </div>
-          <div class="chat-inp-bar">
-            <input class="chat-inp" id="chat-inp" placeholder="Type your message…"
-              onkeydown="if(event.key==='Enter')sendMsg()">
-            <button class="chat-send" onclick="sendMsg()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="#fff" stroke-width="2.2" stroke-linecap="round">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg></button>
-          </div>
-        </div>
-      </section>
+    renderOverview();
+    renderSpiceSelector();
+    
+    const activePage = document.querySelector('.page.active').id.replace('page-', '');
+    if(activePage === 'order-history') renderHistory();
+    if(activePage === 'pricing') renderFullPricing();
+    if(activePage === 'ledger') renderLedger();
 
-      <!-- PROFILE -->
-      <section class="page" id="page-profile">
-        <div class="page-header">
-          <div class="page-title">My Profile</div>
-        </div>
-        <div class="prof-hero">
-          <div class="prof-av">RS</div>
-          <div>
-            <div class="prof-name">Ramesh Sharma</div>
-            <div class="prof-shop">Sharma Masala &amp; Spices</div>
-            <div class="prof-city">📍 Nai Sarak, Jodhpur, Rajasthan · +91 98765 43210</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="set-row" onclick="toast('Edit profile — coming soon')">
-            <div class="set-ico">👤</div>
-            <div>
-              <div class="set-lbl">Personal Information</div>
-              <div class="set-desc">Update name, phone, shop address</div>
-            </div>
-            <div class="set-chev">›</div>
-          </div>
-          <div class="set-row" onclick="toast('Payment settings')">
-            <div class="set-ico">💳</div>
-            <div>
-              <div class="set-lbl">Payment Settings</div>
-              <div class="set-desc">UPI, NEFT or cash payment preferences</div>
-            </div>
-            <div class="set-chev">›</div>
-          </div>
-          <div class="set-row" onclick="toast('Notification preferences')">
-            <div class="set-ico">🔔</div>
-            <div>
-              <div class="set-lbl">Notification Preferences</div>
-              <div class="set-desc">Price alerts, order updates, WhatsApp</div>
-            </div>
-            <div class="set-chev">›</div>
-          </div>
-          <div class="set-row" onclick="window.location.href='login.html'">
-            <div class="set-ico" style="background:var(--redl);">🚪</div>
-            <div>
-              <div class="set-lbl" style="color:var(--red);">Sign Out</div>
-              <div class="set-desc">Log out of your retailer account</div>
-            </div>
-            <div class="set-chev">›</div>
-          </div>
-        </div>
-      </section>
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    toast('Error connecting to backend', 'error');
+  }
+}
 
-    </main>
-  </div>
-
-  <nav class="mob-nav">
-    <button class="mob-nav-item active" data-page="overview" onclick="showPage('overview',this)"><svg width="19"
-        height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <rect x="3" y="3" width="7" height="7" />
-        <rect x="14" y="3" width="7" height="7" />
-        <rect x="14" y="14" width="7" height="7" />
-        <rect x="3" y="14" width="7" height="7" />
-      </svg><span>Home</span></button>
-    <button class="mob-nav-item" data-page="place-order" onclick="showPage('place-order',this)"><svg width="19"
-        height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-        <line x1="3" y1="6" x2="21" y2="6" />
-        <path d="M16 10a4 4 0 01-8 0" />
-      </svg><span>Order</span></button>
-    <button class="mob-nav-item" data-page="order-history" onclick="showPage('order-history',this)"><svg width="19"
-        height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-        <rect x="9" y="3" width="6" height="4" rx="2" />
-      </svg><span>Orders</span></button>
-    <button class="mob-nav-item" data-page="ledger" onclick="showPage('ledger',this)"><svg width="19" height="19"
-        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-        <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-      </svg><span>Ledger</span></button>
-    <button class="mob-nav-item" data-page="profile" onclick="showPage('profile',this)"><svg width="19" height="19"
-        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg><span>Profile</span></button>
-  </nav>
-
-  <script>
-    /* ═══════════════════════════════════════════════════════
-       DATA — TODO: replace with API calls
-       e.g. const SPICES = await fetch('/api/spices').then(r=>r.json())
-    ═══════════════════════════════════════════════════════ */
-    let SPICES = [
-      { e: '🌾', n: 'Cumin (Jeera)', h: 'जीरा', p: 145, bg: '#FFF5E0' },
-      { e: '🟡', n: 'Turmeric (Haldi)', h: 'हल्दी', p: 178, bg: '#FFF8E0' },
-      { e: '🌶️', n: 'Red Chilli', h: 'लाल मिर्च', p: 228, bg: '#FFF0E8' },
-      { e: '🫚', n: 'Coriander (Dhania)', h: 'धनिया', p: 88, bg: '#F0F5E0' },
-      { e: '🖤', n: 'Black Pepper', h: 'काली मिर्च', p: 700, bg: '#F5F5F0' },
-      { e: '🌿', n: 'Cardamom', h: 'इलायची', p: 1800, bg: '#EDF5EA' },
-      { e: '🟤', n: 'Clove (Laung)', h: 'लौंग', p: 1100, bg: '#F5EDE0' },
-      { e: '🫙', n: 'Asafoetida (Hing)', h: 'हींग', p: 2500, bg: '#FFF0E8' },
-      { e: '🌰', n: 'Cinnamon', h: 'दालचीनी', p: 350, bg: '#F5EDE0' },
-      { e: '🌱', n: 'Fenugreek', h: 'मेथी', p: 75, bg: '#EDF5EA' },
-      { e: '🫛', n: 'Fennel Seeds', h: 'सौंफ', p: 120, bg: '#F0F5E8' },
-      { e: '🟠', n: 'Garam Masala', h: 'गरम मसाला', p: 280, bg: '#FFF0E8' }
-    ];
-
-    let PRICE_CHANGES = [12, -7, 18, 0, -3, 5, 0, -12, 0, 8, 0, -5];
-
-    let ORDERS_HIST = [
-      { id: 'SPC1256', product: 'Cumin (Jeera) 25kg', qty: 25, rate: 145, total: 3625, status: 'pending', date: '25 May', time: '11:20 AM' },
-      { id: 'SPC1255', product: 'Red Chilli 20kg', qty: 20, rate: 210, total: 4200, status: 'transit', date: '24 May', time: '2:15 PM' },
-      { id: 'SPC1254', product: 'Turmeric 15kg', qty: 15, rate: 185, total: 2775, status: 'delivered', date: '23 May', time: '10:00 AM' }
-    ];
-
-    let LEDGER_ENTRIES = [
-      { party: 'Spicelity', type: 'Bulk Purchase — Cumin 25kg', amount: 3625, credit: false, date: '25 May' },
-      { party: 'Retail Sales', type: 'Cash receipts — daily sales', amount: 6800, credit: true, date: '24 May' }
-    ];
-
-    let NOTIFS_R = [
-      { ico: '📈', text: '<strong>Cumin (Jeera)</strong> price rose by ₹12/kg — update your selling price', time: 'Today, 10:00 AM' },
-      { ico: '📉', text: '<strong>Turmeric (Haldi)</strong> price dropped by ₹7/kg — good time to reorder', time: '2 days ago' }
-    ];
-
-    const STATUS_META = {
-      pending: { cls: 'p-gold', label: 'Pending' },
-      transit: { cls: 'p-blue', label: 'In Transit' },
-      delivered: { cls: 'p-green', label: 'Delivered' },
-      cancelled: { cls: 'p-red', label: 'Cancelled' },
-    };
-
-    let selectedSpices = new Set();
-    let histFilter = 'all';
-
-    async function initApp() {
-      try {
-        const [ordersRes, notifsRes] = await Promise.all([
-          fetch('/api/orders'),
-          fetch('/api/notifications/retailer')
-        ]);
-        let allOrders = await ordersRes.json();
-        let backendNotifs = await notifsRes.json();
-
-        // Merge notifications
-        NOTIFS_R = [...backendNotifs, ...NOTIFS_R];
-
-        // Filter and map orders for "Ramesh Sharma" and append to static orders
-        const backendOrders = allOrders.filter(o => o.retailer_name === 'Ramesh Sharma').map(o => ({
-          id: o.order_id.replace('#', ''),
-          product: o.product_details,
-          qty: parseInt(o.product_details.match(/(\\d+)kg/)?.[1] || '0'),
-          rate: Math.round(o.amount / (parseInt(o.product_details.match(/(\\d+)kg/)?.[1] || '1') || 1)),
-          total: o.amount,
-          status: o.status,
-          delivery: o.delivery,
-          date: o.date,
-          time: o.time
-        }));
-        ORDERS_HIST = [...backendOrders, ...ORDERS_HIST];
-
-        const backendLedger = backendOrders.map(o => ({
-          party: 'Spicelity',
-          type: `Bulk Purchase — ${o.product}`,
-          amount: o.total,
-          credit: false,
-          date: o.date
-        }));
-        LEDGER_ENTRIES = [...backendLedger, ...LEDGER_ENTRIES];
-
-        renderOverview();
-        renderSpiceSelector();
-
-        // Set Profile Initials
-        const rName = 'Ramesh Sharma'; // Assuming logged in user
-        const rShop = 'Sharma Masala & Spices';
-        const init = getInitials(rShop);
-        document.querySelector('.tb-avatar').textContent = init;
-        document.querySelector('.prof-av').textContent = init;
-
-        const activePage = document.querySelector('.page.active').id.replace('page-', '');
-        if (activePage === 'order-history') renderHistory();
-        if (activePage === 'pricing') renderFullPricing();
-        if (activePage === 'ledger') renderLedger();
-        if (activePage === 'chat') openChat();
-
-        updateBadges();
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        toast('Error connecting to backend', 'error');
-      }
-    }
-
-
-    /* ═══ NAV ═══ */
-    function showPage(id, triggerEl) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page-' + id).classList.add('active');
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const sideEl = document.querySelector(`.nav-item[data-page="${id}"]`);
-      if (sideEl) sideEl.classList.add('active');
-      document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
-      const mobEl = document.querySelector(`.mob-nav-item[data-page="${id}"]`);
-      if (mobEl) mobEl.classList.add('active');
-      const titles = { 'overview': 'Overview', 'place-order': 'Place Bulk Order', 'order-history': 'Order History', 'ledger': 'Ledger & Accounts', 'pricing': 'Market Rates', 'chat': 'Message Admin', 'notifications': 'Notifications', 'profile': 'My Profile' };
-      document.getElementById('page-title-label').textContent = titles[id] || '';
-      closeSidebar();
-      const lazyRenders = { 'order-history': renderHistory, pricing: renderFullPricing, ledger: renderLedger, notifications: renderNotifications };
-      if (lazyRenders[id]) lazyRenders[id]();
-    }
-    function toggleSidebar() { const sb = document.getElementById('sidebar'); const ov = document.getElementById('sb-overlay'); const open = sb.classList.toggle('open'); ov.style.display = open ? 'block' : 'none'; }
-    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sb-overlay').style.display = 'none'; }
-
-    /* ═══ UTILITIES ═══ */
-    function getInitials(fullName) {
-      if (!fullName) return '??';
-      const ignore = ['shri', 'm/s', 'store', 'kirana', 'general', 'merchant', 'traders'];
-      const words = fullName.split(' ').filter(w => !ignore.includes(w.toLowerCase().replace(/[^a-z0-9]/g, '')));
-      if (words.length === 0) return fullName.substring(0, 2).toUpperCase();
-      if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
-      return (words[0][0] + words[1][0]).toUpperCase();
-    }
-
-    /* ═══ RENDERS ═══ */
-    function renderOverview() {
-      // Prices
-      document.getElementById('overview-prices').innerHTML = SPICES.slice(0, 8).map((s, i) => {
-        const ch = PRICE_CHANGES[i] || 0;
-        const dir = ch > 0 ? 'chg-up' : ch < 0 ? 'chg-dn' : 'chg-fl';
-        const arrow = ch > 0 ? '↑' : ch < 0 ? '↓' : '–';
-        return `<div class="ptick">
+ 
+/* ═══ NAV ═══ */
+function showPage(id, triggerEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sideEl = document.querySelector(`.nav-item[data-page="${id}"]`);
+  if (sideEl) sideEl.classList.add('active');
+  document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('active'));
+  const mobEl = document.querySelector(`.mob-nav-item[data-page="${id}"]`);
+  if (mobEl) mobEl.classList.add('active');
+  const titles = {'overview':'Overview','place-order':'Place Bulk Order','order-history':'Order History','ledger':'Ledger & Accounts','pricing':'Market Rates','chat':'Message Admin','notifications':'Notifications','profile':'My Profile'};
+  document.getElementById('page-title-label').textContent = titles[id] || '';
+  closeSidebar();
+  const lazyRenders = {'order-history': renderHistory, pricing: renderFullPricing, ledger: renderLedger, notifications: renderNotifications};
+  if (lazyRenders[id]) lazyRenders[id]();
+}
+function toggleSidebar(){const sb=document.getElementById('sidebar');const ov=document.getElementById('sb-overlay');const open=sb.classList.toggle('open');ov.style.display=open?'block':'none';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-overlay').style.display='none';}
+ 
+/* ═══ RENDERS ═══ */
+function renderOverview() {
+  // Prices
+  document.getElementById('overview-prices').innerHTML = SPICES.slice(0,8).map((s,i) => {
+    const ch = PRICE_CHANGES[i] || 0;
+    const dir = ch > 0 ? 'chg-up' : ch < 0 ? 'chg-dn' : 'chg-fl';
+    const arrow = ch > 0 ? '↑' : ch < 0 ? '↓' : '–';
+    return `<div class="ptick">
       <div class="ptick-ico">${s.e}</div>
       <div class="ptick-name">${s.n.split('(')[0].trim()}</div>
       <div class="ptick-price">₹${s.p}</div>
       <div class="ptick-unit">per kg</div>
       <div class="ptick-chg ${dir}">${arrow} ${Math.abs(ch) || '0'}</div>
     </div>`;
-      }).join('');
-
-      // Recent orders
-      const sm = STATUS_META;
-      document.getElementById('overview-orders').innerHTML = ORDERS_HIST.slice(0, 3).map(o => `
+  }).join('');
+ 
+  // Recent orders
+  const sm = STATUS_META;
+  document.getElementById('overview-orders').innerHTML = ORDERS_HIST.slice(0,3).map(o => `
     <div class="ord-row">
-      <div class="ord-ico">${SPICES.find(s => o.product.includes(s.n.split('(')[0].trim()))?.e || '📦'}</div>
+      <div class="ord-ico">${SPICES.find(s=>o.product.includes(s.n.split('(')[0].trim()))?.e || '📦'}</div>
       <div style="flex:1;">
         <div class="ord-id">#${o.id} · ${o.date}</div>
         <div class="ord-name">${o.product}</div>
@@ -2259,32 +640,32 @@
       <div class="ord-amt">₹${o.total.toLocaleString('en-IN')}</div>
       <span class="pill ${sm[o.status].cls}"><span class="pill-dot"></span>${sm[o.status].label}</span>
     </div>`).join('');
-    }
-
-    function renderSpiceSelector() {
-      document.getElementById('spice-select-grid').innerHTML = SPICES.map((s, i) => `
-    <div class="spice-item ${selectedSpices.has(i) ? 'sel' : ''}" onclick="toggleSpice(${i})">
+}
+ 
+function renderSpiceSelector() {
+  document.getElementById('spice-select-grid').innerHTML = SPICES.map((s,i) => `
+    <div class="spice-item ${selectedSpices.has(i)?'sel':''}" onclick="toggleSpice(${i})">
       ${selectedSpices.has(i) ? '<div class="si-sel-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>' : ''}
       <div class="si-ico">${s.e}</div>
       <div class="si-name">${s.n}</div>
       <div class="si-hin">${s.h}</div>
       <div class="si-price">₹${s.p}/kg</div>
     </div>`).join('');
-      const cnt = selectedSpices.size;
-      document.getElementById('sel-count').textContent = cnt > 0 ? `${cnt} product${cnt > 1 ? 's' : ''} selected` : '';
-      document.getElementById('order-form-wrap').style.display = cnt > 0 ? 'block' : 'none';
-      if (cnt > 0) renderOrderCart();
-    }
-
-    function toggleSpice(i) {
-      selectedSpices.has(i) ? selectedSpices.delete(i) : selectedSpices.add(i);
-      renderSpiceSelector();
-    }
-
-    function renderOrderCart() {
-      document.getElementById('order-cart-items').innerHTML = [...selectedSpices].map(i => {
-        const s = SPICES[i];
-        return `<div class="cart-item-row">
+  const cnt = selectedSpices.size;
+  document.getElementById('sel-count').textContent = cnt > 0 ? `${cnt} product${cnt > 1 ? 's' : ''} selected` : '';
+  document.getElementById('order-form-wrap').style.display = cnt > 0 ? 'block' : 'none';
+  if (cnt > 0) renderOrderCart();
+}
+ 
+function toggleSpice(i) {
+  selectedSpices.has(i) ? selectedSpices.delete(i) : selectedSpices.add(i);
+  renderSpiceSelector();
+}
+ 
+function renderOrderCart() {
+  document.getElementById('order-cart-items').innerHTML = [...selectedSpices].map(i => {
+    const s = SPICES[i];
+    return `<div class="cart-item-row">
       <div class="ci-ico" style="background:${s.bg};">${s.e}</div>
       <div class="ci-info">
         <div class="ci-name">${s.n}</div>
@@ -2296,69 +677,69 @@
       </div>
       <button class="ci-remove" onclick="selectedSpices.delete(${i});renderSpiceSelector();" title="Remove">✕</button>
     </div>`;
-      }).join('') + `<div class="cart-total-strip">
+  }).join('') + `<div class="cart-total-strip">
     <div class="ct-label">Estimated Total</div>
     <div class="ct-value" id="cart-grand-total">₹0</div>
   </div>`;
-      updateCartTotal();
-    }
+  updateCartTotal();
+}
+ 
+function updateCartTotal() {
+  let total = 0;
+  selectedSpices.forEach(i => {
+    const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
+    total += SPICES[i].p * qty;
+  });
+  const el = document.getElementById('cart-grand-total');
+  if (el) el.textContent = '₹' + total.toLocaleString('en-IN');
+}
+ 
+async function submitOrder() {
+  const id = '#SPC' + (1260 + Math.floor(Math.random() * 100));
+  
+  let totalAmount = 0;
+  let productDetails = [];
+  selectedSpices.forEach(i => {
+    const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
+    totalAmount += SPICES[i].p * qty;
+    productDetails.push(`${SPICES[i].n} ${qty}kg`);
+  });
 
-    function updateCartTotal() {
-      let total = 0;
-      selectedSpices.forEach(i => {
-        const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
-        total += SPICES[i].p * qty;
-      });
-      const el = document.getElementById('cart-grand-total');
-      if (el) el.textContent = '₹' + total.toLocaleString('en-IN');
-    }
+  const now = new Date();
+  const dStr = now.getDate() + ' ' + now.toLocaleString('default', { month: 'short' });
+  const tStr = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
 
-    async function submitOrder() {
-      const id = '#SPC' + (1260 + Math.floor(Math.random() * 100));
-
-      let totalAmount = 0;
-      let productDetails = [];
-      selectedSpices.forEach(i => {
-        const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
-        totalAmount += SPICES[i].p * qty;
-        productDetails.push(`${SPICES[i].n} ${qty}kg`);
-      });
-
-      const now = new Date();
-      const dStr = now.getDate() + ' ' + now.toLocaleString('default', { month: 'short' });
-      const tStr = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-
-      try {
-        await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            order_id: id,
-            retailer_name: 'Ramesh Sharma',
-            city: 'Jodhpur',
-            product_details: productDetails.join(' + '),
-            amount: totalAmount,
-            status: 'pending',
-            date: dStr,
-            time: tStr
-          })
-        });
-        selectedSpices.clear();
-        await initApp();
-        toast(`Order ${id} submitted! Admin will confirm shortly.`, 'success');
-        showPage('order-history');
-      } catch (e) {
-        toast('Failed to place order', 'error');
-      }
-    }
-
-    function renderHistory() {
-      const q = (document.getElementById('hist-search')?.value || '').toLowerCase();
-      const sm = STATUS_META;
-      let list = histFilter === 'all' ? ORDERS_HIST : ORDERS_HIST.filter(o => o.status === histFilter);
-      if (q) list = list.filter(o => o.id.toLowerCase().includes(q) || o.product.toLowerCase().includes(q));
-
-      document.getElementById('hist-list').innerHTML = list.length ? list.map(o => `
+  try {
+    await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order_id: id,
+        retailer_name: 'Ramesh Sharma',
+        city: 'Jodhpur',
+        product_details: productDetails.join(' + '),
+        amount: totalAmount,
+        status: 'pending',
+        date: dStr,
+        time: tStr
+      })
+    });
+    selectedSpices.clear();
+    await initApp();
+    toast(`Order ${id} submitted! Admin will confirm shortly.`, 'success');
+    showPage('order-history');
+  } catch (e) {
+    toast('Failed to place order', 'error');
+  }
+}
+ 
+function renderHistory() {
+  const q = (document.getElementById('hist-search')?.value || '').toLowerCase();
+  const sm = STATUS_META;
+  let list = histFilter === 'all' ? ORDERS_HIST : ORDERS_HIST.filter(o => o.status === histFilter);
+  if (q) list = list.filter(o => o.id.toLowerCase().includes(q) || o.product.toLowerCase().includes(q));
+ 
+  document.getElementById('hist-list').innerHTML = list.length ? list.map(o => `
     <div class="card" style="margin-bottom:10px;">
       <div style="padding:12px 16px;border-bottom:.5px solid var(--c200);display:flex;justify-content:space-between;align-items:center;">
         <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--t700);">#${o.id}</span>
@@ -2380,18 +761,18 @@
         </div>
       </div>
     </div>`).join('')
-        : `<div style="text-align:center;padding:40px;color:var(--t400);"><div style="font-size:32px;margin-bottom:10px;">📭</div><div style="font-weight:700;">No orders found</div></div>`;
-    }
-
-    function setHistFilter(f, el) {
-      histFilter = f;
-      document.querySelectorAll('[data-sf]').forEach(c => c.classList.remove('on'));
-      el.classList.add('on');
-      renderHistory();
-    }
-
-    function renderLedger() {
-      document.getElementById('ledger-transactions').innerHTML = LEDGER_ENTRIES.map(l => `
+  : `<div style="text-align:center;padding:40px;color:var(--t400);"><div style="font-size:32px;margin-bottom:10px;">📭</div><div style="font-weight:700;">No orders found</div></div>`;
+}
+ 
+function setHistFilter(f, el) {
+  histFilter = f;
+  document.querySelectorAll('[data-sf]').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  renderHistory();
+}
+ 
+function renderLedger() {
+  document.getElementById('ledger-transactions').innerHTML = LEDGER_ENTRIES.map(l => `
     <div class="ledger-row">
       <div class="ledger-ico ${l.credit ? 'l-credit' : 'l-debit'}">${l.credit ? '💰' : '📤'}</div>
       <div class="ledger-info">
@@ -2403,8 +784,8 @@
         <div class="ledger-date">${l.date}</div>
       </div>
     </div>`).join('');
-
-      document.getElementById('sell-prices').innerHTML = SPICES.slice(0, 8).map(s => `
+ 
+  document.getElementById('sell-prices').innerHTML = SPICES.slice(0,8).map(s => `
     <div class="sp-card">
       <div class="sp-ico">${s.e}</div>
       <div class="sp-info">
@@ -2413,139 +794,74 @@
       </div>
       <input class="sp-input" type="number" placeholder="Sell ₹" min="${s.p}" value="${Math.round(s.p * 1.18)}">
     </div>`).join('');
-    }
-
-    function renderFullPricing() {
-      document.getElementById('full-price-grid').innerHTML = SPICES.map((s, i) => {
-        const ch = PRICE_CHANGES[i] || 0;
-        const dir = ch > 0 ? 'chg-up' : ch < 0 ? 'chg-dn' : 'chg-fl';
-        const arrow = ch > 0 ? '↑' : ch < 0 ? '↓' : '–';
-        return `<div class="card" style="padding:14px;">
+}
+ 
+function renderFullPricing() {
+  document.getElementById('full-price-grid').innerHTML = SPICES.map((s,i) => {
+    const ch = PRICE_CHANGES[i] || 0;
+    const dir = ch > 0 ? 'chg-up' : ch < 0 ? 'chg-dn' : 'chg-fl';
+    const arrow = ch > 0 ? '↑' : ch < 0 ? '↓' : '–';
+    return `<div class="card" style="padding:14px;">
       <div style="font-size:24px;margin-bottom:6px;">${s.e}</div>
       <div style="font-size:13px;font-weight:700;color:var(--t900);">${s.n}</div>
       <div style="font-size:11px;color:var(--t400);margin-top:1px;">${s.h}</div>
       <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--a700);margin-top:8px;">₹${s.p}<span style="font-size:11px;color:var(--t400);font-family:'DM Sans',sans-serif;">/kg</span></div>
       <div class="ptick-chg ${dir}" style="margin-top:4px;">${arrow} ₹${Math.abs(ch)} today</div>
     </div>`;
-      }).join('');
-    }
-
-    function renderNotifications() {
-      document.getElementById('notif-list').innerHTML = NOTIFS_R.map(n => `
-    <div class="ord-row" style="${n.is_read ? 'opacity:0.7;' : 'background:var(--c50);'}" onclick="markNotifRead(${n.id})">
+  }).join('');
+}
+ 
+function renderNotifications() {
+  document.getElementById('notif-list').innerHTML = NOTIFS_R.map(n => `
+    <div class="ord-row">
       <div style="width:36px;height:36px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${n.ico}</div>
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:600;color:var(--t700);line-height:1.4;">${n.text}</div>
         <div style="font-size:11px;color:var(--t200);margin-top:3px;">${n.time}</div>
       </div>
-      ${!n.is_read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--red);"></div>' : ''}
     </div>`).join('');
-
-      updateBadges();
-    }
-
-    async function markNotifRead(id) {
-      try {
-        await fetch('/api/notifications/' + id + '/read', { method: 'PUT' });
-        initApp();
-      } catch (e) { }
-    }
-
-    /* ═══ CHAT ═══ */
-    const MY_NAME = 'Ramesh Sharma';
-
-    async function openChat() {
-      await fetchMessages();
-      try {
-        await fetch('/api/messages/read/' + encodeURIComponent(MY_NAME), {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reader: 'retailer' })
-        });
-      } catch (e) { }
-    }
-
-    async function fetchMessages() {
-      try {
-        const res = await fetch('/api/messages/' + encodeURIComponent(MY_NAME));
-        const msgs = await res.json();
-        document.getElementById('chat-msgs').innerHTML = msgs.map(m => {
-          if (m.sender === 'retailer') {
-            return `<div class="mrow me"><div class="mbub mine">${m.text}<span class="mtime">${m.timestamp}</span></div></div>`;
-          } else {
-            return `<div class="mrow"><div class="mbub adm">${m.text}<span class="mtime">${m.timestamp}</span></div></div>`;
-          }
-        }).join('');
-        const box = document.getElementById('chat-msgs');
-        box.scrollTop = box.scrollHeight;
-      } catch (e) { }
-    }
-
-    async function sendMsg() {
-      const inp = document.getElementById('chat-inp');
-      const text = inp.value.trim();
-      if (!text) return;
-
-      const now = new Date();
-      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-
-      inp.value = '';
-      try {
-        await fetch('/api/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            retailer_name: MY_NAME,
-            sender: 'retailer',
-            text: text,
-            timestamp: time
-          })
-        });
-        await fetchMessages();
-      } catch (e) { }
-    }
-
-    /* ═══ POLLING & BADGES ═══ */
-    async function updateBadges() {
-      const unreadNotifs = NOTIFS_R.filter(n => !n.is_read).length;
-      // Update UI manually for the top badge and sidebar badge
-      document.querySelectorAll('.tb-badge').forEach(b => {
-        if (unreadNotifs > 0) { b.textContent = unreadNotifs; b.style.display = 'flex'; }
-        else b.style.display = 'none';
-      });
-
-      // Find the notifications badge in sidebar
-      const sideNotifBadge = document.querySelector('.nav-item[data-page="notifications"] .nav-badge');
-      if (sideNotifBadge) {
-        if (unreadNotifs > 0) { sideNotifBadge.textContent = unreadNotifs; sideNotifBadge.style.display = 'inline-block'; }
-        else sideNotifBadge.style.display = 'none';
-      }
-    }
-
-    setInterval(() => {
-      if (document.querySelector('.page.active').id === 'page-chat') fetchMessages();
-      // Poll to update badges
-      initApp(); // Lightweight reload of data
-    }, 5000);
-
-    /* ═══ TOAST ═══ */
-    function toast(msg, type = '') {
-      const wrap = document.getElementById('toast-wrap');
-      const el = document.createElement('div');
-      el.className = `toast ${type}`;
-      el.textContent = msg;
-      wrap.appendChild(el);
-      setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 350); }, 2800);
-    }
-
-    /* ═══ SPLASH ═══ */
-    document.getElementById('spl').addEventListener('animationend', function (e) {
-      if (e.animationName === 'spl-out') this.style.display = 'none';
-    });
-
-    /* ═══ INIT ═══ */
-    initApp();
-  </script>
+}
+ 
+/* ═══ CHAT ═══ */
+let _msgId = 0;
+function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const msgs = document.getElementById('chat-msgs');
+  const now = new Date();
+  const t = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  msgs.innerHTML += `<div class="mrow me"><div class="mbub mine">${txt}<span class="mtime">${t}</span></div></div>`;
+  inp.value = '';
+  msgs.scrollTop = 9999;
+  setTimeout(() => {
+    const replies = ['Got it! Let me check and get back to you shortly.','Your order is being processed 🙏','Understood. I\'ll update you soon.','Thanks for reaching out. Noted!'];
+    msgs.innerHTML += `<div class="mrow"><div class="mbub adm">${replies[_msgId++ % replies.length]}<span class="mtime">${t}</span></div></div>`;
+    msgs.scrollTop = 9999;
+  }, 1200);
+}
+ 
+/* ═══ TOAST ═══ */
+function toast(msg, type = '') {
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 350); }, 2800);
+}
+ 
+/* ═══ SPLASH ═══ */
+document.getElementById('spl').addEventListener('animationend', function(e) {
+  if (e.animationName === 'spl-out') this.style.display = 'none';
+});
+ 
+/* ═══ INIT ═══ */
+initApp();
+</script>
 </body>
-
 </html>
+ 
+
+
+

@@ -289,9 +289,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
     <div class="tb-actions">
       <div class="tb-ic" onclick="showPage('notifications')" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-        <div class="tb-badge" id="badge-top-notifs" style="display:none;">0</div>
+        <div class="tb-badge">4</div>
       </div>
-      <div class="tb-avatar" title="Admin Settings" onclick="showPage('settings')">A</div>
+      <div class="tb-avatar" title="Admin Settings" onclick="showPage('settings')">CS</div>
     </div>
   </div>
 </header>
@@ -311,7 +311,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
       <button class="nav-item" data-page="orders" onclick="showPage('orders',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
         Orders
-        <span class="nav-badge" id="badge-orders" style="display:none;">0</span>
+        <span class="nav-badge">8</span>
       </button>
       <button class="nav-item" data-page="pricing" onclick="showPage('pricing',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
@@ -323,11 +323,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
       <button class="nav-item" data-page="retailers" onclick="showPage('retailers',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
         Retailers
-      </button>
-      <button class="nav-item" data-page="messages" onclick="showPage('messages',this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        Messages
-        <span class="nav-badge" id="badge-messages" style="display:none;background:var(--red);">0</span>
+        <span class="nav-badge" style="background:var(--red);">3</span>
       </button>
       <button class="nav-item" data-page="reports" onclick="showPage('reports',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -339,7 +335,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
       <button class="nav-item" data-page="notifications" onclick="showPage('notifications',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         Notifications
-        <span class="nav-badge" id="badge-notifs" style="display:none;">0</span>
+        <span class="nav-badge">4</span>
       </button>
       <button class="nav-item" data-page="settings" onclick="showPage('settings',this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -366,26 +362,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
       <div class="stats-grid">
         <div class="stat-card sc-green">
           <div class="stat-label">Today's Revenue</div>
-          <div class="stat-value" id="ov-rev">₹0</div>
-          <div class="stat-change up">↑ Updated now</div>
+          <div class="stat-value">₹42,800</div>
+          <div class="stat-change up">↑ ₹3,200 vs yesterday</div>
           <div class="stat-ico" style="background:var(--g50);">💰</div>
         </div>
         <div class="stat-card sc-gold">
           <div class="stat-label">Total Orders</div>
-          <div class="stat-value" id="ov-orders">0</div>
-          <div class="stat-change up">↑ Updated now</div>
+          <div class="stat-value">38</div>
+          <div class="stat-change up">↑ 5 new today</div>
           <div class="stat-ico" style="background:var(--a50);">📦</div>
         </div>
         <div class="stat-card sc-red">
           <div class="stat-label">Outstanding Dues</div>
-          <div class="stat-value" id="ov-dues">₹0</div>
-          <div class="stat-change dn" id="ov-dues-sub">From 0 retailers</div>
+          <div class="stat-value">₹18,500</div>
+          <div class="stat-change dn">From 7 retailers</div>
           <div class="stat-ico" style="background:var(--redl);">⚠️</div>
         </div>
         <div class="stat-card sc-blue">
           <div class="stat-label">Active Retailers</div>
-          <div class="stat-value" id="ov-retailers">0</div>
-          <div class="stat-change up">↑ Total registered</div>
+          <div class="stat-value">47</div>
+          <div class="stat-change up">↑ 2 this week</div>
           <div class="stat-ico" style="background:var(--bluel);">🏪</div>
         </div>
       </div>
@@ -510,45 +506,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
       <div class="card" id="notif-list"></div>
     </section>
  
-    <!-- ── MESSAGES ── -->
-    <section class="page" id="page-messages">
-      <div class="page-header">
-        <div class="page-title">Messages</div>
-        <div class="page-sub">Direct communication with your retailers</div>
-      </div>
-      <div class="card" style="display:flex; height:600px; padding:0; overflow:hidden;">
-        <!-- Retailers List -->
-        <div style="width:260px; border-right:1px solid var(--border); display:flex; flex-direction:column; background:var(--c50);">
-          <div style="padding:16px; border-bottom:1px solid var(--border);">
-            <div class="search-bar">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9A8878" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input placeholder="Search retailers…" id="msg-search" oninput="renderMessageList()">
-            </div>
-          </div>
-          <div id="msg-retailers-list" style="flex:1; overflow-y:auto; padding:8px 0;"></div>
-        </div>
-        <!-- Chat Window -->
-        <div style="flex:1; display:flex; flex-direction:column; background:var(--page);">
-          <div id="chat-header" style="padding:16px 20px; border-bottom:1px solid var(--border); background:#fff; display:none; align-items:center; gap:12px;">
-            <div id="chat-avatar" class="ret-avatar"></div>
-            <div>
-              <div id="chat-name" style="font-weight:700; color:var(--t900); font-size:15px;"></div>
-              <div id="chat-city" style="font-size:12px; color:var(--t400);"></div>
-            </div>
-          </div>
-          <div id="chat-empty" style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; color:var(--t400);">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            <div style="margin-top:12px; font-weight:600;">Select a retailer to view messages</div>
-          </div>
-          <div id="chat-messages" style="flex:1; padding:20px; overflow-y:auto; display:none; flex-direction:column; gap:12px;"></div>
-          <div id="chat-input-area" style="padding:16px 20px; border-top:1px solid var(--border); background:#fff; display:none; gap:10px;">
-            <input type="text" id="chat-input" class="input" style="flex:1;" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendAdminMessage()">
-            <button class="btn btn-primary" onclick="sendAdminMessage()">Send</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ── SETTINGS ── -->
     <section class="page" id="page-settings">
       <div class="page-header"><div class="page-title">Settings</div><div class="page-sub">Manage your platform and account</div></div>
@@ -607,47 +564,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
    DATA LAYER — Replace fetch() calls here when connecting DB
    e.g.: const ORDERS = await fetch('/api/orders').then(r=>r.json());
 ═══════════════════════════════════════════════════════════ */
-let SPICES = [
-{e:'🌾',n:'Cumin (Jeera)',h:'जीरा',p:145,cat:'seeds',bg:'#FFF5E0'},
-{e:'🟡',n:'Turmeric (Haldi)',h:'हल्दी',p:178,cat:'powder',bg:'#FFF8E0'},
-{e:'🌶️',n:'Red Chilli (Lal Mirch)',h:'लाल मिर्च',p:228,cat:'chilli',bg:'#FFF0E8'},
-{e:'🫚',n:'Coriander (Dhania)',h:'धनिया',p:88,cat:'seeds',bg:'#F0F5E0'},
-{e:'🖤',n:'Black Pepper (Kali Mirch)',h:'काली मिर्च',p:700,cat:'seeds',bg:'#F5F5F0'},
-{e:'🌿',n:'Cardamom (Elaichi)',h:'हरी इलायची',p:1800,cat:'seeds',bg:'#EDF5EA'},
-{e:'🟤',n:'Clove (Laung)',h:'लौंग',p:1100,cat:'seeds',bg:'#F5EDE0'},
-{e:'🫙',n:'Asafoetida (Hing)',h:'हींग',p:2500,cat:'powder',bg:'#FFF0E8'},
-{e:'🌰',n:'Cinnamon (Dalchini)',h:'दालचीनी',p:350,cat:'bark',bg:'#F5EDE0'},
-{e:'🌱',n:'Fenugreek (Methi)',h:'मेथी',p:75,cat:'seeds',bg:'#EDF5EA'},
-{e:'🫛',n:'Fennel Seeds (Saunf)',h:'सौंफ',p:120,cat:'seeds',bg:'#F0F5E8'},
-{e:'🧂',n:'Black Salt (Kala Namak)',h:'काला नमक',p:45,cat:'salt',bg:'#F5F5F5'},
-{e:'🟠',n:'Garam Masala Blend',h:'गरम मसाला',p:280,cat:'blend',bg:'#FFF0E8'},
-{e:'🌾',n:'Mustard Seeds (Sarson)',h:'सरसों',p:110,cat:'seeds',bg:'#FFF8E0'},
-];
-
-let ORDERS = [
-{id:'SPC1260',retailer:'Ramesh Sharma',city:'Jodhpur',product:'Cumin 40kg + Red Chilli 20kg',amount:10800,status:'pending',date:'30 May'},
-{id:'SPC1259',retailer:'Suresh Gupta',city:'Jaipur',product:'Turmeric 50kg',amount:9250,status:'transit',date:'30 May'},
-{id:'SPC1258',retailer:'Meena Devi',city:'Ajmer',product:'Coriander Powder 30kg',amount:4800,status:'delivered',date:'29 May'},
-{id:'SPC1257',retailer:'Kavita Singh',city:'Kota',product:'Asafoetida 5kg + Black Salt 10kg',amount:3200,status:'pending',date:'29 May'},
-{id:'SPC1256',retailer:'Dinesh Patel',city:'Bikaner',product:'Mustard Seeds 25kg',amount:2750,status:'transit',date:'28 May'},
-{id:'SPC1254',retailer:'Geeta Kumari',city:'Udaipur',product:'Black Pepper 8kg',amount:5600,status:'cancelled',date:'27 May'},
-];
-
-let RETAILERS = [
-{init:'RS',name:'Ramesh Sharma',city:'Jodhpur',phone:'+91 98765 43210',orders:24,outstanding:3250,lastOrder:'Today'},
-{init:'PV',name:'Priya Verma',city:'Ajmer',phone:'+91 87654 32109',orders:18,outstanding:1800,lastOrder:'Yesterday'},
-{init:'AS',name:'Amit Singh',city:'Kota',phone:'+91 76543 21098',orders:31,outstanding:5400,lastOrder:'3 days ago'},
-{init:'NK',name:'Neha Kumari',city:'Bikaner',phone:'+91 65432 10987',orders:12,outstanding:0,lastOrder:'Today'},
-{init:'DG',name:'Dinesh Gupta',city:'Jodhpur',phone:'+91 54321 09876',orders:9,outstanding:0,lastOrder:'Yesterday'},
-];
-
-let NOTIFS = [
-{ico:'📦',text:'<strong>Ramesh Sharma</strong> placed a new order of ₹10,800',time:'Today, 11:30 AM',type:'order'},
-{ico:'💰',text:'<strong>Amit Singh</strong> — ₹5,400 due payment is 22 days overdue',time:'Yesterday, 6:00 PM',type:'due'},
-{ico:'✅',text:'<strong>Order #SPC1258</strong> successfully delivered to Meena Devi',time:'Yesterday, 3:45 PM',type:'success'},
-{ico:'📉',text:'<strong>Turmeric</strong> stock running low — consider restocking',time:'2 days ago',type:'warning'},
-{ico:'🆕',text:'<strong>Kavita Singh</strong> registered a new retail account from Kota',time:'3 days ago',type:'info'},
-];
+let SPICES = [];
+let ORDERS = [];
+let RETAILERS = [];
+let NOTIFS = [];
 
 const STATUS_META = {
   pending:  {cls:'p-gold', label:'Pending'},
@@ -660,28 +580,29 @@ let retFilter = 'all';
 
 async function initApp() {
   try {
-    const [ordersRes, retailersRes, notifsRes] = await Promise.all([
+    const [spicesRes, ordersRes, retailersRes, notifsRes] = await Promise.all([
+      fetch('/api/spices'),
       fetch('/api/orders'),
       fetch('/api/retailers'),
       fetch('/api/notifications/admin')
     ]);
-    let backendOrders = await ordersRes.json();
-    let backendRetailers = await retailersRes.json();
-    let backendNotifs = await notifsRes.json();
-
-    // Merge Backend Data into Static Data
-    RETAILERS = [...backendRetailers, ...RETAILERS];
-    NOTIFS = [...backendNotifs, ...NOTIFS];
+    SPICES = await spicesRes.json();
+    ORDERS = await ordersRes.json();
+    RETAILERS = await retailersRes.json();
+    NOTIFS = await notifsRes.json();
     
-    // Map Retailers to apply initials parsing
-    RETAILERS = RETAILERS.map(r => ({
-      ...r,
-      init: getInitials(r.name),
-      lastOrder: r.last_order || r.lastOrder
+    // Map database spices to format used by UI
+    SPICES = SPICES.map(s => ({
+      id: s.id,
+      e: s.emoji,
+      n: s.name,
+      h: s.hindi_name,
+      p: s.price,
+      bg: s.bg_color
     }));
     
-    // Format backend orders and merge
-    backendOrders = backendOrders.map(o => ({
+    // Map orders
+    ORDERS = ORDERS.map(o => ({
       id: o.order_id.replace('#', ''),
       db_id: o.id, // Keep the actual database row ID for updates
       retailer: o.retailer_name,
@@ -691,12 +612,9 @@ async function initApp() {
       status: o.status,
       date: o.date
     }));
-    ORDERS = [...backendOrders, ...ORDERS];
 
     renderOverview();
     renderNotifications();
-    renderMessageList();
-    updateBadges();
     
     // Refresh current view if needed
     const activePage = document.querySelector('.page.active').id.replace('page-', '');
@@ -727,13 +645,13 @@ function showPage(id, triggerEl) {
   if (mobEl) mobEl.classList.add('active');
  
   // Page title in topbar
-  const titles = {overview:'Overview',orders:'Orders',pricing:'Market Pricing',retailers:'Retailers',reports:'Reports',notifications:'Notifications',settings:'Settings',messages:'Messages'};
+  const titles = {overview:'Overview',orders:'Orders',pricing:'Market Pricing',retailers:'Retailers',reports:'Reports',notifications:'Notifications',settings:'Settings'};
   document.getElementById('page-title-label').textContent = titles[id] || '';
  
   closeSidebar();
  
   // Lazy render
-  const renders = {orders: renderOrders, pricing: renderPricing, retailers: renderRetailers, messages: initMessages};
+  const renders = {orders: renderOrders, pricing: renderPricing, retailers: renderRetailers};
   if (renders[id]) renders[id]();
 }
  
@@ -747,34 +665,9 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sb-overlay').style.display = 'none';
 }
-
-/* ═══ UTILITIES ═══ */
-function getInitials(fullName) {
-  if (!fullName) return '??';
-  const ignore = ['shri', 'm/s', 'store', 'kirana', 'general', 'merchant', 'traders'];
-  const words = fullName.split(' ').filter(w => !ignore.includes(w.toLowerCase().replace(/[^a-z0-9]/g, '')));
-  if (words.length === 0) return fullName.substring(0,2).toUpperCase();
-  if (words.length === 1) return words[0].substring(0,2).toUpperCase();
-  return (words[0][0] + words[1][0]).toUpperCase();
-}
  
 /* ═══ RENDERS ═══ */
 function renderOverview() {
-  // Update Top Stats
-  const now = new Date();
-  const dStr = now.getDate() + ' ' + now.toLocaleString('default', { month: 'short' });
-  const todaysOrders = ORDERS.filter(o => o.date === dStr);
-  const todaysRevenue = todaysOrders.reduce((sum, o) => sum + o.amount, 0);
-  
-  const totalOutstanding = RETAILERS.reduce((sum, r) => sum + r.outstanding, 0);
-  const retailersWithDues = RETAILERS.filter(r => r.outstanding > 0).length;
-
-  document.getElementById('ov-rev').textContent = '₹' + todaysRevenue.toLocaleString('en-IN');
-  document.getElementById('ov-orders').textContent = ORDERS.length;
-  document.getElementById('ov-dues').textContent = '₹' + totalOutstanding.toLocaleString('en-IN');
-  document.getElementById('ov-dues-sub').textContent = `From ${retailersWithDues} retailers`;
-  document.getElementById('ov-retailers').textContent = RETAILERS.length;
-
   // Orders table (overview, 5 latest)
   const tbl = document.getElementById('overview-orders-tbl');
   const sm = STATUS_META;
@@ -910,150 +803,14 @@ function setRetFilter(f, el) {
  
 function renderNotifications() {
   document.getElementById('notif-list').innerHTML = NOTIFS.map(n => `
-    <div class="out-row" style="${n.is_read ? 'opacity:0.7;' : 'background:var(--c50);'}" onclick="markNotifRead(${n.id})">
+    <div class="out-row">
       <div style="width:36px;height:36px;border-radius:10px;background:var(--c100);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${n.ico}</div>
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:600;color:var(--t700);line-height:1.4;">${n.text}</div>
         <div style="font-size:11px;color:var(--t200);margin-top:3px;">${n.time}</div>
       </div>
-      ${!n.is_read ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--red);"></div>' : ''}
     </div>`).join('');
-    
-  updateBadges();
 }
-
-async function markNotifRead(id) {
-  try {
-    await fetch('/api/notifications/' + id + '/read', { method: 'PUT' });
-    initApp();
-  } catch (e) {}
-}
-
-/* ═══ MESSAGING ═══ */
-let MESSAGES = [];
-let ACTIVE_CHAT_RETAILER = null;
-
-async function fetchAllMessages() {
-  // To avoid adding a complex endpoint to fetch all messages grouped, we will fetch retailers and aggregate if needed.
-  // Actually, for the admin, it's easier to just fetch /api/messages/:retailer_name on demand, 
-  // but to show unread badges we need a global count. Let's assume we poll.
-}
-
-function renderMessageList() {
-  const q = (document.getElementById('msg-search')?.value || '').toLowerCase();
-  const list = RETAILERS.filter(r => r.name.toLowerCase().includes(q) || r.city.toLowerCase().includes(q));
-  
-  document.getElementById('msg-retailers-list').innerHTML = list.map(r => `
-    <div style="padding:12px 16px; border-bottom:1px solid var(--c200); cursor:pointer; display:flex; align-items:center; gap:12px; transition:background .2s;" 
-         onclick="openChat('${r.name}', '${r.init}', '${r.city}')"
-         onmouseover="this.style.background='var(--c100)'" onmouseout="this.style.background='transparent'">
-      <div class="ret-avatar">${r.init}</div>
-      <div style="flex:1;">
-        <div style="font-size:13.5px; font-weight:700; color:var(--t900);">${r.name}</div>
-        <div style="font-size:11px; color:var(--t400);">${r.city}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function openChat(rName, rInit, rCity) {
-  ACTIVE_CHAT_RETAILER = rName;
-  document.getElementById('chat-empty').style.display = 'none';
-  document.getElementById('chat-header').style.display = 'flex';
-  document.getElementById('chat-messages').style.display = 'flex';
-  document.getElementById('chat-input-area').style.display = 'flex';
-  
-  document.getElementById('chat-avatar').textContent = rInit;
-  document.getElementById('chat-name').textContent = rName;
-  document.getElementById('chat-city').textContent = rCity;
-  
-  await fetchAdminMessages();
-  // Mark read
-  try {
-    await fetch('/api/messages/read/' + encodeURIComponent(rName), {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reader: 'admin' })
-    });
-  } catch(e) {}
-}
-
-async function fetchAdminMessages() {
-  if (!ACTIVE_CHAT_RETAILER) return;
-  try {
-    const res = await fetch('/api/messages/' + encodeURIComponent(ACTIVE_CHAT_RETAILER));
-    const msgs = await res.json();
-    
-    document.getElementById('chat-messages').innerHTML = msgs.map(m => `
-      <div style="display:flex; flex-direction:column; align-items:${m.sender === 'admin' ? 'flex-end' : 'flex-start'};">
-        <div style="background:${m.sender === 'admin' ? 'var(--g600)' : '#fff'}; color:${m.sender === 'admin' ? '#fff' : 'var(--t900)'}; 
-                    padding:10px 14px; border-radius:16px; border:${m.sender === 'admin' ? 'none' : '1px solid var(--bdr)'};
-                    max-width:80%; font-size:13.5px; line-height:1.4;">
-          ${m.text}
-        </div>
-        <div style="font-size:10px; color:var(--t400); margin-top:4px; margin-right:4px; margin-left:4px;">${m.timestamp}</div>
-      </div>
-    `).join('');
-    
-    const chatBox = document.getElementById('chat-messages');
-    chatBox.scrollTop = chatBox.scrollHeight;
-  } catch(e) {}
-}
-
-async function sendAdminMessage() {
-  const inp = document.getElementById('chat-input');
-  const text = inp.value.trim();
-  if (!text || !ACTIVE_CHAT_RETAILER) return;
-  
-  const now = new Date();
-  const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
-  
-  inp.value = '';
-  try {
-    await fetch('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        retailer_name: ACTIVE_CHAT_RETAILER,
-        sender: 'admin',
-        text: text,
-        timestamp: time
-      })
-    });
-    await fetchAdminMessages();
-  } catch(e) {}
-}
-
-/* ═══ POLLING & BADGES ═══ */
-async function updateBadges() {
-  const unreadNotifs = NOTIFS.filter(n => !n.is_read).length;
-  const bTop = document.getElementById('badge-top-notifs');
-  const bSide = document.getElementById('badge-notifs');
-  
-  if (unreadNotifs > 0) {
-    bTop.textContent = unreadNotifs; bTop.style.display = 'flex';
-    bSide.textContent = unreadNotifs; bSide.style.display = 'flex';
-  } else {
-    bTop.style.display = 'none'; bSide.style.display = 'none';
-  }
-  
-  try {
-    const res = await fetch('/api/messages/all');
-    const allMsgs = await res.json();
-    const unreadMsgs = allMsgs.filter(m => !m.is_read && m.sender !== 'admin').length;
-    const bMsg = document.getElementById('badge-messages');
-    if (unreadMsgs > 0) {
-      bMsg.textContent = unreadMsgs; bMsg.style.display = 'flex';
-    } else {
-      bMsg.style.display = 'none';
-    }
-  } catch(e) {}
-}
-
-setInterval(() => {
-  if (ACTIVE_CHAT_RETAILER) fetchAdminMessages();
-  updateBadges();
-}, 5000);
  
 /* ═══ TOAST ═══ */
 let _toastId = 0;

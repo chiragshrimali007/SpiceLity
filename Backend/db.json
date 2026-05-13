@@ -231,6 +231,17 @@
       "status": "pending",
       "date": "10 May",
       "time": "16:36"
+    },
+    {
+      "id": 3,
+      "order_id": "#SPC1333",
+      "retailer_name": "Ramesh Sharma",
+      "city": "Jodhpur",
+      "product_details": "Garam Masala 10kg + Fennel Seeds 10kg + Fenugreek 10kg",
+      "amount": 4750,
+      "status": "pending",
+      "date": "13 May",
+      "time": "12:39"
     }
   ],
   "notifications": [],
