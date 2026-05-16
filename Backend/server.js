@@ -51,14 +51,46 @@ app.get('/api/retailers', (req, res) => {
 app.post('/api/retailers', (req, res) => {
   try {
     const db = readDB();
-    const { initials, name, city, phone } = req.body;
+    const { initials, name, city, phone, password } = req.body;
     const newRetailer = {
       id: db.retailers.length > 0 ? Math.max(...db.retailers.map(r => r.id)) + 1 : 1,
-      initials, name, city, phone, orders: 0, outstanding: 0, last_order: 'Never'
+      initials, name, city, phone, password: password || '', orders: 0, outstanding: 0, last_order: 'Never'
     };
     db.retailers.push(newRetailer);
     writeDB(db);
     res.json({ id: newRetailer.id, success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update retailer password after registration
+app.put('/api/retailers/:id/password', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const { password } = req.body;
+    const retailer = db.retailers.find(r => r.id === id);
+    if (retailer) { retailer.password = password; writeDB(db); }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Login with name + password
+app.post('/api/login', (req, res) => {
+  try {
+    const db = readDB();
+    const { name, password } = req.body;
+    const retailer = db.retailers.find(r =>
+      r.name.toLowerCase().includes(name.toLowerCase()) && r.password === password
+    );
+    if (retailer) {
+      res.json({ success: true, role: 'retailer', id: retailer.id, name: retailer.name });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid name or password' });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

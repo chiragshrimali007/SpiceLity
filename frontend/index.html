@@ -396,7 +396,8 @@
     }
 
     .otp-digit {
-      flex: 1;
+      /* flex: 1; */
+      width: 14%;
       height: 54px;
       border: 1.5px solid var(--bdr);
       border-radius: 12px;
@@ -731,11 +732,14 @@
 
     .admin-code-digits {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .ac-digit {
       flex: 1;
+      min-width: 0;
       height: 46px;
       border: 1.5px solid var(--a400);
       border-radius: 10px;
@@ -895,40 +899,33 @@
         <div class="card card-pull">
           <div class="card-hdr">
             <div class="card-title">Login to SpiceLity</div>
-            <div class="card-sub">Enter your mobile number to receive an OTP</div>
+            <div class="card-sub">Enter your name and password to continue</div>
           </div>
           <div class="card-body">
 
-            <!-- Mobile Number -->
+            <!-- Name -->
             <div class="f-field">
-              <label class="f-label">MOBILE NUMBER</label>
-              <div class="phone-input-row">
-                <input class="country-code" type="text" value="+91" readonly>
-                <div class="f-wrap" style="flex:1;">
-                  <input class="f-input" id="loginPhone" type="tel" placeholder="98765 43210" maxlength="10">
-                  <span class="f-ico">📱</span>
-                </div>
+              <label class="f-label">YOUR NAME</label>
+              <div class="f-wrap">
+                <input class="f-input" id="loginName" type="text" placeholder="e.g. Vikram Patel">
+                <span class="f-ico">👤</span>
               </div>
-              <div class="err-msg" id="phoneErr">Enter a valid 10-digit mobile number</div>
+              <div class="err-msg" id="nameErr">Please enter your registered name</div>
             </div>
 
-            <!-- OTP send -->
-            <div class="f-field" id="otpSection" style="display:none;">
-              <label class="f-label">ENTER OTP</label>
-              <div class="otp-row">
-                <div class="f-wrap">
-                  <input class="f-input" id="otpInput" type="tel" placeholder="6-digit OTP" maxlength="6">
-                  <span class="f-ico">🔒</span>
-                </div>
-                <button class="otp-send-btn" id="resendBtn" onclick="resendOTP()" style="display:none;">Resend</button>
+            <!-- Password -->
+            <div class="f-field">
+              <label class="f-label">PASSWORD</label>
+              <div class="f-wrap">
+                <input class="f-input" id="loginPass" type="password" placeholder="Your password">
+                <span class="f-ico">🔒</span>
               </div>
-              <div class="otp-timer show" id="otpTimer">⏱ Resend in <span id="cd">60</span>s</div>
-              <div class="err-msg" id="otpErr">Incorrect OTP. Please try again.</div>
+              <div class="err-msg" id="passErr">Incorrect password. Please try again.</div>
             </div>
 
-            <!-- Send OTP button / Login button -->
+            <!-- Login button -->
             <button class="btn-primary" id="mainLoginBtn" onclick="handleLoginBtn()">
-              <span id="mainBtnTxt">Send OTP</span>
+              <span id="mainBtnTxt">Login</span>
               <span id="mainBtnArrow">→</span>
               <div class="spin" id="mainSpin"></div>
             </button>
@@ -1165,6 +1162,9 @@
               <div class="step-item" id="rS3">
                 <div class="step-circle">3</div><span class="step-lbl">Verify</span>
               </div>
+              <div class="step-item" id="rS4">
+                <div class="step-circle">4</div><span class="step-lbl">Password</span>
+              </div>
             </div>
 
             <!-- Step 1: Personal Info -->
@@ -1266,6 +1266,37 @@
               </div>
             </div>
 
+            <!-- Step 4: Set Password -->
+            <div class="reg-step" id="rStep4">
+              <div style="text-align:center;margin-bottom:20px;">
+                <div style="font-size:42px;margin-bottom:8px;">🔐</div>
+                <div style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:4px;">Create Your Password
+                </div>
+                <div style="font-size:12px;font-weight:600;color:var(--t3);line-height:1.6;">This password will be used
+                  to log in next time</div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">NEW PASSWORD</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rPassword" type="password" placeholder="Min. 6 characters">
+                  <span class="f-ico">🔒</span>
+                </div>
+                <div class="err-msg" id="rPassErr">Password must be at least 6 characters</div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">CONFIRM PASSWORD</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rPasswordConfirm" type="password" placeholder="Re-enter password">
+                  <span class="f-ico">✅</span>
+                </div>
+                <div class="err-msg" id="rPassConfirmErr">Passwords do not match</div>
+              </div>
+              <button class="btn-primary" onclick="rSetPassword()">
+                <span id="rPassTxt">Save Password &amp; Finish ✓</span>
+                <div class="spin" id="rPassSpin"></div>
+              </button>
+            </div>
+
             <!-- Success -->
             <div class="success-wrap" id="rSuccess">
               <div class="suc-icon">✅</div>
@@ -1317,12 +1348,14 @@
             <!-- Admin Code -->
             <div class="admin-code-wrap">
               <div class="admin-code-title">🔐 Admin Secret Code</div>
-              <div class="admin-code-digits">
-                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,0)" placeholder="•">
-                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,1)" placeholder="•">
-                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,2)" placeholder="•">
-                <input class="ac-digit" type="password" maxlength="1" oninput="acMove(this,3)" placeholder="•">
+              <div class="admin-code-digits" id="acDigitsRow">
+                <input class="ac-digit" id="ac0" type="password" maxlength="1" oninput="acMove(this,0)" placeholder="•">
+                <input class="ac-digit" id="ac1" type="password" maxlength="1" oninput="acMove(this,1)" placeholder="•">
+                <input class="ac-digit" id="ac2" type="password" maxlength="1" oninput="acMove(this,2)" placeholder="•">
+                <input class="ac-digit" id="ac3" type="password" maxlength="1" oninput="acMove(this,3)" placeholder="•">
               </div>
+              <div id="acErr" style="font-size:11px;font-weight:700;color:var(--red);margin-top:8px;display:none;">❌
+                Incorrect code. Please try again.</div>
               <div style="font-size:10.5px;font-weight:600;color:var(--t3);margin-top:8px;">4-digit code provided by
                 owner</div>
             </div>
@@ -1390,76 +1423,45 @@
       goTo('s3' + role);
     }
 
-    // ── SCREEN 1: LOGIN OTP FLOW ──
-    let loginStep = 1; // 1 = enter phone, 2 = enter OTP
-    let cdTimer;
+    // ── SCREEN 1: LOGIN FLOW ──
+    async function handleLoginBtn() {
+      const name = document.getElementById('loginName').value.trim();
+      const pass = document.getElementById('loginPass').value;
 
-    function handleLoginBtn() {
-      if (loginStep === 1) {
-        const ph = document.getElementById('loginPhone').value.replace(/\s/g, '');
-        if (!ph || ph.length < 10 || isNaN(ph)) {
-          showErr('phoneErr');
-          shake(document.getElementById('loginPhone'));
-          return;
-        }
-        hideErr('phoneErr');
-        // Show OTP section
-        const btn = document.getElementById('mainLoginBtn');
-        const sp = document.getElementById('mainSpin');
-        const txt = document.getElementById('mainBtnTxt');
-        const arr = document.getElementById('mainBtnArrow');
-        btn.classList.add('loading'); sp.classList.add('show'); txt.textContent = 'Sending OTP…'; arr.style.display = 'none';
-        setTimeout(() => {
-          btn.classList.remove('loading'); sp.classList.remove('show');
-          document.getElementById('otpSection').style.display = 'block';
-          txt.textContent = 'Login →'; arr.style.display = 'inline';
-          loginStep = 2;
-          startLoginTimer();
-          showToast('✅ OTP sent to +91 ' + ph);
-        }, 1400);
-      } else {
-        // Verify OTP
-        const otp = document.getElementById('otpInput').value;
-        if (!otp || otp.length < 6) { showErr('otpErr'); return; }
-        hideErr('otpErr');
-        const btn = document.getElementById('mainLoginBtn');
-        const sp = document.getElementById('mainSpin');
-        const txt = document.getElementById('mainBtnTxt');
-        const arr = document.getElementById('mainBtnArrow');
-        btn.classList.add('loading'); sp.classList.add('show'); txt.textContent = 'Verifying…'; arr.style.display = 'none';
-        setTimeout(() => {
-          btn.classList.remove('loading'); sp.classList.remove('show');
+      if (!name) { showErr('nameErr'); shake(document.getElementById('loginName')); return; }
+      hideErr('nameErr');
+      if (!pass) { showErr('passErr'); shake(document.getElementById('loginPass')); return; }
+      hideErr('passErr');
+
+      const btn = document.getElementById('mainLoginBtn');
+      const sp = document.getElementById('mainSpin');
+      const txt = document.getElementById('mainBtnTxt');
+      const arr = document.getElementById('mainBtnArrow');
+      btn.classList.add('loading'); sp.classList.add('show');
+      txt.textContent = 'Verifying…'; arr.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, password: pass })
+        });
+        const data = await res.json();
+        btn.classList.remove('loading'); sp.classList.remove('show');
+        txt.textContent = 'Login'; arr.style.display = 'inline';
+
+        if (data.success) {
           showToast('✅ Login successful! Redirecting…');
-          txt.textContent = 'Login →'; arr.style.display = 'inline';
-          setTimeout(() => {
-            // Redirect to retailer dashboard by default
-            window.location.href = 'retailer.html';
-          }, 800);
-        }, 1600);
-      }
-    }
-
-    function startLoginTimer() {
-      let t = 60;
-      const timer = document.getElementById('otpTimer');
-      const cd = document.getElementById('cd');
-      timer.classList.add('show');
-      clearInterval(cdTimer);
-      cdTimer = setInterval(() => {
-        t--;
-        cd.textContent = t;
-        if (t <= 0) {
-          clearInterval(cdTimer);
-          timer.classList.remove('show');
-          document.getElementById('resendBtn').style.display = 'block';
+          setTimeout(() => window.location.href = 'retailer.html', 800);
+        } else {
+          showErr('passErr');
+          shake(document.getElementById('loginPass'));
         }
-      }, 1000);
-    }
-
-    function resendOTP() {
-      document.getElementById('resendBtn').style.display = 'none';
-      startLoginTimer();
-      showToast('📲 OTP resent!');
+      } catch (e) {
+        btn.classList.remove('loading'); sp.classList.remove('show');
+        txt.textContent = 'Login'; arr.style.display = 'inline';
+        showToast('⚠️ Could not reach server. Is it running?');
+      }
     }
 
     // ── OTP DIGIT AUTO-FOCUS ──
@@ -1505,6 +1507,8 @@
     }
 
     // ── RETAILER REGISTRATION STEPS ──
+    let newRetailerId = null; // store new retailer ID for password update
+
     function rNext(step) {
       if (step === 1) {
         document.getElementById('rPhoneDisplay').textContent = '+91 ' + document.getElementById('rPhone').value;
@@ -1527,25 +1531,19 @@
         const phone = document.getElementById('rPhone').value || '0000000000';
         const city = document.getElementById('rCity').value || 'Unknown City';
         const shop = document.getElementById('rShop').value || name;
-
-        // Create initials
         const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'NR';
 
-        // Send to API
-        await fetch('/api/retailers', {
+        const res = await fetch('/api/retailers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            initials,
-            name: shop + ' (' + name + ')',
-            city,
-            phone: '+91 ' + phone
-          })
+          body: JSON.stringify({ initials, name: shop + ' (' + name + ')', city, phone: '+91 ' + phone })
         });
+        const data = await res.json();
+        newRetailerId = data.id; // save for step 4
 
         sp.classList.remove('show'); txt.style.display = '';
-        document.getElementById('rStep3').style.display = 'none';
-        document.getElementById('rSuccess').classList.add('show');
+        // Go to Step 4 instead of success
+        setStep('r', 4);
 
       } catch (error) {
         console.error('Registration failed:', error);
@@ -1554,8 +1552,58 @@
       }
     }
 
+    async function rSetPassword() {
+      const pass = document.getElementById('rPassword').value;
+      const confirm = document.getElementById('rPasswordConfirm').value;
+
+      if (!pass || pass.length < 6) { showErr('rPassErr'); return; }
+      hideErr('rPassErr');
+      if (pass !== confirm) { showErr('rPassConfirmErr'); return; }
+      hideErr('rPassConfirmErr');
+
+      const sp = document.getElementById('rPassSpin');
+      const txt = document.getElementById('rPassTxt');
+      sp.classList.add('show'); txt.style.display = 'none';
+
+      try {
+        if (newRetailerId) {
+          await fetch('/api/retailers/' + newRetailerId + '/password', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: pass })
+          });
+        }
+        sp.classList.remove('show'); txt.style.display = '';
+        // Hide step 4 panel and show success
+        document.getElementById('rStep4').style.display = 'none';
+        document.getElementById('rSuccess').classList.add('show');
+      } catch (error) {
+        showToast('Failed to save password');
+        sp.classList.remove('show'); txt.style.display = '';
+      }
+    }
+
     // ── ADMIN REGISTER ──
     function aFinish() {
+      // Read the 4 digit inputs
+      const digits = ['ac0', 'ac1', 'ac2', 'ac3'].map(id => document.getElementById(id).value);
+      const entered = digits.join('');
+      const errEl = document.getElementById('acErr');
+
+      // Validate — correct code is 1978
+      if (entered !== '1978') {
+        errEl.style.display = 'block';
+        const row = document.getElementById('acDigitsRow');
+        row.style.animation = 'shake .3s';
+        setTimeout(() => { row.style.animation = ''; }, 400);
+        // Clear the digit boxes
+        ['ac0', 'ac1', 'ac2', 'ac3'].forEach(id => { document.getElementById(id).value = ''; });
+        document.getElementById('ac0').focus();
+        return;
+      }
+      errEl.style.display = 'none';
+
+      // Code correct — proceed
       const sp = document.getElementById('aSpin');
       const txt = document.getElementById('aFinishTxt');
       sp.classList.add('show'); txt.style.display = 'none';
@@ -1564,12 +1612,12 @@
         document.getElementById('aSuccess').classList.add('show');
         // Hide form fields
         document.querySelectorAll('#s3admin .f-field, #s3admin .admin-code-wrap, #s3admin .reg-role-badge').forEach(el => el.style.display = 'none');
-      }, 1600);
+      }, 1200);
     }
 
-    // ── STEP MANAGER ──
+    // ── STEP MANAGER ── (handles up to 4 steps)
     function setStep(prefix, step) {
-      [1, 2, 3].forEach(i => {
+      [1, 2, 3, 4].forEach(i => {
         const panel = document.getElementById(prefix + 'Step' + i);
         const dot = document.getElementById(prefix + 'S' + i);
         if (panel) panel.style.display = 'none';

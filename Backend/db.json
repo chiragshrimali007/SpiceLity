@@ -207,6 +207,50 @@
       "orders": 0,
       "outstanding": 0,
       "last_order": "Never"
+    },
+    {
+      "id": 4,
+      "initials": "NR",
+      "name": "New Retailer (New Retailer)",
+      "city": "Unknown City",
+      "phone": "+91 0000000000",
+      "password": "",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
+    },
+    {
+      "id": 5,
+      "initials": "NR",
+      "name": "New Retailer (New Retailer)",
+      "city": "Unknown City",
+      "phone": "+91 0000000000",
+      "password": "",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
+    },
+    {
+      "id": 6,
+      "initials": "NR",
+      "name": "New Retailer (New Retailer)",
+      "city": "Unknown City",
+      "phone": "+91 0000000000",
+      "password": "123456",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
+    },
+    {
+      "id": 7,
+      "initials": "NR",
+      "name": "New Retailer (New Retailer)",
+      "city": "Unknown City",
+      "phone": "+91 0000000000",
+      "password": "123456",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
     }
   ],
   "orders": [
@@ -239,9 +283,22 @@
       "city": "Jodhpur",
       "product_details": "Garam Masala 10kg + Fennel Seeds 10kg + Fenugreek 10kg",
       "amount": 4750,
-      "status": "pending",
+      "status": "transit",
       "date": "13 May",
-      "time": "12:39"
+      "time": "12:39",
+      "delivery": "Tomorrow"
+    },
+    {
+      "id": 4,
+      "order_id": "#SPC1324",
+      "retailer_name": "Ramesh Sharma",
+      "city": "Jodhpur",
+      "product_details": "Mustard Seeds 5kg + Fenugreek Seeds 3kg + Fennel Seeds 16kg",
+      "amount": 4580,
+      "status": "transit",
+      "date": "16 May",
+      "time": "16:46",
+      "delivery": "Not fix yet"
     }
   ],
   "notifications": [],

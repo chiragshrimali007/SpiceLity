@@ -20,7 +20,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-font-smoothing:antialiased;}
-body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);min-height:100vh;display:flex;flex-direction:column;}
+body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t200);min-height:100vh;display:flex;flex-direction:column;}
  
 /* SPLASH */
 .spl{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--g900),var(--g800));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:spl-out .5s ease 1.6s both;pointer-events:none;}
@@ -37,13 +37,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
 @keyframes bar-grow{from{width:0;}to{width:100%;}}
  
 /* TOPBAR */
-.topbar{position:sticky;top:0;z-index:100;background:var(--g900);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;height:60px;flex-shrink:0;}
+.topbar{position:sticky;top:0;z-index:100;background:var(--g900);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;height:60px;flex-shrink:0;width:100%;}
 .tb-brand{width:var(--sidebar);flex-shrink:0;padding:0 22px;display:flex;align-items:center;gap:10px;border-right:1px solid rgba(255,255,255,.07);text-decoration:none;}
 .tb-logo{width:30px;height:30px;object-fit:contain;}
 .tb-logo-fb{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--g500),var(--a500));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
 .tb-wordmark .tb-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:800;color:var(--a200);}
 .tb-wordmark .tb-sub{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,206,144,.4);}
-.tb-right{flex:1;display:flex;align-items:center;justify-content:space-between;padding:0 22px;}
+.tb-right{flex:1;display:flex;align-items:center;justify-content:flex-end;padding:0 22px;}
 .tb-page-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.7);}
 .tb-actions{display:flex;align-items:center;gap:10px;}
 .tb-ic{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);border:.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:middle;cursor:pointer;position:relative;color:rgba(255,255,255,.7);}
@@ -254,16 +254,35 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:149;}
  
 @media(max-width:900px){
+  .tb-brand{width:auto;border-right:none;flex-shrink:1;}
+  .tb-right{flex:1;min-width:0;}
   .sidebar{position:fixed;top:60px;left:0;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
   .sidebar.open{transform:translateX(0);}
   .sidebar-overlay{display:block;}
   .hamburger{display:flex;}
   .mob-nav{display:flex;}
-  .main{padding:20px 16px 80px;}
+  .app-body{width:100%;}
+  .main{padding:20px 16px 90px;width:100%;}
   .two-col{grid-template-columns:1fr;}
-  .stats-row,.ledger-summary{grid-template-columns:1fr 1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .ledger-summary{grid-template-columns:1fr 1fr;}
+  .toast-wrap{bottom:80px;right:16px;}
+  .chat-layout{height:auto;flex:1;max-height:calc(100dvh - 180px);}
 }
-@media(max-width:500px){.stats-row,.ledger-summary{grid-template-columns:1fr;}.spice-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .stats-row .scard:last-child{grid-column:1/-1;}
+  .overview-actions-wrap{display:flex;flex-direction:column-reverse;gap:10px;}
+  #full-price-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .sell-price-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:500px){
+  .stats-row,.ledger-summary{grid-template-columns:1fr;}
+  .stats-row .scard:last-child{grid-column:auto;}
+  .spice-grid{grid-template-columns:repeat(2,1fr);}
+  .tb-page-title{display:none;}
+  #full-price-grid{grid-template-columns:repeat(2,1fr)!important;}
+}
 </style>
 </head>
 <body>
@@ -280,20 +299,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--c100);color:var(--t900);m
 <header class="topbar">
   <a href="login.html" class="tb-brand">
     <img src="assets/logo.png" class="tb-logo" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="tb-logo-fb" style="display:none">S</div>
+    <div class="tb-avatar" onclick="event.preventDefault();event.stopPropagation();showPage('profile')" title="My Profile" style="display:none">RS</div>
     <div class="tb-wordmark"><div class="tb-name">Spicelity</div><div class="tb-sub">Retailer Portal</div></div>
   </a>
   <div class="tb-right">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <button class="hamburger" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-      <span class="tb-page-title" id="page-title-label">Overview</span>
-    </div>
+    <span class="tb-page-title" id="page-title-label">Overview</span>
     <div class="tb-actions">
       <div class="tb-ic" onclick="showPage('notifications')" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-        <div class="tb-badge">2</div>
       </div>
-      <div class="tb-avatar" onclick="showPage('profile')" title="My Profile">RS</div>
+      <button class="hamburger" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     </div>
   </div>
 </header>
