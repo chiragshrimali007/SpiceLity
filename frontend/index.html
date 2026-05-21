@@ -3,11 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SpiceLity – Login</title>
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap"
     rel="stylesheet">
+
+  <!-- ── FIREBASE SDK (compat build) ── -->
+  <!-- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script> -->
   <style>
     :root {
       --g900: #0F1E08;
@@ -750,7 +754,6 @@
       color: var(--t1);
       background: var(--card);
       outline: none;
-      letter-spacing: 3px;
     }
 
     .ac-digit:focus {
@@ -876,8 +879,8 @@
     <div class="scroll">
 
       <!-- ════════════════════════════════
-         SCREEN 1 — LOGIN CARD
-    ════════════════════════════════ -->
+       SCREEN 1 — LOGIN CARD
+  ════════════════════════════════ -->
       <div class="screen active" id="s1">
 
         <!-- Brand Hero -->
@@ -952,8 +955,8 @@
 
 
       <!-- ════════════════════════════════
-         SCREEN 2 — ROLE SELECTION CARD
-    ════════════════════════════════ -->
+       SCREEN 2 — ROLE SELECTION CARD
+  ════════════════════════════════ -->
       <div class="screen" id="s2">
 
         <div class="hero-strip" style="padding-bottom:48px;">
@@ -1000,8 +1003,8 @@
 
 
       <!-- ════════════════════════════════
-         SCREEN 3A — CONSUMER REGISTRATION
-    ════════════════════════════════ -->
+       SCREEN 3A — CONSUMER REGISTRATION
+  ════════════════════════════════ -->
       <div class="screen" id="s3consumer">
 
         <div class="hero-strip" style="padding-bottom:48px;">
@@ -1089,7 +1092,7 @@
                 <div style="font-size:12px;font-weight:600;color:var(--t3);line-height:1.6;">OTP sent to <strong
                     id="cPhoneDisplay" style="color:var(--t1);"></strong></div>
               </div>
-              <div class="otp-digits">
+              <div class="otp-digits" id="cOtpDigits">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'c')">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'c')">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'c')">
@@ -1098,7 +1101,7 @@
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'c')">
               </div>
               <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
-                Didn't get it? <button onclick=""
+                Didn't get it? <button onclick="cResendOTP()"
                   style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend
                   OTP</button>
               </div>
@@ -1129,8 +1132,8 @@
 
 
       <!-- ════════════════════════════════
-         SCREEN 3B — RETAILER REGISTRATION
-    ════════════════════════════════ -->
+       SCREEN 3B — RETAILER REGISTRATION
+  ════════════════════════════════ -->
       <div class="screen" id="s3retailer">
 
         <div class="hero-strip" style="padding-bottom:48px;">
@@ -1170,53 +1173,69 @@
             <!-- Step 1: Personal Info -->
             <div class="reg-step active" id="rStep1">
               <div class="f-field">
-                <label class="f-label">FULL NAME</label>
+                <label class="f-label">FULL NAME <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="f-wrap">
                   <input class="f-input" id="rName" type="text" placeholder="e.g. Vikram Patel">
                   <span class="f-ico">👤</span>
                 </div>
+                <div class="err-msg" id="rNameErr">Full name is required</div>
               </div>
               <div class="f-field">
-                <label class="f-label">MOBILE NUMBER</label>
+                <label class="f-label">MOBILE NUMBER <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="phone-input-row">
                   <input class="country-code" type="text" value="+91" readonly>
                   <div class="f-wrap" style="flex:1;">
                     <input class="f-input" id="rPhone" type="tel" placeholder="98765 43210" maxlength="10">
                   </div>
                 </div>
+                <div class="err-msg" id="rPhoneErr">Enter a valid 10-digit mobile number</div>
               </div>
               <div class="f-field">
-                <label class="f-label">CITY</label>
+                <label class="f-label">CITY <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="f-wrap">
                   <input class="f-input" id="rCity" type="text" placeholder="e.g. Jaipur">
                   <span class="f-ico">🏙️</span>
                 </div>
+                <div class="err-msg" id="rCityErr">City is required</div>
               </div>
-              <button class="btn-primary" onclick="rNext(1)">Continue →</button>
+              <!-- Duplicate name warning -->
+              <div id="rDuplicateErr"
+                style="display:none;background:var(--redl);border:1px solid var(--red);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--red);margin-bottom:12px;line-height:1.5;">
+                ⚠️ This name is already registered. Please <button onclick="goTo('s1')"
+                  style="color:var(--red);font-weight:900;background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;">Login
+                  here</button> instead.
+              </div>
+              <button class="btn-primary" id="rStep1Btn" onclick="rNext(1)">
+                <span id="rStep1Txt">Continue →</span>
+                <div class="spin" id="rStep1Spin"></div>
+              </button>
             </div>
 
             <!-- Step 2: Shop Details -->
             <div class="reg-step" id="rStep2">
               <div class="f-field">
-                <label class="f-label">SHOP NAME</label>
+                <label class="f-label">SHOP NAME <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="f-wrap">
                   <input class="f-input" id="rShop" type="text" placeholder="e.g. Patel Masala Store">
                   <span class="f-ico">🏪</span>
                 </div>
+                <div class="err-msg" id="rShopErr">Shop name is required</div>
               </div>
               <div class="f-field">
-                <label class="f-label">SHOP ADDRESS</label>
+                <label class="f-label">SHOP ADDRESS <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="f-wrap">
                   <input class="f-input" id="rAddr" type="text" placeholder="Street, Area, PIN Code">
                   <span class="f-ico">📍</span>
                 </div>
+                <div class="err-msg" id="rAddrErr">Shop address is required</div>
               </div>
               <div class="f-field">
-                <label class="f-label">EMAIL</label>
+                <label class="f-label">EMAIL <span style="color:var(--red);font-size:10px;">*</span></label>
                 <div class="f-wrap">
                   <input class="f-input" id="rEmail" type="email" placeholder="shop@example.com">
                   <span class="f-ico">📧</span>
                 </div>
+                <div class="err-msg" id="rEmailErr">Valid email address is required</div>
               </div>
               <div class="f-field">
                 <label class="f-label">GSTIN <span style="color:var(--t3);font-weight:600;">(optional)</span></label>
@@ -1242,7 +1261,7 @@
                 <div style="font-size:12px;font-weight:600;color:var(--t3);">OTP sent to <strong id="rPhoneDisplay"
                     style="color:var(--t1);"></strong></div>
               </div>
-              <div class="otp-digits">
+              <div class="otp-digits" id="rOtpDigits">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,0,'r')">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,1,'r')">
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,2,'r')">
@@ -1251,7 +1270,7 @@
                 <input class="otp-digit" type="tel" maxlength="1" oninput="dMove(this,5,'r')">
               </div>
               <div style="text-align:center;margin:14px 0;font-size:11px;font-weight:600;color:var(--t3);">
-                Didn't get it? <button
+                Didn't get it? <button onclick="rResendOTP()"
                   style="color:var(--or);font-weight:800;background:none;border:none;cursor:pointer;font-family:inherit;">Resend
                   OTP</button>
               </div>
@@ -1310,7 +1329,7 @@
                   days<br>• Wholesale pricing enabled on approval<br>• Orders: minimum 10 kg per product</div>
               </div>
               <button class="btn-primary"
-                onclick="showToast('🚀 Opening Retailer Dashboard…'); setTimeout(() => window.location.href = 'retailer.html', 800)">Go
+                onclick="showToast('🚀 Opening Retailer Dashboard…'); setTimeout(() => window.location.href = './retailer.html', 800)">Go
                 to Dashboard →</button>
             </div>
 
@@ -1320,8 +1339,8 @@
 
 
       <!-- ════════════════════════════════
-         SCREEN 3C — ADMIN REGISTRATION
-    ════════════════════════════════ -->
+       SCREEN 3C — ADMIN REGISTRATION
+  ════════════════════════════════ -->
       <div class="screen" id="s3admin">
 
         <div class="hero-strip"
@@ -1386,7 +1405,7 @@
               <div class="suc-sub">You have full access to SpiceLity control panel.</div>
               <button class="btn-primary"
                 style="background:linear-gradient(135deg,var(--c900),var(--c800));box-shadow:0 5px 18px rgba(0,0,0,.3);"
-                onclick="showToast('🚀 Opening Admin Dashboard…'); setTimeout(() => window.location.href = 'admin.html', 800)">Open
+                onclick="localStorage.setItem('sl_session', JSON.stringify({role: 'admin'})); showToast('🚀 Opening Admin Dashboard…'); setTimeout(() => window.location.href = './admin.html', 800)">Open
                 Admin Panel →</button>
             </div>
 
@@ -1407,9 +1426,100 @@
     </div><!-- /scroll -->
   </div><!-- /phone -->
 
+  <!-- Invisible reCAPTCHA anchor (required by Firebase Phone Auth) -->
+  <div id="recaptcha-container"></div>
+
   <div class="toast" id="toast"></div>
 
+  <!-- ══════════════════════════════════════════════
+     FIREBASE PHONE AUTH INTEGRATION
+══════════════════════════════════════════════ -->
   <script>
+    // ── OTP SYSTEM (no Firebase needed) ──────────────
+    // For registration phone verification.
+    // OTP code: 123456 (fixed for testing)
+    // In production: replace requestOTP with Twilio/MSG91
+
+    let _confirmationResult = null;
+    const _countdownTimers = {};
+
+    function requestOTP(flowId, phoneNum) {
+      if (!phoneNum || phoneNum.length < 10) {
+        showToast('⚠️ Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      if (_countdownTimers[flowId] && _countdownTimers[flowId] > 0) {
+        showToast('⏳ Please wait ' + _countdownTimers[flowId] + 's before resending.');
+        return;
+      }
+      // Mark OTP as "sent" — user enters 123456
+      _confirmationResult = { phone: '+91' + phoneNum };
+      showToast('📨 OTP sent to +91' + phoneNum + '  (use 123456)');
+      _startCountdown(flowId);
+    }
+
+    async function verifyOTP(otpCode) {
+      if (!_confirmationResult) {
+        showToast('⚠️ Please request an OTP first.');
+        return false;
+      }
+      if (!otpCode || otpCode.length < 6) {
+        showToast('⚠️ Enter the complete 6-digit OTP.');
+        return false;
+      }
+      if (otpCode !== '123456') {
+        showToast('❌ Incorrect OTP. Use 123456 for testing.');
+        return false;
+      }
+      return true;
+    }
+
+    function _startCountdown(flowId) {
+      _countdownTimers[flowId] = 30;
+      const t = setInterval(() => {
+        _countdownTimers[flowId]--;
+        if (_countdownTimers[flowId] <= 0) { clearInterval(t); _countdownTimers[flowId] = 0; }
+      }, 1000);
+    }
+
+    function _getOtpDigits(containerSelector) {
+      return Array.from(
+        document.querySelector(containerSelector).querySelectorAll('.otp-digit')
+      ).map(i => i.value).join('');
+    }
+
+    function _clearOtpDigits(containerSelector) {
+      document.querySelector(containerSelector)
+        .querySelectorAll('.otp-digit')
+        .forEach(i => i.value = '');
+    }
+  </script>
+
+  <script>
+    const API = 'https://spicelity.onrender.com';
+
+    // ── ONE-TIME LOGIN: check if already logged in ──
+    (function checkSession() {
+      const raw = localStorage.getItem('sl_session');
+      if (!raw) return;
+      try {
+        const s = JSON.parse(raw);
+        if (!s || !s.role) return;
+        // Restore sessionStorage so dashboard gets user info
+        sessionStorage.setItem('spicelityUser', JSON.stringify({
+          name: s.name || '',
+          shop: s.shop || '',
+          city: s.city || '',
+          phone: s.phone || ''
+        }));
+        window.location.href = s.role === 'admin'
+          ? './admin.html'
+          : './retailer.html';
+      } catch (e) { localStorage.removeItem('sl_session'); }
+    })();
+
+
+
     // ── NAVIGATION ──
     function goTo(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1441,7 +1551,7 @@
       txt.textContent = 'Verifying…'; arr.style.display = 'none';
 
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(API + '/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, password: pass })
@@ -1452,6 +1562,31 @@
 
         if (data.success) {
           showToast('✅ Login successful! Redirecting…');
+          // Save retailer info to sessionStorage for dashboard use
+          sessionStorage.setItem('spicelityUser', JSON.stringify({
+            name: data.name || name,
+            shop: data.shop || '',
+            city: data.city || '',
+            phone: data.phone || ''
+          }));
+
+          // existing line (keep it):
+          sessionStorage.setItem('spicelityUser', JSON.stringify({
+            name: data.name || name,
+            shop: data.shop || '',
+            city: data.city || '',
+            phone: data.phone || ''
+          }));
+
+          // ADD this new line immediately after:
+          localStorage.setItem('sl_session', JSON.stringify({
+            role: 'retailer',
+            name: data.name || name,
+            shop: data.shop || '',
+            city: data.city || '',
+            phone: data.phone || ''
+          }));
+
           setTimeout(() => window.location.href = 'retailer.html', 800);
         } else {
           showErr('passErr');
@@ -1479,6 +1614,20 @@
       }
     }
 
+    document.addEventListener('keydown', function(e) {
+      if (e.target.classList.contains('ac-digit') || e.target.classList.contains('otp-digit')) {
+        if (e.key === 'Backspace' && e.target.value.length === 0) {
+          const isAc = e.target.classList.contains('ac-digit');
+          const row = e.target.closest(isAc ? '.admin-code-digits' : '.otp-digits');
+          const boxes = Array.from(row.querySelectorAll(isAc ? '.ac-digit' : '.otp-digit'));
+          const idx = boxes.indexOf(e.target);
+          if (idx > 0) {
+            boxes[idx - 1].focus();
+          }
+        }
+      }
+    });
+
     // ── CONSUMER REGISTRATION STEPS ──
     function cNext(step) {
       if (step === 1) {
@@ -1487,45 +1636,128 @@
         if (!name) { showErr('cNameErr'); return; } hideErr('cNameErr');
         if (!phone || phone.length < 10) { showErr('cPhoneErr'); return; } hideErr('cPhoneErr');
         document.getElementById('cPhoneDisplay').textContent = '+91 ' + phone;
+        // Send OTP via Firebase when moving to step 2
         setStep('c', 2);
+        requestOTP('c', phone);
       } else if (step === 2) {
+        // Verify OTP entered by user
+        const otp = _getOtpDigits('#cOtpDigits');
         const sp = document.getElementById('cSpin');
         const txt = document.getElementById('cVerifyTxt');
         sp.classList.add('show'); txt.style.display = 'none';
-        setTimeout(() => {
+
+        verifyOTP(otp).then(success => {
           sp.classList.remove('show'); txt.style.display = '';
-          setStep('c', 3);
-          document.getElementById('cStep2').style.display = 'none';
-          document.getElementById('cStepBar').style.display = 'none';
-          document.querySelector('.reg-role-badge').style.display = 'none';
-          document.getElementById('cSuccess').classList.add('show');
-        }, 1600);
+          if (success) {
+            setStep('c', 3);
+            document.getElementById('cStep2').style.display = 'none';
+            document.getElementById('cStepBar').style.display = 'none';
+            document.querySelector('.reg-role-badge').style.display = 'none';
+            document.getElementById('cSuccess').classList.add('show');
+          } else {
+            _clearOtpDigits('#cOtpDigits');
+            document.getElementById('cOtpDigits').querySelectorAll('.otp-digit')[0].focus();
+          }
+        });
       }
     }
     function cBack(step) {
       if (step === 2) setStep('c', 1);
     }
+    function cResendOTP() {
+      const phone = document.getElementById('cPhone').value;
+      _clearOtpDigits('#cOtpDigits');
+      // Reset verifier so a fresh reCAPTCHA is created
+      window._recaptchaVerifier = null;
+      requestOTP('c', phone);
+    }
 
     // ── RETAILER REGISTRATION STEPS ──
     let newRetailerId = null; // store new retailer ID for password update
 
-    function rNext(step) {
+    async function rNext(step) {
       if (step === 1) {
-        document.getElementById('rPhoneDisplay').textContent = '+91 ' + document.getElementById('rPhone').value;
+        const name = document.getElementById('rName').value.trim();
+        const phone = document.getElementById('rPhone').value.trim();
+        const city = document.getElementById('rCity').value.trim();
+        let hasErr = false;
+
+        if (!name) { showErr('rNameErr'); shake(document.getElementById('rName')); hasErr = true; } else hideErr('rNameErr');
+        if (!phone || phone.length < 10) { showErr('rPhoneErr'); shake(document.getElementById('rPhone')); hasErr = true; } else hideErr('rPhoneErr');
+        if (!city) { showErr('rCityErr'); shake(document.getElementById('rCity')); hasErr = true; } else hideErr('rCityErr');
+        if (hasErr) return;
+
+        // Duplicate name check
+        const btn = document.getElementById('rStep1Btn');
+        const sp = document.getElementById('rStep1Spin');
+        const txt = document.getElementById('rStep1Txt');
+        btn.classList.add('loading'); sp.classList.add('show'); txt.style.display = 'none';
+        document.getElementById('rDuplicateErr').style.display = 'none';
+
+        try {
+          const res = await fetch(API + '/api/retailers');
+          const retailers = await res.json();
+          // Check if a retailer with this name already exists (case-insensitive)
+          const exists = retailers.some(r => {
+            const stored = r.name.toLowerCase();
+            return stored.includes(name.toLowerCase()) || name.toLowerCase().includes(stored.split('(')[0].trim());
+          });
+          btn.classList.remove('loading'); sp.classList.remove('show'); txt.style.display = '';
+          if (exists) {
+            document.getElementById('rDuplicateErr').style.display = 'block';
+            shake(document.getElementById('rName'));
+            return;
+          }
+        } catch (e) {
+          btn.classList.remove('loading'); sp.classList.remove('show'); txt.style.display = '';
+          // If API fails, still allow continuing
+        }
+
+        document.getElementById('rPhoneDisplay').textContent = '+91 ' + phone;
         setStep('r', 2);
+
       } else if (step === 2) {
+        const shop = document.getElementById('rShop').value.trim();
+        const addr = document.getElementById('rAddr').value.trim();
+        const email = document.getElementById('rEmail').value.trim();
+        let hasErr2 = false;
+
+        if (!shop) { showErr('rShopErr'); shake(document.getElementById('rShop')); hasErr2 = true; } else hideErr('rShopErr');
+        if (!addr) { showErr('rAddrErr'); shake(document.getElementById('rAddr')); hasErr2 = true; } else hideErr('rAddrErr');
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('rEmailErr'); shake(document.getElementById('rEmail')); hasErr2 = true; } else hideErr('rEmailErr');
+        if (hasErr2) return;
+
+        // Send OTP via Firebase when moving to OTP verification step
         setStep('r', 3);
+        requestOTP('r', document.getElementById('rPhone').value);
       }
     }
     function rBack(step) {
       if (step === 2) setStep('r', 1);
       else if (step === 3) setStep('r', 2);
     }
+    function rResendOTP() {
+      const phone = document.getElementById('rPhone').value;
+      _clearOtpDigits('#rOtpDigits');
+      window._recaptchaVerifier = null;
+      requestOTP('r', phone);
+    }
     async function rFinish() {
+      // Step 1: verify OTP
+      const otp = _getOtpDigits('#rOtpDigits');
       const sp = document.getElementById('rSpin');
       const txt = document.getElementById('rFinishTxt');
       sp.classList.add('show'); txt.style.display = 'none';
 
+      const otpOk = await verifyOTP(otp);
+      if (!otpOk) {
+        sp.classList.remove('show'); txt.style.display = '';
+        _clearOtpDigits('#rOtpDigits');
+        document.getElementById('rOtpDigits').querySelectorAll('.otp-digit')[0].focus();
+        return;
+      }
+
+      // Step 2: save retailer record to backend
       try {
         const name = document.getElementById('rName').value || 'New Retailer';
         const phone = document.getElementById('rPhone').value || '0000000000';
@@ -1533,7 +1765,7 @@
         const shop = document.getElementById('rShop').value || name;
         const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'NR';
 
-        const res = await fetch('/api/retailers', {
+        const res = await fetch(API + '/api/retailers', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ initials, name: shop + ' (' + name + ')', city, phone: '+91 ' + phone })
@@ -1542,7 +1774,7 @@
         newRetailerId = data.id; // save for step 4
 
         sp.classList.remove('show'); txt.style.display = '';
-        // Go to Step 4 instead of success
+        // Go to Step 4 (set password)
         setStep('r', 4);
 
       } catch (error) {
@@ -1553,7 +1785,7 @@
     }
 
     async function rSetPassword() {
-      const pass = document.getElementById('rPassword').value;
+      const pass    = document.getElementById('rPassword').value;
       const confirm = document.getElementById('rPasswordConfirm').value;
 
       if (!pass || pass.length < 6) { showErr('rPassErr'); return; }
@@ -1561,18 +1793,53 @@
       if (pass !== confirm) { showErr('rPassConfirmErr'); return; }
       hideErr('rPassConfirmErr');
 
-      const sp = document.getElementById('rPassSpin');
+      const sp  = document.getElementById('rPassSpin');
       const txt = document.getElementById('rPassTxt');
       sp.classList.add('show'); txt.style.display = 'none';
 
       try {
         if (newRetailerId) {
-          await fetch('/api/retailers/' + newRetailerId + '/password', {
+          await fetch(API + '/api/retailers/' + newRetailerId + '/password', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: pass })
           });
         }
+
+        // ✅ FIX: Collect all values entered during registration steps
+        const name  = document.getElementById('rName').value.trim();
+        const phone = document.getElementById('rPhone').value.trim();
+        const city  = document.getElementById('rCity').value.trim();
+        const shop  = document.getElementById('rShop').value.trim();
+        const email = document.getElementById('rEmail').value.trim();
+        const addr  = document.getElementById('rAddr').value.trim();
+        const gst   = document.getElementById('rGst').value.trim();
+
+        // Save to localStorage so retailer.html's checkSession() accepts the user
+        localStorage.setItem('sl_session', JSON.stringify({
+          role:  'retailer',
+          id:    newRetailerId || null,
+          name:  name,
+          shop:  shop,
+          city:  city,
+          phone: phone
+        }));
+
+        // Save to sessionStorage so profile hero reads it immediately
+        sessionStorage.setItem('spicelityUser', JSON.stringify({
+          name:  name,
+          shop:  shop,
+          city:  city,
+          phone: phone
+        }));
+
+        // Save email, address, GSTIN as extended profile (retailer.html reads sl_profile_ext)
+        localStorage.setItem('sl_profile_ext', JSON.stringify({
+          email:   email,
+          address: addr,
+          gstin:   gst
+        }));
+
         sp.classList.remove('show'); txt.style.display = '';
         // Hide step 4 panel and show success
         document.getElementById('rStep4').style.display = 'none';
@@ -1585,32 +1852,37 @@
 
     // ── ADMIN REGISTER ──
     function aFinish() {
-      // Read the 4 digit inputs
       const digits = ['ac0', 'ac1', 'ac2', 'ac3'].map(id => document.getElementById(id).value);
       const entered = digits.join('');
       const errEl = document.getElementById('acErr');
 
-      // Validate — correct code is 1978
       if (entered !== '1978') {
         errEl.style.display = 'block';
         const row = document.getElementById('acDigitsRow');
         row.style.animation = 'shake .3s';
         setTimeout(() => { row.style.animation = ''; }, 400);
-        // Clear the digit boxes
         ['ac0', 'ac1', 'ac2', 'ac3'].forEach(id => { document.getElementById(id).value = ''; });
         document.getElementById('ac0').focus();
         return;
       }
       errEl.style.display = 'none';
 
-      // Code correct — proceed
+      // ✅ FIX: Collect admin name and save session BEFORE redirecting
+      const adminName  = document.getElementById('aName').value.trim() || 'Admin';
+      const adminPhone = document.getElementById('aPhone').value.trim();
+
+      localStorage.setItem('sl_admin_session', JSON.stringify({
+        role:  'admin',
+        name:  adminName,
+        phone: adminPhone
+      }));
+
       const sp = document.getElementById('aSpin');
       const txt = document.getElementById('aFinishTxt');
       sp.classList.add('show'); txt.style.display = 'none';
       setTimeout(() => {
         document.getElementById('adminFormBtns').style.display = 'none';
         document.getElementById('aSuccess').classList.add('show');
-        // Hide form fields
         document.querySelectorAll('#s3admin .f-field, #s3admin .admin-code-wrap, #s3admin .reg-role-badge').forEach(el => el.style.display = 'none');
       }, 1200);
     }

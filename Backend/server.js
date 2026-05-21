@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { readDB, writeDB } = require('./db');
+const { sendPriceUpdateNotification } = require('./fcm');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,15 +23,20 @@ app.get('/api/spices', (req, res) => {
   }
 });
 
-app.put('/api/spices/:id', (req, res) => {
+app.put('/api/spices/:id', async (req, res) => {
   try {
     const db = readDB();
     const { price } = req.body;
     const id = parseInt(req.params.id);
     const spice = db.spices.find(s => s.id === id);
     if (spice) {
+      const oldPrice = spice.price;      // capture before overwriting
       spice.price = price;
       writeDB(db);
+
+      // Fire-and-forget: push notification to all 'retailers' topic subscribers.
+      // sendPriceUpdateNotification never throws — failures are logged internally.
+      sendPriceUpdateNotification(spice, oldPrice);
     }
     res.json({ success: true });
   } catch (error) {
@@ -87,7 +93,18 @@ app.post('/api/login', (req, res) => {
       r.name.toLowerCase().includes(name.toLowerCase()) && r.password === password
     );
     if (retailer) {
-      res.json({ success: true, role: 'retailer', id: retailer.id, name: retailer.name });
+      // Parse shop name out of the stored "Shop Name (Owner Name)" format
+      const shopMatch = retailer.name.match(/^(.+?)\s*\(/);
+      const shopName = shopMatch ? shopMatch[1].trim() : retailer.name;
+      res.json({
+        success: true,
+        role: 'retailer',
+        id: retailer.id,
+        name: retailer.name.replace(/\s*\(.*\)$/, '').trim() || retailer.name, // owner name
+        shop: shopName,
+        city: retailer.city || '',
+        phone: retailer.phone || ''
+      });
     } else {
       res.status(401).json({ success: false, message: 'Invalid name or password' });
     }
@@ -152,6 +169,101 @@ app.get('/api/notifications/:target', (req, res) => {
     const { target } = req.params;
     const notifs = db.notifications.filter(n => n.target === target || n.target === 'all').reverse();
     res.json(notifs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/notifications', (req, res) => {
+  try {
+    const db = readDB();
+    const { target, text, time, ico } = req.body;
+    const newNotif = {
+      id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+      target, text, time, ico, read: false
+    };
+    db.notifications.push(newNotif);
+    writeDB(db);
+    res.json({ success: true, notification: newNotif });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/notifications/:id/read', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const notif = db.notifications.find(n => n.id === id);
+    if (notif) {
+      notif.read = true;
+      writeDB(db);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// --- MESSAGES API ---
+app.get('/api/messages', (req, res) => {
+  try {
+    const db = readDB();
+    res.json(db.messages || []);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/messages/:retailer_name', (req, res) => {
+  try {
+    const db = readDB();
+    const name = req.params.retailer_name.toLowerCase();
+    const msgs = db.messages.filter(m => m.retailer_name.toLowerCase() === name);
+    res.json(msgs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/messages', (req, res) => {
+  try {
+    const db = readDB();
+    const { sender, receiver, retailer_name, text } = req.body;
+    
+    const now = new Date();
+    const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const date = now.getDate() + ' ' + months[now.getMonth()];
+
+    const newMsg = {
+      id: db.messages.length > 0 ? Math.max(...db.messages.map(m => m.id)) + 1 : 1,
+      sender, receiver, retailer_name, text, time, date, read: false
+    };
+    db.messages.push(newMsg);
+    writeDB(db);
+    res.json({ success: true, message: newMsg });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/messages/read/:retailer_name', (req, res) => {
+  try {
+    const db = readDB();
+    const name = req.params.retailer_name.toLowerCase();
+    const role = req.query.role; // Optional: specify who is marking it as read
+
+    db.messages.forEach(m => {
+      if (m.retailer_name.toLowerCase() === name) {
+        if (!role || (role === 'admin' && m.sender === 'retailer') || (role === 'retailer' && m.sender === 'admin')) {
+          m.read = true;
+        }
+      }
+    });
+
+    writeDB(db);
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

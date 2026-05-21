@@ -1,0 +1,16 @@
+# ── Secrets & credentials ──────────────────────────────────────────────────
+# NEVER commit the Firebase service account key to Git.
+# Use the FIREBASE_SERVICE_ACCOUNT env var on Render instead.
+serviceAccountKey.json
+*.key.json
+
+# ── Dependencies ────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Database / local data ───────────────────────────────────────────────────
+# Uncomment if db.json holds sensitive data you don't want in the repo:
+# db.json
+
+# ── Logs ────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*

@@ -251,6 +251,39 @@
       "orders": 0,
       "outstanding": 0,
       "last_order": "Never"
+    },
+    {
+      "id": 8,
+      "initials": "NR",
+      "name": "New Retailer (New Retailer)",
+      "city": "Jodhpur",
+      "phone": "+91 8112208053",
+      "password": "",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
+    },
+    {
+      "id": 9,
+      "initials": "C",
+      "name": "testing (chirag)",
+      "city": "Jodhpur",
+      "phone": "+91 8112208053",
+      "password": "098765",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
+    },
+    {
+      "id": 10,
+      "initials": "C",
+      "name": "chirag (chirag)",
+      "city": "Jodhpur",
+      "phone": "+91 8112208053",
+      "password": "123456",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
     }
   ],
   "orders": [
@@ -299,6 +332,28 @@
       "date": "16 May",
       "time": "16:46",
       "delivery": "Not fix yet"
+    },
+    {
+      "id": 5,
+      "order_id": "#SPC1331",
+      "retailer_name": "Ramesh Sharma",
+      "city": "Jodhpur",
+      "product_details": "Cumin Seeds Special 10kg",
+      "amount": 2800,
+      "status": "pending",
+      "date": "17 May",
+      "time": "3:00"
+    },
+    {
+      "id": 6,
+      "order_id": "#SPC1272",
+      "retailer_name": "Retailer",
+      "city": "Unknown City",
+      "product_details": "Red Chili 10kg",
+      "amount": 3200,
+      "status": "pending",
+      "date": "17 May",
+      "time": "3:20"
     }
   ],
   "notifications": [],
