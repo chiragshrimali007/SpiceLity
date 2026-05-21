@@ -43,7 +43,7 @@ async function sendPriceUpdateNotification(spice, oldPrice) {
         channelId   : 'price_alerts',   // must be created in the Android app
         icon        : 'ic_notification',
         color       : '#B88020',        // SpiceLity amber
-        clickAction : 'OPEN_PRICING',   // handled in MainActivity / FCM service
+        clickAction : 'FLUTTER_NOTIFICATION_CLICK',   // handled in MainActivity / FCM service
         sound       : 'default',
       },
     },
