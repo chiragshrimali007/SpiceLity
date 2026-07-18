@@ -14,32 +14,42 @@
 
 const admin = require('firebase-admin');
 const path  = require('path');
+const fs    = require('fs');
+
+let isInitialized = false;
 
 if (!admin.apps.length) {
-  let credential;
+  try {
+    let credential;
 
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    // ── Render production: key stored as an environment variable ──
-    // In Render → Environment, add:
-    //   Key:   FIREBASE_SERVICE_ACCOUNT
-    //   Value: <paste the full contents of serviceAccountKey.json here>
-    try {
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
       const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
       credential = admin.credential.cert(serviceAccount);
-    } catch (err) {
-      throw new Error(
-        'FIREBASE_SERVICE_ACCOUNT env var is set but is not valid JSON.\n' + err.message
-      );
+      admin.initializeApp({ credential });
+      isInitialized = true;
+      console.log('[Firebase] Admin SDK initialised from env');
+    } else {
+      const keyPath = path.join(__dirname, 'serviceAccountKey.json');
+      if (fs.existsSync(keyPath)) {
+        const keyData = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+        if (keyData.project_id === 'YOUR_PROJECT_ID') {
+          console.warn('[Firebase] Warning: serviceAccountKey.json is a placeholder. Skipping Firebase initialization.');
+        } else {
+          credential = admin.credential.cert(keyPath);
+          admin.initializeApp({ credential });
+          isInitialized = true;
+          console.log('[Firebase] Admin SDK initialised from serviceAccountKey.json');
+        }
+      } else {
+        console.warn('[Firebase] Warning: serviceAccountKey.json not found. Skipping Firebase initialization.');
+      }
     }
-  } else {
-    // ── Local dev: read the JSON file directly ──
-    // Keep this file in Backend/ and add it to .gitignore!
-    const keyPath = path.join(__dirname, 'serviceAccountKey.json');
-    credential = admin.credential.cert(keyPath);
+  } catch (err) {
+    console.error('[Firebase] Failed to initialize Firebase Admin SDK:', err.message);
   }
-
-  admin.initializeApp({ credential });
-  console.log('[Firebase] Admin SDK initialised');
+} else {
+  isInitialized = true;
 }
 
+admin.isInitialized = isInitialized;
 module.exports = admin;

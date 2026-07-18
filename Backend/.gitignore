@@ -3,6 +3,7 @@
 # Use the FIREBASE_SERVICE_ACCOUNT env var on Render instead.
 serviceAccountKey.json
 *.key.json
+.env
 
 # ── Dependencies ────────────────────────────────────────────────────────────
 node_modules/

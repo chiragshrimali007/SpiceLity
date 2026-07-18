@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Spicelity — Admin Dashboard</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
@@ -197,7 +198,8 @@
       display: flex;
       align-items: center;
       gap: 0;
-      height: 60px;
+      padding-top: env(safe-area-inset-top, 0px);
+      height: calc(60px + env(safe-area-inset-top, 0px));
       flex-shrink: 0;
       width: 100%;
     }
@@ -1229,7 +1231,8 @@
       z-index: 200;
       background: var(--g900);
       border-top: .5px solid rgba(255, 255, 255, .08);
-      height: 62px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      height: calc(62px + env(safe-area-inset-bottom, 0px));
       align-items: stretch;
     }
 
@@ -1292,7 +1295,7 @@
 
       .sidebar {
         position: fixed;
-        top: 60px;
+        top: calc(60px + env(safe-area-inset-top, 0px));
         left: 0;
         bottom: 0;
         z-index: 150;
@@ -1321,7 +1324,7 @@
       }
 
       .main {
-        padding: 20px 16px 90px;
+        padding: 20px 16px calc(90px + env(safe-area-inset-bottom, 0px));
         width: 100%;
       }
 
@@ -1455,262 +1458,692 @@
         display: none;
       }
     }
+
     /* ═══ PULL TO REFRESH ═══ */
-    #ptr { position: absolute; top: 60px; left: 0; width: 100%; display: flex; justify-content: center; align-items: center; height: 50px; z-index: 90; transform: translateY(-100%); transition: transform 0.2s ease; pointer-events: none; }
-    .ptr-spinner { width: 28px; height: 28px; border: 3px solid rgba(184, 128, 32, 0.2); border-top-color: var(--a500); border-radius: 50%; transition: transform 0s; }
-    .ptr-spinner.spin { animation: ptr-spin 0.8s linear infinite; }
-    @keyframes ptr-spin { 100% { transform: rotate(360deg); } }
-    .main.ptr-pull { transition: transform 0s; }
-    .main.ptr-release { transition: transform 0.3s ease; }
+    #ptr {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      z-index: 90;
+      transform: translateY(-100%);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .ptr-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(184, 128, 32, 0.2);
+      border-top-color: var(--a500);
+      border-radius: 50%;
+      transition: transform 0s;
+    }
+
+    .ptr-spinner.spin {
+      animation: ptr-spin 0.8s linear infinite;
+    }
+
+    @keyframes ptr-spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .main.ptr-pull {
+      transition: transform 0s;
+    }
+
+    .main.ptr-release {
+      transition: transform 0.3s ease;
+    }
 
     /* ── ADMIN EDIT PROFILE PANEL ── */
     .aep-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      z-index: 300; backdrop-filter: blur(2px); display: none; opacity: 0; transition: opacity .3s;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 300;
+      backdrop-filter: blur(2px);
+      display: none;
+      opacity: 0;
+      transition: opacity .3s;
     }
-    .aep-overlay.show { opacity: 1; }
+
+    .aep-overlay.show {
+      opacity: 1;
+    }
+
     .aep-panel {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #fff; border-radius: 24px 24px 0 0;
-      z-index: 301; max-height: 90dvh;
-      display: none; flex-direction: column;
-      box-shadow: 0 -8px 32px rgba(0,0,0,.18);
-      transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      z-index: 301;
+      max-height: 90dvh;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, .18);
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1);
     }
-    .aep-panel.show { transform: translateY(0); }
+
+    .aep-panel.show {
+      transform: translateY(0);
+    }
+
     @media(min-width:769px) {
-      .aep-panel { width: 520px; left: 50%; top: 50%; bottom: auto;
-        transform: translate(-50%,-50%) scale(.95); border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,.2); opacity: 0;
-        transition: opacity .3s, transform .3s; }
-      .aep-panel.show { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+      .aep-panel {
+        width: 520px;
+        left: 50%;
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -50%) scale(.95);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, .2);
+        opacity: 0;
+        transition: opacity .3s, transform .3s;
+      }
+
+      .aep-panel.show {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
     }
-    .aep-hdr { display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 24px 16px; border-bottom: .5px solid var(--c200); flex-shrink: 0; }
-    .aep-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--t900); }
-    .aep-close { width: 32px; height: 32px; border-radius: 50%; background: var(--c100);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border: none; color: var(--t700); font-size: 18px; }
-    .aep-body { padding: 20px 24px 24px; overflow-y: auto; flex: 1;
-      padding-bottom: max(24px, env(safe-area-inset-bottom)); }
-    .af-field { margin-bottom: 16px; }
-    .af-lbl { display: block; font-size: 10px; font-weight: 700; letter-spacing: .08em;
-      color: var(--t400); margin-bottom: 6px; text-transform: uppercase; }
-    .af-inp { width: 100%; padding: 13px 14px; border: 1.5px solid var(--border);
-      border-radius: 12px; font-size: 15px; font-family: 'DM Sans', sans-serif;
-      background: #fff; color: var(--t900); box-sizing: border-box;
-      outline: none; transition: border-color .15s; }
-    .af-inp:focus { border-color: var(--g600); }
-    .af-inp.readonly { background: var(--c100); color: var(--t400); cursor: not-allowed; }
-    .aep-save-btn { width: 100%; padding: 15px; background: var(--g800); color: #fff;
-      border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
-      font-family: 'DM Sans', sans-serif; cursor: pointer; margin-top: 8px;
-      transition: background .15s; }
-    .aep-save-btn:active { background: var(--g900); }
+
+    .aep-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: .5px solid var(--c200);
+      flex-shrink: 0;
+    }
+
+    .aep-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--t900);
+    }
+
+    .aep-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      color: var(--t700);
+      font-size: 18px;
+    }
+
+    .aep-body {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+      flex: 1;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    .af-field {
+      margin-bottom: 16px;
+    }
+
+    .af-lbl {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: var(--t400);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .af-inp {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: var(--t900);
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .af-inp:focus {
+      border-color: var(--g600);
+    }
+
+    .af-inp.readonly {
+      background: var(--c100);
+      color: var(--t400);
+      cursor: not-allowed;
+    }
+
+    .aep-save-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--g800);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background .15s;
+    }
+
+    .aep-save-btn:active {
+      background: var(--g900);
+    }
 
 
     /* ── ORDER VIEW SIDE PANEL ── */
     .ov-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45); backdrop-filter: blur(3px);
-      z-index: 400; display: none; opacity: 0; transition: opacity .3s;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      backdrop-filter: blur(3px);
+      z-index: 400;
+      display: none;
+      opacity: 0;
+      transition: opacity .3s;
     }
-    .ov-backdrop.show { opacity: 1; }
+
+    .ov-backdrop.show {
+      opacity: 1;
+    }
 
     .ov-panel {
-      position: fixed; top: 0; right: 0; bottom: 0;
-      width: 420px; background: #fff;
-      z-index: 401; overflow-y: auto;
-      transform: translateX(100%); transition: transform .3s ease;
-      display: flex; flex-direction: column;
-      box-shadow: -6px 0 32px rgba(0,0,0,.16);
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 420px;
+      background: #fff;
+      z-index: 401;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform .3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -6px 0 32px rgba(0, 0, 0, .16);
     }
-    .ov-panel.show { transform: translateX(0); }
+
+    .ov-panel.show {
+      transform: translateX(0);
+    }
 
     @media(max-width:768px) {
       .ov-panel {
-        width: 100%; top: auto; left: 0; right: 0;
-        bottom: 0; height: 92dvh;
+        width: 100%;
+        top: auto;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 92dvh;
         border-radius: 20px 20px 0 0;
         transform: translateY(100%);
-        box-shadow: 0 -6px 32px rgba(0,0,0,.18);
+        box-shadow: 0 -6px 32px rgba(0, 0, 0, .18);
       }
-      .ov-panel.show { transform: translateY(0); }
+
+      .ov-panel.show {
+        transform: translateY(0);
+      }
     }
 
     .ov-hdr {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 22px 16px; border-bottom: 1px solid var(--border);
-      flex-shrink: 0; position: sticky; top: 0;
-      background: #fff; z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
     }
+
     .ov-title {
       font-family: 'Playfair Display', serif;
-      font-size: 20px; font-weight: 800; color: var(--t900);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--t900);
     }
+
     .ov-close {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--c100); border: none;
-      font-size: 18px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c100);
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--t700);
     }
-    .ov-body { padding: 0; flex: 1; }
+
+    .ov-body {
+      padding: 0;
+      flex: 1;
+    }
 
     .ov-section {
       padding: 18px 22px;
       border-bottom: 1px solid var(--border);
     }
-    .ov-section:last-child { border-bottom: none; }
+
+    .ov-section:last-child {
+      border-bottom: none;
+    }
 
     .ov-sec-lbl {
-      font-size: 10px; font-weight: 800; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--t400);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--t400);
       margin-bottom: 14px;
     }
 
     .ov-row {
-      display: flex; justify-content: space-between; align-items: flex-start;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       margin-bottom: 10px;
     }
-    .ov-row:last-child { margin-bottom: 0; }
+
+    .ov-row:last-child {
+      margin-bottom: 0;
+    }
+
     .ov-key {
-      font-size: 12px; font-weight: 600; color: var(--t400);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--t400);
     }
+
     .ov-val {
-      font-size: 13px; font-weight: 700; color: var(--t900);
-      text-align: right; max-width: 60%;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t900);
+      text-align: right;
+      max-width: 60%;
     }
+
     .ov-product {
-      font-size: 13px; color: var(--t700); line-height: 1.55;
-      background: var(--c100); border-radius: var(--r-sm);
-      padding: 10px 12px; margin-top: 8px;
+      font-size: 13px;
+      color: var(--t700);
+      line-height: 1.55;
+      background: var(--c100);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      margin-top: 8px;
     }
+
     .ov-confirm-btn {
-      width: 100%; padding: 12px; margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      margin-top: 14px;
       background: linear-gradient(135deg, var(--g700), var(--g600));
-      color: #fff; border: none; border-radius: var(--r-sm);
-      font-family: inherit; font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: background .18s;
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
     }
-    .ov-confirm-btn:hover { background: var(--g500); }
+
+    .ov-confirm-btn:hover {
+      background: var(--g500);
+    }
 
     /* Retailer profile strip */
     .ov-ret-strip {
-      display: flex; align-items: center; gap: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
+
     .ov-ret-av {
-      width: 44px; height: 44px; border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       background: var(--g700);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 800; color: #fff; flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
     }
+
     .ov-ret-name {
-      font-size: 14px; font-weight: 800; color: var(--t900);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--t900);
     }
+
     .ov-ret-sub {
-      font-size: 12px; color: var(--t400); margin-top: 2px;
+      font-size: 12px;
+      color: var(--t400);
+      margin-top: 2px;
     }
 
     /* Compact history rows */
     .ov-hist-row {
       display: grid;
       grid-template-columns: auto 1fr auto;
-      align-items: center; gap: 10px;
-      padding: 9px 10px; border-radius: var(--r-sm);
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--r-sm);
       font-size: 12px;
     }
-    .ov-hist-row:nth-child(odd) { background: var(--c100); }
-    .ov-hist-id { font-weight: 700; color: var(--t700); white-space: nowrap; }
-    .ov-hist-product { color: var(--t400); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .ov-hist-right { text-align: right; }
-    .ov-hist-amt { font-weight: 700; color: var(--t900); }
-    .ov-hist-date { font-size: 11px; color: var(--t400); }
-    .ov-show-more {
-      display: block; width: 100%; padding: 9px;
-      background: none; border: 1px dashed var(--border);
-      border-radius: var(--r-sm); font-family: inherit;
-      font-size: 12px; font-weight: 700; color: var(--t400);
-      cursor: pointer; margin-top: 8px; transition: all .15s;
+
+    .ov-hist-row:nth-child(odd) {
+      background: var(--c100);
     }
-    .ov-show-more:hover { border-color: var(--g600); color: var(--g600); }
+
+    .ov-hist-id {
+      font-weight: 700;
+      color: var(--t700);
+      white-space: nowrap;
+    }
+
+    .ov-hist-product {
+      color: var(--t400);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ov-hist-right {
+      text-align: right;
+    }
+
+    .ov-hist-amt {
+      font-weight: 700;
+      color: var(--t900);
+    }
+
+    .ov-hist-date {
+      font-size: 11px;
+      color: var(--t400);
+    }
+
+    .ov-show-more {
+      display: block;
+      width: 100%;
+      padding: 9px;
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: var(--r-sm);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--t400);
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all .15s;
+    }
+
+    .ov-show-more:hover {
+      border-color: var(--g600);
+      color: var(--g600);
+    }
 
 
     /* ── RETAILER PROFILE PANEL ── */
     .rp-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.45); backdrop-filter: blur(3px);
-      z-index: 500; display: none; opacity: 0; transition: opacity .3s;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      backdrop-filter: blur(3px);
+      z-index: 500;
+      display: none;
+      opacity: 0;
+      transition: opacity .3s;
     }
-    .rp-backdrop.show { opacity: 1; }
+
+    .rp-backdrop.show {
+      opacity: 1;
+    }
+
     .rp-panel {
-      position: fixed; top: 0; right: 0; bottom: 0;
-      width: 440px; background: #fff;
-      z-index: 501; overflow-y: auto;
-      transform: translateX(110%); transition: transform .3s ease;
-      display: flex; flex-direction: column;
-      box-shadow: -6px 0 32px rgba(0,0,0,.18);
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 440px;
+      background: #fff;
+      z-index: 501;
+      overflow-y: auto;
+      transform: translateX(110%);
+      transition: transform .3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -6px 0 32px rgba(0, 0, 0, .18);
     }
-    .rp-panel.show { transform: translateX(0); }
+
+    .rp-panel.show {
+      transform: translateX(0);
+    }
+
     @media(max-width:768px) {
       .rp-panel {
-        width: 100%; top: auto; left: 0; height: 94dvh;
+        width: 100%;
+        top: auto;
+        left: 0;
+        height: 94dvh;
         border-radius: 20px 20px 0 0;
         transform: translateY(110%);
-        box-shadow: 0 -6px 32px rgba(0,0,0,.18);
+        box-shadow: 0 -6px 32px rgba(0, 0, 0, .18);
       }
-      .rp-panel.show { transform: translateY(0); }
+
+      .rp-panel.show {
+        transform: translateY(0);
+      }
     }
+
     .rp-hdr {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 22px 22px 18px; border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; background: #fff; z-index: 1; flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 22px 22px 18px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+      flex-shrink: 0;
     }
+
     .rp-hdr-av {
-      width: 50px; height: 50px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
     }
-    .rp-hdr-info { flex: 1; min-width: 0; }
-    .rp-hdr-name { font-size: 18px; font-weight: 800; color: var(--t900); }
-    .rp-hdr-shop { font-size: 13px; color: var(--a600); font-weight: 600; margin-top: 2px; }
-    .rp-hdr-meta { font-size: 12px; color: var(--t400); margin-top: 3px; }
+
+    .rp-hdr-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .rp-hdr-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--t900);
+    }
+
+    .rp-hdr-shop {
+      font-size: 13px;
+      color: var(--a600);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .rp-hdr-meta {
+      font-size: 12px;
+      color: var(--t400);
+      margin-top: 3px;
+    }
+
     .rp-close {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--c100); border: none; font-size: 17px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      color: var(--t700); flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--c100);
+      border: none;
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t700);
+      flex-shrink: 0;
     }
-    .rp-sec { padding: 18px 22px; border-bottom: 1px solid var(--border); }
-    .rp-sec:last-child { border-bottom: none; }
+
+    .rp-sec {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rp-sec:last-child {
+      border-bottom: none;
+    }
+
     .rp-sec-lbl {
-      font-size: 10px; font-weight: 800; letter-spacing: .08em;
-      text-transform: uppercase; color: var(--t400); margin-bottom: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--t400);
+      margin-bottom: 12px;
     }
+
     .rp-stats-strip {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
-    .rp-stat { background: var(--c100); border-radius: var(--r-sm); padding: 10px 12px; }
-    .rp-stat-val { font-size: 15px; font-weight: 800; color: var(--t900); }
-    .rp-stat-lbl { font-size: 10px; color: var(--t400); margin-top: 2px; }
-    .rp-contact-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .rp-stat {
+      background: var(--c100);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+    }
+
+    .rp-stat-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--t900);
+    }
+
+    .rp-stat-lbl {
+      font-size: 10px;
+      color: var(--t400);
+      margin-top: 2px;
+    }
+
+    .rp-contact-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .rp-ord-row {
-      display: grid; grid-template-columns: auto 1fr auto;
-      align-items: center; gap: 8px;
-      padding: 8px 10px; border-radius: var(--r-sm);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--r-sm);
       font-size: 12px;
     }
-    .rp-ord-row:nth-child(odd) { background: var(--c100); }
-    .rp-ord-id { font-weight: 700; color: var(--t700); white-space: nowrap; }
-    .rp-ord-product { color: var(--t400); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .rp-ord-right { text-align: right; }
-    .rp-ord-amt { font-weight: 700; color: var(--t900); font-size: 12px; }
-    .rp-ord-date { font-size: 11px; color: var(--t400); }
-    .rp-kv { display: flex; justify-content: space-between; padding: 6px 0;
-      border-bottom: .5px solid var(--c200); font-size: 13px; }
-    .rp-kv:last-child { border-bottom: none; }
-    .rp-kv-key { color: var(--t400); font-weight: 600; }
-    .rp-kv-val { color: var(--t900); font-weight: 700; text-align: right; max-width: 60%; }
+
+    .rp-ord-row:nth-child(odd) {
+      background: var(--c100);
+    }
+
+    .rp-ord-id {
+      font-weight: 700;
+      color: var(--t700);
+      white-space: nowrap;
+    }
+
+    .rp-ord-product {
+      color: var(--t400);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rp-ord-right {
+      text-align: right;
+    }
+
+    .rp-ord-amt {
+      font-weight: 700;
+      color: var(--t900);
+      font-size: 12px;
+    }
+
+    .rp-ord-date {
+      font-size: 11px;
+      color: var(--t400);
+    }
+
+    .rp-kv {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: .5px solid var(--c200);
+      font-size: 13px;
+    }
+
+    .rp-kv:last-child {
+      border-bottom: none;
+    }
+
+    .rp-kv-key {
+      color: var(--t400);
+      font-weight: 600;
+    }
+
+    .rp-kv-val {
+      color: var(--t900);
+      font-weight: 700;
+      text-align: right;
+      max-width: 60%;
+    }
 
     /* ── CHAT ENVIRONMENT STYLES ── */
     .chat-item {
@@ -1722,13 +2155,16 @@
       border-bottom: 1px solid var(--border);
       transition: background 0.2s;
     }
+
     .chat-item:hover {
       background: var(--c100);
     }
+
     .chat-item.active {
       background: var(--a50);
       border-left: 4px solid var(--a500);
     }
+
     .chat-avatar {
       width: 40px;
       height: 40px;
@@ -1742,6 +2178,7 @@
       font-size: 14px;
       flex-shrink: 0;
     }
+
     .chat-bubble {
       max-width: 70%;
       padding: 10px 14px;
@@ -1751,6 +2188,7 @@
       position: relative;
       margin-bottom: 2px;
     }
+
     .chat-bubble.retailer {
       background: var(--card);
       color: var(--t900);
@@ -1758,26 +2196,31 @@
       border-bottom-left-radius: 2px;
       border: 1px solid var(--border);
     }
+
     .chat-bubble.admin {
       background: var(--g600);
       color: #fff;
       align-self: flex-end;
       border-bottom-right-radius: 2px;
     }
+
     .chat-time {
       font-size: 9px;
       color: var(--t400);
       margin-top: 4px;
       text-align: right;
     }
+
     .chat-bubble.admin .chat-time {
       color: var(--g50);
     }
+
     .chat-item-name {
       font-size: 13px;
       font-weight: 700;
       color: var(--t900);
     }
+
     .chat-item-shop {
       font-size: 11px;
       color: var(--t400);
@@ -1785,6 +2228,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .chat-item-snip {
       font-size: 12px;
       color: var(--t500);
@@ -1793,15 +2237,18 @@
       white-space: nowrap;
       margin-top: 2px;
     }
+
     .chat-item-meta {
       margin-left: auto;
       text-align: right;
       flex-shrink: 0;
     }
+
     .chat-item-time {
       font-size: 10px;
       color: var(--t400);
     }
+
     .chat-item-badge {
       background: var(--red);
       color: #fff;
@@ -1813,6 +2260,64 @@
       margin-top: 4px;
     }
 
+    /* Responsive Chat Layout */
+    .chat-container {
+      display: flex;
+      height: 600px;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    .chat-sidebar {
+      width: 320px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--c100);
+      flex-shrink: 0;
+    }
+
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      min-width: 0;
+    }
+
+    .chat-back-btn {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .chat-container {
+        height: calc(100vh - 160px) !important;
+      }
+
+      .chat-sidebar {
+        width: 100% !important;
+        border-right: none !important;
+      }
+
+      .chat-main {
+        display: none !important;
+        width: 100% !important;
+      }
+
+      .chat-container.show-main .chat-sidebar {
+        display: none !important;
+      }
+
+      .chat-container.show-main .chat-main {
+        display: flex !important;
+      }
+
+      .chat-back-btn {
+        display: flex !important;
+      }
+    }
   </style>
 </head>
 
@@ -1853,7 +2358,7 @@
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
-          <div class="tb-badge">4</div>
+          <div class="tb-badge" id="admin-notif-top-badge" style="display:none;">0</div>
         </div>
         <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1892,7 +2397,7 @@
             <rect x="9" y="3" width="6" height="4" rx="2" />
           </svg>
           Orders
-          <span class="nav-badge">8</span>
+          <span class="nav-badge" id="admin-orders-badge" style="display:none;">0</span>
         </button>
         <button class="nav-item" data-page="pricing" onclick="showPage('pricing',this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1913,7 +2418,7 @@
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>
           Retailers
-          <span class="nav-badge" style="background:var(--red);">3</span>
+          <span class="nav-badge" id="admin-retailers-badge" style="background:var(--red); display:none;">0</span>
         </button>
         <button class="nav-item" data-page="chat" onclick="showPage('chat',this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1921,7 +2426,7 @@
             <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
           </svg>
           Messages
-          <span class="nav-badge" id="chat-nav-badge" style="background:var(--red); display:none;">0</span>
+          <!-- <span class="nav-badge" id="chat-nav-badge" style="background:var(--red); display:none;">0</span> -->
         </button>
         <button class="nav-item" data-page="reports" onclick="showPage('reports',this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1942,7 +2447,7 @@
             <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
           Notifications
-          <span class="nav-badge">4</span>
+          <span class="nav-badge" id="admin-notif-sidebar-badge" style="display:none;">0</span>
         </button>
         <button class="nav-item" data-page="settings" onclick="showPage('settings',this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -2183,9 +2688,11 @@
               AD</div>
             <div style="flex:1;min-width:0;">
               <div id="admin-disp-name" style="font-size:15px;font-weight:700;color:var(--t900);">Admin</div>
-              <div id="admin-disp-sub" style="font-size:12px;color:var(--t400);margin-top:2px;">Platform Administrator</div>
+              <div id="admin-disp-sub" style="font-size:12px;color:var(--t400);margin-top:2px;">Platform Administrator
+              </div>
             </div>
-            <button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;" onclick="openAdminEditProfile()">Edit Profile</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto;flex-shrink:0;"
+              onclick="openAdminEditProfile()">Edit Profile</button>
           </div>
         </div>
         <div class="card set-section">
@@ -2237,23 +2744,27 @@
           <div class="page-title">Retailer Conversations</div>
           <div class="page-sub">Direct real-time support and coordination</div>
         </div>
-        <div class="card chat-container" style="display:flex; height:600px; padding:0; overflow:hidden; border:1px solid var(--border);">
+        <div class="card chat-container">
           <!-- Left Sidebar: Conversations List -->
-          <div class="chat-sidebar" style="width:320px; border-right:1px solid var(--border); display:flex; flex-direction:column; background:var(--c100);">
+          <div class="chat-sidebar">
             <div style="padding:15px; border-bottom:1px solid var(--border); background:var(--card);">
-              <input type="text" class="input" id="chat-search" placeholder="Search retailers..." oninput="renderChatSidebar()" style="padding:8px 12px; font-size:13px; width:100%; box-sizing:border-box;">
+              <input type="text" class="input" id="chat-search" placeholder="Search retailers..."
+                oninput="renderChatSidebar()"
+                style="padding:8px 12px; font-size:13px; width:100%; box-sizing:border-box;">
             </div>
             <div id="chat-retailers-list" style="flex:1; overflow-y:auto; background:var(--card);">
               <!-- Dynamic retailers conversation list -->
             </div>
           </div>
           <!-- Right Pane: Active Chat -->
-          <div class="chat-main" id="chat-main-pane" style="flex:1; display:flex; flex-direction:column; background:var(--card);">
-            <div id="chat-active-header" style="padding:15px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--card);">
+          <div class="chat-main" id="chat-main-pane">
+            <div id="chat-active-header"
+              style="padding:15px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--card);">
               <!-- Active retailer details -->
               <div style="font-size:15px; font-weight:700; color:var(--t900);">Select a retailer to start chatting</div>
             </div>
-            <div id="chat-messages-body" style="flex:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; background:var(--c100);">
+            <div id="chat-messages-body"
+              style="flex:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; background:var(--c100);">
               <!-- Chat bubbles -->
               <div class="empty-state" style="margin:auto;">
                 <div class="empty-icon">💬</div>
@@ -2261,8 +2772,10 @@
                 <div class="empty-sub">Choose a retailer from the sidebar to view messages</div>
               </div>
             </div>
-            <div id="chat-input-area" style="padding:15px; border-top:1px solid var(--border); display:none; align-items:center; gap:10px; background:var(--card);">
-              <input type="text" class="input" id="chat-msg-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendAdminMessage()" style="flex:1; padding:10px 14px;">
+            <div id="chat-input-area"
+              style="padding:15px; border-top:1px solid var(--border); display:none; align-items:center; gap:10px; background:var(--card);">
+              <input type="text" class="input" id="chat-msg-input" placeholder="Type a message..."
+                onkeydown="if(event.key==='Enter') sendAdminMessage()" style="flex:1; padding:10px 14px;">
               <button class="btn btn-primary" onclick="sendAdminMessage()" style="padding:10px 20px;">Send</button>
             </div>
           </div>
@@ -2315,7 +2828,8 @@
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
       </svg>
       <span>Chat</span>
-      <span class="nav-badge" id="chat-mob-badge" style="background:var(--red); display:none; position:absolute; top:4px; right:15px; font-size:9px; padding:1px 4px; min-width:12px; height:12px; line-height:10px; border-radius:10px; color:#fff; font-weight:700;">0</span>
+      <span class="nav-badge" id="chat-mob-badge"
+        style="background:var(--red); display:none; position:absolute; top:4px; right:15px; font-size:9px; padding:1px 4px; min-width:12px; height:12px; line-height:10px; border-radius:10px; color:#fff; font-weight:700;">0</span>
     </button>
     <button class="mob-nav-item" data-page="settings" onclick="showPage('settings',this)">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -2328,9 +2842,11 @@
     </button>
   </nav>
 
+  <script src="admin.js"></script>
   <script>
-    const API = 'https://spicelity.onrender.com';
-
+    const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
+      ? 'http://localhost:3000'
+      : window.location.origin;
     /* ═══ SESSION GUARD ═══ */
     (function checkSession() {
       // Accept either sl_session (role=admin) or sl_admin_session
@@ -2339,25 +2855,25 @@
       try {
         const s = JSON.parse(raw);
         if (!s || (s.role !== 'admin')) { window.location.href = 'index.html'; }
-      } catch(e) { window.location.href = 'index.html'; }
+      } catch (e) { window.location.href = 'index.html'; }
     })();
 
     /* ═══ READ ADMIN IDENTITY (fresh each call via function) ═══ */
     function getAdminData() {
       const sess = JSON.parse(localStorage.getItem('sl_admin_session') || localStorage.getItem('sl_session') || '{}');
-      const ext  = JSON.parse(localStorage.getItem('sl_admin_ext') || '{}');
+      const ext = JSON.parse(localStorage.getItem('sl_admin_ext') || '{}');
       return {
-        name:  sess.name  || ext.name  || 'Admin',
+        name: sess.name || ext.name || 'Admin',
         phone: sess.phone || ext.phone || '',
-        email: ext.email  || '',
-        role:  ext.role   || 'Platform Administrator'
+        email: ext.email || '',
+        role: ext.role || 'Platform Administrator'
       };
     }
 
     /* ═══ RENDER ADMIN HERO (settings card + topbar avatar) ═══ */
     function renderAdminHero() {
       const d = getAdminData();
-      const initials = d.name.trim().split(/\s+/).map(w => w[0]).join('').substring(0,2).toUpperCase() || 'AD';
+      const initials = d.name.trim().split(/\s+/).map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'AD';
 
       // Settings card avatar + name + sub
       const av = document.getElementById('admin-av');
@@ -2385,6 +2901,10 @@
     let ORDERS = [];
     let RETAILERS = [];
     let NOTIFS = [];
+
+    let lastOrderCount = null;
+    let lastRetailerCount = null;
+    let lastMessageCount = null;
 
     const STATUS_META = {
       pending: { cls: 'p-gold', label: 'Pending' },
@@ -2439,11 +2959,11 @@
           // Name stored as "Shop Name (Owner Name)" — extract owner from parentheses if present
           const ownerMatch = r.name.match(/\(([^)]+)\)$/);
           const displayName = ownerMatch ? ownerMatch[1].trim() : r.name.trim();
-          const shopName    = ownerMatch ? r.name.replace(ownerMatch[0], '').trim() : r.name.trim();
+          const shopName = ownerMatch ? r.name.replace(ownerMatch[0], '').trim() : r.name.trim();
 
           const formattedDisplay = titleCase(displayName);
-          const formattedShop    = titleCase(shopName);
-          const init = displayName.trim().split(/\s+/).map(w => w[0]).join('').substring(0,2).toUpperCase() || 'R';
+          const formattedShop = titleCase(shopName);
+          const init = displayName.trim().split(/\s+/).map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'R';
 
           // Count + last order from ORDERS array
           const retailerOrders = ORDERS.filter(o =>
@@ -2452,9 +2972,9 @@
             o.retailer.toLowerCase().includes(shopName.toLowerCase())
           );
           const sorted = [...retailerOrders].sort((a, b) => new Date(b.date) - new Date(a.date));
-          const orderCount    = r.order_count ?? retailerOrders.length;
+          const orderCount = r.order_count ?? retailerOrders.length;
           const lastOrderDate = r.last_order_date || (sorted.length > 0 ? sorted[0].date : 'No orders yet');
-          const latestStatus  = sorted.length > 0 ? sorted[0].status : null;
+          const latestStatus = sorted.length > 0 ? sorted[0].status : null;
 
           return {
             id: r.id,
@@ -2477,18 +2997,142 @@
         renderOverview();
         renderNotifications();
 
+        // Update Admin Badges dynamically based on live database arrays
+        const unreadNotifsCount = NOTIFS.filter(n => !n.read).length;
+        const topNotifEl = document.getElementById('admin-notif-top-badge');
+        const sideNotifEl = document.getElementById('admin-notif-sidebar-badge');
+        if (topNotifEl) {
+          topNotifEl.textContent = unreadNotifsCount;
+          topNotifEl.style.display = unreadNotifsCount > 0 ? 'flex' : 'none';
+        }
+        if (sideNotifEl) {
+          sideNotifEl.textContent = unreadNotifsCount;
+          sideNotifEl.style.display = unreadNotifsCount > 0 ? 'inline-flex' : 'none';
+        }
+
+        const pendingOrdersCount = ORDERS.filter(o => o.status === 'pending').length;
+        const ordersBadgeEl = document.getElementById('admin-orders-badge');
+        if (ordersBadgeEl) {
+          ordersBadgeEl.textContent = pendingOrdersCount;
+          ordersBadgeEl.style.display = pendingOrdersCount > 0 ? 'inline-flex' : 'none';
+        }
+
+        const outstandingRetailersCount = RETAILERS.filter(r => r.outstanding > 0).length;
+        const retailersBadgeEl = document.getElementById('admin-retailers-badge');
+        if (retailersBadgeEl) {
+          retailersBadgeEl.textContent = outstandingRetailersCount;
+          retailersBadgeEl.style.display = outstandingRetailersCount > 0 ? 'inline-flex' : 'none';
+        }
+
+        // Real-Time Notification & Polling Alerts (Problem #6)
+        const isFirstLoad = lastOrderCount === null;
+        const messagesRes = await fetch(API + '/api/messages');
+        const allMessages = await messagesRes.json();
+        const totalMessagesCount = allMessages.length;
+
+        if (isFirstLoad) {
+          lastOrderCount = ORDERS.length;
+          lastRetailerCount = RETAILERS.length;
+          lastMessageCount = totalMessagesCount;
+        } else {
+          if (ORDERS.length > lastOrderCount) {
+            const newOrder = ORDERS[0]; // newest is first in descending order list
+            triggerAdminAlert(`📦 New Order Placed!`, `${newOrder.retailer} placed a new order of ₹${newOrder.amount.toLocaleString('en-IN')}.`);
+            lastOrderCount = ORDERS.length;
+          }
+          if (RETAILERS.length > lastRetailerCount) {
+            const newRet = RETAILERS[RETAILERS.length - 1]; // ascending list
+            triggerAdminAlert(`👤 New Retailer Registered!`, `Store "${newRet.shop}" (${newRet.name}) registered from ${newRet.city}.`);
+            lastRetailerCount = RETAILERS.length;
+          }
+          if (totalMessagesCount > lastMessageCount) {
+            const newMsgs = allMessages.slice(lastMessageCount);
+            const incoming = newMsgs.filter(m => m.sender === 'retailer');
+            if (incoming.length > 0) {
+              const latestMsg = incoming[incoming.length - 1];
+              triggerAdminAlert(`💬 New Message Received!`, `From ${latestMsg.retailer_name}: "${latestMsg.text.substring(0, 45)}..."`);
+            }
+            lastMessageCount = totalMessagesCount;
+          }
+        }
+
         // Refresh current view if needed
         const activePage = document.querySelector('.page.active').id.replace('page-', '');
         if (activePage === 'orders') renderOrders();
         if (activePage === 'pricing') renderPricing();
         if (activePage === 'retailers') renderRetailers();
         // Start messaging polling
-        pollChatData();
-        setInterval(pollChatData, 3000);
+        // WebSocket Chat is initialized automatically below
+
+        // Start background administrative updates polling loop for real-time alerts
+        if (!window.adminAlertPollerStarted) {
+          window.adminAlertPollerStarted = true;
+          setInterval(async () => {
+            try {
+              await initApp();
+            } catch (e) { }
+          }, 4000);
+        }
 
       } catch (error) {
         console.error('Error fetching data:', error);
         toast('Error connecting to backend', 'error');
+      }
+    }
+
+    function playAlertSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.6);
+      } catch (e) { /* audio Context blocked */ }
+    }
+
+    function triggerAdminAlert(title, text) {
+      playAlertSound();
+      toast(`${title} — ${text}`, 'success');
+
+      // Update UI panels instantly
+      if (typeof renderOverview === 'function') renderOverview();
+      if (typeof renderOrders === 'function') renderOrders();
+      if (typeof renderRetailers === 'function') renderRetailers();
+    }
+
+    async function deleteRetailerAccount(id, name) {
+      if (!confirm(`Are you sure you want to completely delete retailer "${name}"?\n\nThis will permanently scrub their profile, all their bulk orders, messages, and accounts logs to prevent orphan records. This action CANNOT be undone.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(API + '/api/retailers/' + id, {
+          method: 'DELETE'
+        });
+        if (!res.ok) throw new Error('Server returned an error');
+        const data = await res.json();
+        if (data.success) {
+          toast(`Retailer "${name}" has been fully purged from database`, 'success');
+
+          // Clear comparison baseline count to reflect deleted counts correctly
+          lastOrderCount = null;
+          lastRetailerCount = null;
+          lastMessageCount = null;
+
+          await initApp(); // fully reload database data and refresh all panels
+        } else {
+          toast(data.message || 'Failed to delete account', 'error');
+        }
+      } catch (e) {
+        console.error(e);
+        toast('Failed to delete account', 'error');
       }
     }
 
@@ -2514,6 +3158,46 @@
 
       closeSidebar();
 
+      // Clear badges instantly when viewing sections
+      if (id === 'notifications') {
+        const topNotifEl = document.getElementById('admin-notif-top-badge');
+        const sideNotifEl = document.getElementById('admin-notif-sidebar-badge');
+        if (topNotifEl) topNotifEl.style.display = 'none';
+        if (sideNotifEl) sideNotifEl.style.display = 'none';
+
+        // Batch mark notifications as read in DB
+        fetch(API + '/api/notifications/read-all/admin', { method: 'PUT' })
+          .then(() => {
+            NOTIFS.forEach(n => n.read = true);
+            renderNotifications();
+          }).catch(err => console.error(err));
+      }
+      if (id === 'orders') {
+        const ordersBadgeEl = document.getElementById('admin-orders-badge');
+        if (ordersBadgeEl) ordersBadgeEl.style.display = 'none';
+      }
+      if (id === 'retailers') {
+        const retailersBadgeEl = document.getElementById('admin-retailers-badge');
+        if (retailersBadgeEl) retailersBadgeEl.style.display = 'none';
+      }
+      if (id === 'chat') {
+        const navBadge = document.getElementById('chat-nav-badge');
+        const mobBadge = document.getElementById('chat-mob-badge');
+        if (navBadge) navBadge.style.display = 'none';
+        if (mobBadge) mobBadge.style.display = 'none';
+
+        // Batch mark all incoming messages as read in DB
+        fetch(API + '/api/messages/read-all?role=admin', { method: 'PUT' })
+          .then(() => {
+            allMessages.forEach(m => { if (m.sender === 'retailer') m.read = true; });
+            renderChatSidebar();
+          }).catch(err => console.error(err));
+
+        // Reset mobile chat pane view on tab entry
+        const container = document.querySelector('.chat-container');
+        if (container) container.classList.remove('show-main');
+      }
+
       // Lazy render
       const renders = { orders: renderOrders, pricing: renderPricing, retailers: renderRetailers, chat: initChat };
       if (renders[id]) renders[id]();
@@ -2537,7 +3221,7 @@
       const totalOrdersCount = ORDERS.length;
       const totalDues = RETAILERS.reduce((sum, r) => sum + (r.outstanding || 0), 0);
       const activeRetailersCount = RETAILERS.length;
-      
+
       const dueRetailersCount = RETAILERS.filter(r => (r.outstanding || 0) > 0).length;
 
       document.getElementById('overview-revenue').textContent = '₹' + totalRevenue.toLocaleString('en-IN');
@@ -2647,7 +3331,7 @@
       const q = (document.getElementById('ret-search')?.value || '').toLowerCase();
       let list = RETAILERS;
       if (retFilter === 'overdue') list = list.filter(r => r.outstanding > 0);
-      if (retFilter === 'active')  list = list.filter(r => r.outstanding === 0);
+      if (retFilter === 'active') list = list.filter(r => r.outstanding === 0);
       if (q) list = list.filter(r =>
         r.name.toLowerCase().includes(q) ||
         r.shop.toLowerCase().includes(q) ||
@@ -2655,7 +3339,7 @@
       );
 
       const sm = STATUS_META;
-      const avatarColors = ['#2C4A18','#4A3715','#1A3010','#785A20','#243D14','#3A6020'];
+      const avatarColors = ['#2C4A18', '#4A3715', '#1A3010', '#785A20', '#243D14', '#3A6020'];
 
       const statusDot = s => {
         if (!s) return '<span style="color:var(--t400);font-size:12px;font-weight:700;">New</span>';
@@ -2669,7 +3353,7 @@
         ? list.map(r => {
           const avatarBg = avatarColors[(r.id || 0) % avatarColors.length];
           const callBtn = r.phone
-            ? `<button class="btn btn-sm btn-ghost" onclick="window.location.href='tel:${r.phone.replace(/\s/g,'')}'">📞 Call</button>`
+            ? `<button class="btn btn-sm btn-ghost" onclick="window.location.href='tel:${r.phone.replace(/\s/g, '')}'">📞 Call</button>`
             : `<button class="btn btn-sm btn-ghost" onclick="toast('No phone number on file','error')">📞 Call</button>`;
 
           return `
@@ -2695,6 +3379,7 @@
         <button class="btn btn-sm btn-ghost" onclick="toast('Opening chat with ${r.name}')">💬 Message</button>
         ${callBtn}
         ${r.outstanding > 0 ? `<button class="btn btn-sm btn-danger" onclick="toast('Payment reminder sent to ${r.name}','success')">⚠️ Send Reminder</button>` : ''}
+        <button class="btn btn-sm btn-danger" style="margin-left:8px;" onclick="deleteRetailerAccount(${r.id}, '${r.name.replace(/'/g, "\\'")}')">🗑️ Delete Account</button>
         <button class="btn btn-sm btn-primary" style="margin-left:auto;" onclick="openRetailerPanel(${r.id})">View Account →</button>
       </div>
     </div>`;
@@ -2830,8 +3515,8 @@
           main.style.transform = `translateY(50px)`;
           ptr.style.transform = `translateY(0px)`;
           spinner.classList.add('spin');
-          
-          try { await initApp(); } catch(e){}
+
+          try { await initApp(); } catch (e) { }
 
           main.style.transform = 'translateY(0)';
           ptr.style.transform = 'translateY(-100%)';
@@ -2850,13 +3535,13 @@
     /* \u2550\u2550\u2550 ADMIN EDIT PROFILE \u2550\u2550\u2550 */
     function openAdminEditProfile() {
       const d = getAdminData();
-      document.getElementById('aep-name').value  = d.name;
+      document.getElementById('aep-name').value = d.name;
       document.getElementById('aep-phone').value = d.phone;
       document.getElementById('aep-email').value = d.email;
-      document.getElementById('aep-role').value  = d.role;
+      document.getElementById('aep-role').value = d.role;
 
       const ov = document.getElementById('aep-overlay');
-      const p  = document.getElementById('aep-panel');
+      const p = document.getElementById('aep-panel');
       ov.style.display = 'block'; p.style.display = 'flex';
       void p.offsetWidth; // force reflow for transition
       ov.classList.add('show'); p.classList.add('show');
@@ -2865,16 +3550,16 @@
 
     function closeAdminEditProfile() {
       const ov = document.getElementById('aep-overlay');
-      const p  = document.getElementById('aep-panel');
+      const p = document.getElementById('aep-panel');
       ov.classList.remove('show'); p.classList.remove('show');
       document.body.style.overflow = '';
       setTimeout(() => { ov.style.display = 'none'; p.style.display = 'none'; }, 300);
     }
 
     function saveAdminProfile() {
-      const name  = document.getElementById('aep-name').value.trim();
+      const name = document.getElementById('aep-name').value.trim();
       const email = document.getElementById('aep-email').value.trim();
-      const role  = document.getElementById('aep-role').value.trim();
+      const role = document.getElementById('aep-role').value.trim();
 
       if (!name) { toast('Name cannot be empty', 'error'); return; }
 
@@ -2918,7 +3603,7 @@
       const histRowHTML = (ord, extra = '') =>
         `<div class="ov-hist-row">
           <span class="ov-hist-id">#${ord.id}</span>
-          <span class="ov-hist-product">${(ord.product || '').length > 40 ? ord.product.substring(0,40)+'\u2026' : ord.product}</span>
+          <span class="ov-hist-product">${(ord.product || '').length > 40 ? ord.product.substring(0, 40) + '\u2026' : ord.product}</span>
           <div class="ov-hist-right">
             <div class="ov-hist-amt">${fmt(ord.amount)}</div>
             <span class="pill ${sm[ord.status]?.cls || 'p-gold'}" style="font-size:10px;padding:2px 7px;">
@@ -2931,7 +3616,7 @@
       const HIST_LIMIT = 6;
       _ovExpanded = false;
       const histPreview = allRetOrders.slice(0, HIST_LIMIT);
-      const histRest    = allRetOrders.slice(HIST_LIMIT);
+      const histRest = allRetOrders.slice(HIST_LIMIT);
 
       const showMoreBtn = histRest.length > 0
         ? `<button class="ov-show-more" id="ov-show-more-btn" onclick="ovExpandHistory()">
@@ -3041,7 +3726,7 @@
 
       const sm = STATUS_META;
       const fmt = n => '₹' + (n || 0).toLocaleString('en-IN');
-      const avatarColors = ['#2C4A18','#4A3715','#1A3010','#785A20','#243D14','#3A6020'];
+      const avatarColors = ['#2C4A18', '#4A3715', '#1A3010', '#785A20', '#243D14', '#3A6020'];
       const avatarBg = avatarColors[(r.id || 0) % avatarColors.length];
 
       // All orders by this retailer, newest first
@@ -3057,7 +3742,7 @@
         ? retOrders.map(o => `
           <div class="rp-ord-row">
             <span class="rp-ord-id">#${o.id}</span>
-            <span class="rp-ord-product">${(o.product || '').length > 38 ? o.product.substring(0,38)+'…' : o.product}</span>
+            <span class="rp-ord-product">${(o.product || '').length > 38 ? o.product.substring(0, 38) + '…' : o.product}</span>
             <div class="rp-ord-right">
               <div class="rp-ord-amt">${fmt(o.amount)}</div>
               <span class="pill ${sm[o.status]?.cls || 'p-gold'}" style="font-size:10px;padding:2px 7px;">
@@ -3070,14 +3755,14 @@
 
       // Registration details rows (only non-empty fields)
       const kvRows = [
-        r.email   ? `<div class="rp-kv"><span class="rp-kv-key">Email</span><span class="rp-kv-val">${r.email}</span></div>` : '',
-        r.gstin   ? `<div class="rp-kv"><span class="rp-kv-key">GSTIN</span><span class="rp-kv-val" style="font-family:'JetBrains Mono',monospace;font-size:12px;">${r.gstin}</span></div>` : '',
+        r.email ? `<div class="rp-kv"><span class="rp-kv-key">Email</span><span class="rp-kv-val">${r.email}</span></div>` : '',
+        r.gstin ? `<div class="rp-kv"><span class="rp-kv-key">GSTIN</span><span class="rp-kv-val" style="font-family:'JetBrains Mono',monospace;font-size:12px;">${r.gstin}</span></div>` : '',
         r.address ? `<div class="rp-kv"><span class="rp-kv-key">Address</span><span class="rp-kv-val">${r.address}</span></div>` : '',
-        r.phone   ? `<div class="rp-kv"><span class="rp-kv-key">Phone</span><span class="rp-kv-val">${r.phone}</span></div>` : ''
+        r.phone ? `<div class="rp-kv"><span class="rp-kv-key">Phone</span><span class="rp-kv-val">${r.phone}</span></div>` : ''
       ].filter(Boolean).join('');
 
       const callBtn = r.phone
-        ? `<a href="tel:${r.phone.replace(/\s/g,'')}" class="btn btn-sm btn-ghost">📞 Call</a>`
+        ? `<a href="tel:${r.phone.replace(/\s/g, '')}" class="btn btn-sm btn-ghost">📞 Call</a>`
         : `<button class="btn btn-sm btn-ghost" onclick="toast('No phone number on file','error')">📞 Call</button>`;
 
       document.getElementById('rp-panel-inner').innerHTML = `
@@ -3107,9 +3792,8 @@
           <div class="rp-stats-strip">
             <div class="rp-stat"><div class="rp-stat-val">${r.orders}</div><div class="rp-stat-lbl">Total Orders</div></div>
             <div class="rp-stat"><div class="rp-stat-val" style="font-size:12px;font-weight:600;">${r.lastOrder || 'None'}</div><div class="rp-stat-lbl">Last Order</div></div>
-            <div class="rp-stat"><div class="rp-stat-val" style="font-size:14px;color:${r.outstanding > 0 ? 'var(--red)' : 'var(--g600)'};">${
-              r.outstanding > 0 ? fmt(r.outstanding) : '✔ Cleared'
-            }</div><div class="rp-stat-lbl">Outstanding</div></div>
+            <div class="rp-stat"><div class="rp-stat-val" style="font-size:14px;color:${r.outstanding > 0 ? 'var(--red)' : 'var(--g600)'};">${r.outstanding > 0 ? fmt(r.outstanding) : '✔ Cleared'
+        }</div><div class="rp-stat-lbl">Outstanding</div></div>
           </div>
           ${r.outstanding > 0 ? `<div style="background:var(--redl);border:1px solid var(--red);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;color:var(--red);margin-top:10px;">⚠️ Outstanding: ${fmt(r.outstanding)} — Payment overdue</div>` : ''}
         </div>
@@ -3141,9 +3825,10 @@
     }
 
     // ── CHAT ENVIRONMENT LOGIC ──
-    let activeChatRetailer = null;
-    let allMessages = [];
-    let lastMsgCount = 0;
+    // ── CHAT ENVIRONMENT LOGIC ──
+    let activeChatRetailerId = null;
+    let sidebarList = [];
+    let activeChatHistory = [];
 
     function generateInitials(name) {
       if (!name) return 'SP';
@@ -3168,36 +3853,58 @@
       return 'SP';
     }
 
-    async function pollChatData() {
-      try {
-        const res = await fetch(API + '/api/messages');
-        if (!res.ok) return;
-        allMessages = await res.json();
-        
-        // Calculate total unread count for badges
-        const unreadCount = allMessages.filter(m => m.sender === 'retailer' && !m.read).length;
-        
-        const navBadge = document.getElementById('chat-nav-badge');
-        const mobBadge = document.getElementById('chat-mob-badge');
-        
-        if (unreadCount > 0) {
-          if (navBadge) { navBadge.textContent = unreadCount; navBadge.style.display = 'inline-block'; }
-          if (mobBadge) { mobBadge.textContent = unreadCount; mobBadge.style.display = 'inline-block'; }
-        } else {
-          if (navBadge) navBadge.style.display = 'none';
-          if (mobBadge) mobBadge.style.display = 'none';
-        }
+    /**
+     * Handles inbound WebSocket message packets.
+     */
+    async function handleIncomingChatMessage(payload) {
+      const senderId = payload.senderId;
 
-        // If currently on chat page, render sidebar
-        const activePage = document.querySelector('.page.active');
-        if (activePage && activePage.id === 'page-chat') {
-          renderChatSidebar();
-          if (activeChatRetailer) {
-            pollActiveChatMessages();
+      if (senderId !== 0) {
+        // Find retailer details
+        const ret = RETAILERS.find(r => r.id === senderId) || { name: 'Retailer Partner' };
+        
+        // If chat pane is active for this sender, append and render
+        if (activeChatRetailerId === senderId) {
+          if (!activeChatHistory.some(m => m.id === payload.id)) {
+            activeChatHistory.push(payload);
+            renderActiveChatMessages();
+          }
+          await markChatAsRead(senderId);
+        } else {
+          // Fire notification trigger
+          triggerAdminAlert(`💬 New Message Received!`, `From ${ret.name}: "${payload.text.substring(0, 45)}..."`);
+        }
+      } else {
+        // Handle acknowledgement for self messages
+        if (activeChatRetailerId === payload.receiverId) {
+          if (!activeChatHistory.some(m => m.id === payload.id)) {
+            activeChatHistory.push(payload);
+            renderActiveChatMessages();
           }
         }
-      } catch (err) {
-        console.error('Error polling chat data:', err);
+      }
+
+      // Refresh sidebar stats
+      await refreshSidebarData();
+    }
+
+    /**
+     * Refresh sidebar list data and unread badge alerts
+     */
+    async function refreshSidebarData() {
+      sidebarList = await fetchSidebarConversations();
+      renderChatSidebar();
+
+      const totalUnread = sidebarList.reduce((sum, conv) => sum + conv.unread_count, 0);
+      const navBadge = document.getElementById('chat-nav-badge');
+      const mobBadge = document.getElementById('chat-mob-badge');
+
+      if (totalUnread > 0) {
+        if (navBadge) { navBadge.textContent = totalUnread; navBadge.style.display = 'inline-block'; }
+        if (mobBadge) { mobBadge.textContent = totalUnread; mobBadge.style.display = 'inline-block'; }
+      } else {
+        if (navBadge) navBadge.style.display = 'none';
+        if (mobBadge) mobBadge.style.display = 'none';
       }
     }
 
@@ -3206,147 +3913,165 @@
       const listEl = document.getElementById('chat-retailers-list');
       if (!listEl) return;
 
-      let filteredRetailers = RETAILERS;
+      const mappedRetailers = RETAILERS.map(r => {
+        const conv = sidebarList.find(c => c.user_id === r.id);
+        return {
+          ...r,
+          lastText: conv ? conv.last_message : 'No messages yet',
+          lastActivity: conv ? new Date(conv.last_activity) : new Date(0),
+          lastTimeStr: conv ? formatMessageTime(conv.last_activity) : '',
+          unreadCount: conv ? conv.unread_count : 0
+        };
+      });
+
+      let filtered = mappedRetailers;
       if (q) {
-        filteredRetailers = RETAILERS.filter(r => 
-          r.name.toLowerCase().includes(q) || 
+        filtered = mappedRetailers.filter(r =>
+          r.name.toLowerCase().includes(q) ||
           r.shop.toLowerCase().includes(q) ||
           r.city.toLowerCase().includes(q)
         );
       }
 
-      listEl.innerHTML = filteredRetailers.map(r => {
-        // Find messages for this retailer
-        const msgs = allMessages.filter(m => m.retailer_name.toLowerCase() === r.rawName.toLowerCase());
-        const unreadMsgs = msgs.filter(m => m.sender === 'retailer' && !m.read);
-        
-        let lastText = 'No messages yet';
-        let lastTime = '';
-        if (msgs.length > 0) {
-          const sorted = [...msgs].sort((a, b) => a.id - b.id);
-          const lastMsg = sorted[sorted.length - 1];
-          lastText = (lastMsg.sender === 'admin' ? 'You: ' : '') + lastMsg.text;
-          lastTime = lastMsg.time;
-        }
+      // Sort by recent activity first
+      filtered.sort((a, b) => {
+        return b.lastActivity - a.lastActivity || a.name.localeCompare(b.name);
+      });
 
-        const isActive = activeChatRetailer && activeChatRetailer.toLowerCase() === r.rawName.toLowerCase();
-        const initials = generateInitials(r.rawName);
+      listEl.innerHTML = filtered.map(r => {
+        const isActive = activeChatRetailerId === r.id;
+        const initials = generateInitials(r.rawName || r.name);
 
         return `
-          <div class="chat-item ${isActive ? 'active' : ''}" onclick="selectRetailerChat('${r.rawName.replace(/'/g, "\\'")}')">
+          <div class="chat-item ${isActive ? 'active' : ''}" onclick="selectRetailerChat(${r.id})">
             <div class="chat-avatar">${initials}</div>
             <div style="flex:1; min-width:0;">
               <div style="display:flex; justify-content:between; align-items:center;">
                 <div class="chat-item-name">${r.name}</div>
                 <div class="chat-item-meta" style="margin-left:auto;">
-                  <div class="chat-item-time">${lastTime}</div>
+                  <div class="chat-item-time">${r.lastTimeStr}</div>
                 </div>
               </div>
               <div class="chat-item-shop">${r.shop} · 📍 ${r.city}</div>
-              <div class="chat-item-snip">${lastText}</div>
+              <div class="chat-item-snip">${r.lastText}</div>
             </div>
-            ${unreadMsgs.length > 0 ? `<span class="chat-item-badge">${unreadMsgs.length}</span>` : ''}
+            ${r.unreadCount > 0 ? `<span class="chat-item-badge">${r.unreadCount}</span>` : ''}
           </div>
         `;
       }).join('');
     }
 
-    async function selectRetailerChat(retailerName) {
-      activeChatRetailer = retailerName;
-      lastMsgCount = 0; // reset scroll trigger
-
-      // Mark messages as read
-      try {
-        await fetch(API + `/api/messages/read/${encodeURIComponent(retailerName)}?role=admin`, {
-          method: 'PUT'
-        });
-      } catch (err) {
-        console.error('Error marking messages as read:', err);
-      }
-
-      // Find retailer details
-      const ret = RETAILERS.find(r => r.rawName.toLowerCase() === retailerName.toLowerCase()) || { name: retailerName, shop: 'Retailer Partner' };
-      const initials = generateInitials(retailerName);
-
-      // Render Header
-      document.getElementById('chat-active-header').innerHTML = `
-        <div class="chat-avatar">${initials}</div>
-        <div style="flex:1; min-width:0;">
-          <div style="font-size:15px; font-weight:700; color:var(--t900);">${ret.name}</div>
-          <div style="font-size:11px; color:var(--t400);">${ret.shop} · 📍 ${ret.city || ''}</div>
-        </div>
-      `;
-
-      // Show Input Area
-      document.getElementById('chat-input-area').style.display = 'flex';
-      
-      // Update sidebar display immediately
-      pollChatData();
+    function formatMessageTime(timestamp) {
+      if (!timestamp) return '';
+      const date = new Date(timestamp);
+      return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
     }
 
-    async function pollActiveChatMessages() {
-      if (!activeChatRetailer) return;
-      try {
-        const res = await fetch(API + `/api/messages/${encodeURIComponent(activeChatRetailer)}`);
-        if (!res.ok) return;
-        const msgs = await res.json();
-        
-        const body = document.getElementById('chat-messages-body');
-        if (!body) return;
+    async function selectRetailerChat(retailerId) {
+      activeChatRetailerId = retailerId;
 
-        body.innerHTML = msgs.map(m => {
-          const isAdmin = m.sender === 'admin';
-          return `
-            <div class="chat-bubble ${isAdmin ? 'admin' : 'retailer'}">
-              <div>${m.text}</div>
-              <div class="chat-time">${m.time} · ${m.date}</div>
-            </div>
-          `;
-        }).join('');
+      // Toggle layout view for mobile
+      const container = document.querySelector('.chat-container');
+      if (container) container.classList.add('show-main');
 
-        if (msgs.length !== lastMsgCount) {
-          lastMsgCount = msgs.length;
-          body.scrollTop = body.scrollHeight;
-        }
-      } catch (err) {
-        console.error('Error fetching chat messages:', err);
+      // Sync unread status to database
+      await markChatAsRead(retailerId);
+
+      const ret = RETAILERS.find(r => r.id === retailerId) || { name: 'Retailer Partner', shop: 'Retailer' };
+      const initials = generateInitials(ret.rawName || ret.name);
+
+      const headerEl = document.getElementById('chat-active-header');
+      if (headerEl) {
+        headerEl.innerHTML = `
+          <button class="chat-back-btn" onclick="backToChatList()" style="background:none; border:none; color:var(--t700); cursor:pointer; font-size:18px; display:inline-flex; align-items:center; justify-content:center; padding:5px 8px; margin-right:8px; border-radius:4px; font-weight:bold;">←</button>
+          <div class="chat-avatar">${initials}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:15px; font-weight:700; color:var(--t900);">${ret.name}</div>
+            <div style="font-size:11px; color:var(--t400);">${ret.shop} · 📍 ${ret.city || ''}</div>
+          </div>
+        `;
       }
+
+      const inputArea = document.getElementById('chat-input-area');
+      if (inputArea) inputArea.style.display = 'flex';
+
+      activeChatHistory = await fetchChatHistory(retailerId);
+      renderActiveChatMessages();
+      await refreshSidebarData();
+    }
+
+    function backToChatList() {
+      const container = document.querySelector('.chat-container');
+      if (container) container.classList.remove('show-main');
+      activeChatRetailerId = null;
+      renderChatSidebar();
+    }
+
+    function renderActiveChatMessages() {
+      const body = document.getElementById('chat-messages-body');
+      if (!body) return;
+
+      if (activeChatHistory.length === 0) {
+        body.innerHTML = `
+          <div class="empty-state" style="margin:auto;">
+            <div class="empty-icon">💬</div>
+            <div class="empty-title">No messages yet</div>
+            <div class="empty-sub">Send a message to start chatting.</div>
+          </div>
+        `;
+        return;
+      }
+
+      body.innerHTML = activeChatHistory.map(m => {
+        const isAdmin = (m.sender_id === 0 || m.senderId === 0);
+        const text = m.message_text || m.text;
+        
+        const timeField = m.created_at || m.createdAt;
+        const dateObj = timeField ? new Date(timeField) : new Date();
+        const timeStr = dateObj.getHours() + ':' + String(dateObj.getMinutes()).padStart(2, '0');
+        const dateStr = dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+        return `
+          <div class="chat-bubble ${isAdmin ? 'admin' : 'retailer'}">
+            <div>${text}</div>
+            <div class="chat-time">${timeStr} · ${dateStr}</div>
+          </div>
+        `;
+      }).join('');
+
+      body.scrollTop = body.scrollHeight;
     }
 
     async function sendAdminMessage() {
       const inp = document.getElementById('chat-msg-input');
       if (!inp) return;
       const text = inp.value.trim();
-      if (!text || !activeChatRetailer) return;
+      if (!text || !activeChatRetailerId) return;
 
       inp.value = '';
       inp.focus();
 
-      try {
-        await fetch(API + '/api/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sender: 'admin',
-            receiver: 'retailer',
-            retailer_name: activeChatRetailer,
-            text: text
-          })
-        });
-        
-        // Refresh messages immediately
-        pollChatData();
-      } catch (err) {
-        console.error('Error sending message:', err);
-        toast('Failed to send message', 'error');
+      // Transmit message over socket
+      const sent = sendAdminWebSocketMessage(activeChatRetailerId, text);
+      if (!sent) {
+        toast('Connection offline. Failed to send message.', 'error');
       }
     }
 
     function initChat() {
-      renderChatSidebar();
-      if (activeChatRetailer) {
-        pollActiveChatMessages();
-      }
+      // Connect WS
+      connectAdminChat(
+        handleIncomingChatMessage,
+        (isConnected) => {
+          const indicator = document.getElementById('chat-status-indicator');
+          if (indicator) {
+            indicator.style.background = isConnected ? '#4CAF50' : '#F44336';
+            indicator.title = isConnected ? 'Online' : 'Connecting...';
+          }
+        }
+      );
+      
+      refreshSidebarData();
     }
 
   </script>

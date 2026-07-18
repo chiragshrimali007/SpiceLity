@@ -27,6 +27,11 @@ async function sendPriceUpdateNotification(spice, oldPrice) {
   const emoji     = spice.emoji || '🌶️';
   const name      = (spice.name || `Spice #${spice.id}`).split('(')[0].trim();
 
+  if (!admin.isInitialized) {
+    console.warn(`[FCM] Firebase not initialized. Skipping price alert notification for "${name}".`);
+    return;
+  }
+
   const message = {
     topic: 'retailers',          // all retailer app instances subscribed to this topic
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SpiceLity – Login</title>
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap"
@@ -1496,7 +1496,9 @@
   </script>
 
   <script>
-    const API = 'https://spicelity.onrender.com';
+    const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
+      ? 'http://localhost:3000'
+      : window.location.origin;
 
     // ── ONE-TIME LOGIN: check if already logged in ──
     (function checkSession() {
@@ -1564,22 +1566,16 @@
           showToast('✅ Login successful! Redirecting…');
           // Save retailer info to sessionStorage for dashboard use
           sessionStorage.setItem('spicelityUser', JSON.stringify({
+            id: data.id,
             name: data.name || name,
             shop: data.shop || '',
             city: data.city || '',
             phone: data.phone || ''
           }));
 
-          // existing line (keep it):
-          sessionStorage.setItem('spicelityUser', JSON.stringify({
-            name: data.name || name,
-            shop: data.shop || '',
-            city: data.city || '',
-            phone: data.phone || ''
-          }));
-
-          // ADD this new line immediately after:
+          // Save retailer info to localStorage for persistent session
           localStorage.setItem('sl_session', JSON.stringify({
+            id: data.id,
             role: 'retailer',
             name: data.name || name,
             shop: data.shop || '',

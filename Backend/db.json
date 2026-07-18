@@ -284,6 +284,17 @@
       "orders": 0,
       "outstanding": 0,
       "last_order": "Never"
+    },
+    {
+      "id": 11,
+      "initials": "HC",
+      "name": "testing (Hiralal Chaganlal)",
+      "city": "jaipur",
+      "phone": "+91 9876543210",
+      "password": "123456",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
     }
   ],
   "orders": [

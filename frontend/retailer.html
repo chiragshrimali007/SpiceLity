@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Spicelity — Retailer Portal</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
@@ -198,7 +198,8 @@
       border-bottom: 1px solid rgba(255, 255, 255, .08);
       display: flex;
       align-items: center;
-      height: 60px;
+      padding-top: env(safe-area-inset-top, 0px);
+      height: calc(60px + env(safe-area-inset-top, 0px));
       flex-shrink: 0;
       width: 100%;
     }
@@ -1589,7 +1590,8 @@
       z-index: 100;
       background: var(--g900);
       border-top: .5px solid rgba(255, 255, 255, .08);
-      height: 62px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      height: calc(62px + env(safe-area-inset-bottom, 0px));
       align-items: stretch;
     }
 
@@ -1640,7 +1642,7 @@
 
       .sidebar {
         position: fixed;
-        top: 60px;
+        top: calc(60px + env(safe-area-inset-top, 0px));
         left: 0;
         bottom: 0;
         z-index: 150;
@@ -1669,7 +1671,7 @@
       }
 
       .main {
-        padding: 20px 16px 90px 16px;
+        padding: 20px 16px calc(90px + env(safe-area-inset-bottom, 0px)) 16px;
         width: 100%;
         box-sizing: border-box;
       }
@@ -1976,7 +1978,7 @@
     
     .ep-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .5); z-index: 2000; display: none; opacity: 0; transition: opacity .3s; }
     .ep-overlay.show { opacity: 1; }
-    .ep-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2001; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: transform .3s cubic-bezier(.4, 0, .2, 1); display: none; flex-direction: column; max-height: 90vh; }
+    .ep-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2001; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: transform .3s cubic-bezier(.4, 0, .2, 1); display: none; flex-direction: column; max-height: 90vh; padding-bottom: env(safe-area-inset-bottom, 0px); }
     .ep-panel.show { transform: translateY(0); }
     .ep-hdr { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--c200); flex-shrink: 0; }
     .ep-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--t900); }
@@ -2071,7 +2073,7 @@
             <rect x="9" y="3" width="6" height="4" rx="2" />
           </svg>
           Order History
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="retailer-orders-badge" style="display:none;">0</span>
         </button>
       </div>
       <div class="nav-section">
@@ -2194,7 +2196,7 @@
       <section class="page" id="page-place-order">
         <div class="page-header">
           <div class="page-title">Place Bulk Order</div>
-          <div class="page-sub">Select products, set quantities, and submit — minimum 10kg per item</div>
+          <div class="page-sub">Select products, set quantities, and submit — minimum 10kg overall</div>
         </div>
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
@@ -2285,7 +2287,7 @@
             </div>
             <div class="sell-price-grid" id="sell-prices"></div>
             <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center;"
-              onclick="toast('Selling prices saved','success')">Save Prices</button>
+              onclick="saveSellingPrices()">Save Prices</button>
           </div>
         </div>
       </section>
@@ -2501,9 +2503,11 @@
     </div>
   </div>
 
+  <script src="client.js"></script>
   <script>
-    const API = 'https://spicelity.onrender.com';
-
+    const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
+      ? 'http://localhost:3000'
+      : window.location.origin;
     (function checkSession() {
       const raw = localStorage.getItem('sl_session');
       if (!raw) {
@@ -2546,6 +2550,8 @@
     };
 
     let selectedSpices = new Set();
+    let selectedQuantities = {};
+    let sellingPricesDraft = {};
     let histFilter = 'all';
 
     // ── Read logged-in retailer from sessionStorage (set by login flow) ──
@@ -2678,6 +2684,14 @@
           date: o.date
         }));
 
+        // Update Order History Badge (count of active/in-progress orders)
+        const activeOrdersCount = ORDERS_HIST.filter(o => o.status === 'pending' || o.status === 'transit').length;
+        const ordersBadgeEl = document.getElementById('retailer-orders-badge');
+        if (ordersBadgeEl) {
+          ordersBadgeEl.textContent = activeOrdersCount;
+          ordersBadgeEl.style.display = activeOrdersCount > 0 ? 'inline-flex' : 'none';
+        }
+
         renderOverview();
         renderSpiceSelector();
 
@@ -2686,9 +2700,7 @@
         if (activePage === 'pricing') renderFullPricing();
         if (activePage === 'ledger') renderLedger();
 
-        // Start messaging polling
-        pollRetailerChat();
-        setInterval(pollRetailerChat, 3000);
+        // WebSocket Chat is initialized automatically via startWebSocketChat() below
 
         // 5-minute polling for fresh spice prices
         setInterval(async () => {
@@ -2731,6 +2743,17 @@
         const _sb = document.getElementById('notif-sidebar-badge');
         if (_tb) _tb.style.display = 'none';
         if (_sb) _sb.style.display = 'none';
+        
+        // Batch mark notifications as read in DB
+        fetch(API + '/api/notifications/read-all/retailer', { method: 'PUT' })
+          .then(() => {
+            NOTIFS_R.forEach(n => n.read = true);
+            renderNotifications();
+          }).catch(err => console.error(err));
+      }
+      if (id === 'order-history') {
+        const ordersBadgeEl = document.getElementById('retailer-orders-badge');
+        if (ordersBadgeEl) ordersBadgeEl.style.display = 'none';
       }
       const lazyRenders = { 'order-history': renderHistory, pricing: renderFullPricing, ledger: renderLedger, notifications: renderNotifications, chat: initChatPage };
       if (lazyRenders[id]) lazyRenders[id]();
@@ -2860,24 +2883,31 @@
     }
 
     function toggleSpice(i) {
-      selectedSpices.has(i) ? selectedSpices.delete(i) : selectedSpices.add(i);
+      if (selectedSpices.has(i)) {
+        selectedSpices.delete(i);
+        delete selectedQuantities[i];
+      } else {
+        selectedSpices.add(i);
+        selectedQuantities[i] = 10; // default quantity
+      }
       renderSpiceSelector();
     }
 
     function renderOrderCart() {
       document.getElementById('order-cart-items').innerHTML = [...selectedSpices].map(i => {
         const s = SPICES[i];
+        const qty = selectedQuantities[i] || 10;
         return `<div class="cart-item-row">
     <div class="ci-ico" style="background:${s.bg};">${s.e}</div>
     <div class="ci-info">
       <div class="ci-name">${s.n}</div>
-      <div class="ci-price">₹${s.p}/kg · min 10kg</div>
+      <div class="ci-price">₹${s.p}/kg</div>
     </div>
     <div class="ci-qty-wrap">
       <div class="qty-label">Quantity (kg)</div>
-      <input class="qty-input" type="number" id="qty-${i}" value="10" min="10" step="5" onchange="updateCartTotal()">
+      <input class="qty-input" type="number" id="qty-${i}" value="${qty}" min="1" step="1" oninput="updateSpiceQty(${i}, this.value)">
     </div>
-    <button class="ci-remove" onclick="selectedSpices.delete(${i});renderSpiceSelector();" title="Remove">✕</button>
+    <button class="ci-remove" onclick="removeSpice(${i})" title="Remove">✕</button>
   </div>`;
       }).join('') + `<div class="cart-total-strip">
   <div class="ct-label">Estimated Total</div>
@@ -2886,10 +2916,22 @@
       updateCartTotal();
     }
 
+    function updateSpiceQty(i, val) {
+      const parsed = parseFloat(val);
+      selectedQuantities[i] = isNaN(parsed) ? 0 : parsed;
+      updateCartTotal();
+    }
+
+    function removeSpice(i) {
+      selectedSpices.delete(i);
+      delete selectedQuantities[i];
+      renderSpiceSelector();
+    }
+
     function updateCartTotal() {
       let total = 0;
       selectedSpices.forEach(i => {
-        const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
+        const qty = selectedQuantities[i] || 0;
         total += SPICES[i].p * qty;
       });
       const el = document.getElementById('cart-grand-total');
@@ -2897,12 +2939,23 @@
     }
 
     async function submitOrder() {
+      let totalQty = 0;
+      selectedSpices.forEach(i => {
+        const qty = selectedQuantities[i] || 0;
+        totalQty += qty;
+      });
+
+      if (totalQty <= 10) {
+        toast('Total order quantity must be more than 10 kg overall', 'error');
+        return;
+      }
+
       const id = '#SPC' + (1260 + Math.floor(Math.random() * 100));
 
       let totalAmount = 0;
       let productDetails = [];
       selectedSpices.forEach(i => {
-        const qty = parseFloat(document.getElementById('qty-' + i)?.value || 10);
+        const qty = selectedQuantities[i] || 0;
         totalAmount += SPICES[i].p * qty;
         productDetails.push(`${SPICES[i].n} ${qty}kg`);
       });
@@ -2927,6 +2980,7 @@
           })
         });
         selectedSpices.clear();
+        selectedQuantities = {};
         await initApp();
         toast(`Order ${id} submitted! Admin will confirm shortly.`, 'success');
         showPage('order-history');
@@ -2983,7 +3037,42 @@
       if (periodEl) periodEl.textContent = `Your financial summary — ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
 
       const totalPurchase = ORDERS_HIST.reduce((s, o) => s + (o.total || 0), 0);
-      const estSalesRevenue = Math.round(totalPurchase * 1.18);  // 18% average markup
+      
+      // Calculate revenue based on custom selling prices where possible, fallback to 18% markup
+      const savedSellingPrices = JSON.parse(localStorage.getItem(`sl_selling_prices_${RETAILER_NAME}`) || '{}');
+      let estSalesRevenue = 0;
+      
+      ORDERS_HIST.forEach(o => {
+        const items = o.product.split(' + ');
+        let orderRevenue = 0;
+        let matchedAll = true;
+        
+        items.forEach(item => {
+          const match = item.match(/(.+?)\s+(\d+)kg/);
+          if (match) {
+            const name = match[1].trim();
+            const qty = parseFloat(match[2]);
+            const spice = SPICES.find(s => s.n.includes(name));
+            if (spice && savedSellingPrices[spice.id] !== undefined) {
+              orderRevenue += savedSellingPrices[spice.id] * qty;
+            } else if (spice) {
+              orderRevenue += spice.p * 1.18 * qty;
+            } else {
+              matchedAll = false;
+            }
+          } else {
+            matchedAll = false;
+          }
+        });
+        
+        if (matchedAll && orderRevenue > 0) {
+          estSalesRevenue += orderRevenue;
+        } else {
+          estSalesRevenue += o.total * 1.18;
+        }
+      });
+      
+      estSalesRevenue = Math.round(estSalesRevenue);
       const netMargin = estSalesRevenue - totalPurchase;
       const marginPct = totalPurchase > 0 ? Math.round((netMargin / totalPurchase) * 100) : 0;
       const avgOrder = ORDERS_HIST.length > 0 ? Math.round(totalPurchase / ORDERS_HIST.length) : 0;
@@ -3015,6 +3104,13 @@
 
       document.getElementById('sell-prices').innerHTML = SPICES.map(s => {
         const shortName = s.n.split('(')[0].trim().substring(0, 12);
+        // Read draft value first, then saved value, then fallback to 18% markup
+        let sellPrice = Math.round(s.p * 1.18);
+        if (sellingPricesDraft[s.id] !== undefined) {
+          sellPrice = sellingPricesDraft[s.id];
+        } else if (savedSellingPrices[s.id] !== undefined) {
+          sellPrice = savedSellingPrices[s.id];
+        }
         return `
   <div class="sp-card">
     <div class="sp-ico">${s.e}</div>
@@ -3022,9 +3118,57 @@
       <div class="sp-name">${shortName}</div>
       <div class="sp-buy">Buy ₹${s.p}/kg</div>
     </div>
-    <input class="sp-input" type="number" placeholder="Sell ₹" min="${s.p}" value="${Math.round(s.p * 1.18)}">
+    <input class="sp-input" type="number" data-spice-id="${s.id}" placeholder="Sell ₹" min="${s.p}" value="${sellPrice}" oninput="updateSellingPriceDraft(${s.id}, this.value); validateSellingPrice(this, ${s.p})">
   </div>`;
       }).join('');
+    }
+
+    function updateSellingPriceDraft(id, val) {
+      const parsed = parseFloat(val);
+      sellingPricesDraft[id] = isNaN(parsed) ? undefined : parsed;
+    }
+
+    function validateSellingPrice(input, minVal) {
+      const val = parseFloat(input.value);
+      if (isNaN(val) || val < minVal) {
+        input.style.borderColor = 'var(--red)';
+      } else {
+        input.style.borderColor = '';
+      }
+    }
+
+    function saveSellingPrices() {
+      const savedSellingPrices = JSON.parse(localStorage.getItem(`sl_selling_prices_${RETAILER_NAME}`) || '{}');
+      const inputs = document.querySelectorAll('.sp-input');
+      let hasError = false;
+
+      inputs.forEach(input => {
+        const id = input.getAttribute('data-spice-id');
+        const val = parseFloat(input.value);
+        const minVal = parseFloat(input.getAttribute('min'));
+
+        if (!isNaN(val)) {
+          if (val < minVal) {
+            hasError = true;
+            input.style.borderColor = 'var(--red)';
+          } else {
+            savedSellingPrices[id] = val;
+            input.style.borderColor = '';
+          }
+        }
+      });
+
+      if (hasError) {
+        toast('Selling price cannot be less than wholesale price', 'error');
+        return;
+      }
+
+      localStorage.setItem(`sl_selling_prices_${RETAILER_NAME}`, JSON.stringify(savedSellingPrices));
+      sellingPricesDraft = {}; // clear drafts since they are now committed to saved prices
+      toast('Selling prices saved successfully', 'success');
+      
+      // Recalculate margins and sales revenue in ledger
+      renderLedger();
     }
 
     function renderFullPricing() {
@@ -3079,7 +3223,8 @@
     }
 
     /* ═══ CHAT ═══ */
-    let lastMsgCount = 0;
+    let chatHistory = [];
+    let RETAILER_ID = _retailer?.id;
 
     function generateInitials(name) {
       if (!name) return 'SP';
@@ -3104,65 +3249,139 @@
       return 'SP';
     }
 
-    async function pollRetailerChat() {
-      try {
-        const res = await fetch(API + `/api/messages/${encodeURIComponent(RETAILER_NAME)}`);
-        if (!res.ok) return;
-        const msgs = await res.json();
+    /**
+     * Handles routing of inbound WebSocket frames.
+     * @param {object} payload 
+     */
+    function handleIncomingChatMessage(payload) {
+      const isMe = (payload.senderId !== 0); // Sender is not Admin (0)
+      
+      // Save message to local history if it's not already logged
+      if (!chatHistory.some(m => m.id === payload.id)) {
+        chatHistory.push(payload);
+        renderChatMessages();
+      }
 
-        // Calculate total unread count from admin
-        const unreadCount = msgs.filter(m => m.sender === 'admin' && !m.read).length;
-
-        const sidebarBadge = document.getElementById('chat-sidebar-badge');
-        const mobBadge = document.getElementById('chat-mob-badge');
-
-        if (unreadCount > 0) {
-          if (sidebarBadge) { sidebarBadge.textContent = unreadCount; sidebarBadge.style.display = 'inline-block'; }
-          if (mobBadge) { mobBadge.textContent = unreadCount; mobBadge.style.display = 'inline-block'; }
-        } else {
-          if (sidebarBadge) sidebarBadge.style.display = 'none';
-          if (mobBadge) mobBadge.style.display = 'none';
+      // If user is currently looking at the chat screen, instantly mark as read
+      const activePage = document.querySelector('.page.active');
+      if (activePage && activePage.id === 'page-chat') {
+        markRetailerMessagesAsRead();
+      } else {
+        // Otherwise, update the visual badge alert
+        if (!isMe) {
+          updateUnreadBadgeCount();
         }
-
-        // If currently on chat page, render messages
-        const activePage = document.querySelector('.page.active');
-        if (activePage && activePage.id === 'page-chat') {
-          const msgsEl = document.getElementById('chat-msgs');
-          if (msgsEl) {
-            msgsEl.innerHTML = msgs.map(m => {
-              const isMe = m.sender === 'retailer';
-              return `
-                <div class="mrow ${isMe ? 'me' : ''}">
-                  <div class="mbub ${isMe ? 'mine' : 'adm'}">
-                    ${m.text}
-                    <span class="mtime">${m.time}</span>
-                  </div>
-                </div>
-              `;
-            }).join('');
-
-            if (msgs.length !== lastMsgCount) {
-              lastMsgCount = msgs.length;
-              msgsEl.scrollTop = msgsEl.scrollHeight;
-            }
-          }
-
-          // Mark messages as read by retailer
-          if (unreadCount > 0) {
-            try {
-              await fetch(API + `/api/messages/read/${encodeURIComponent(RETAILER_NAME)}?role=retailer`, {
-                method: 'PUT'
-              });
-            } catch (err) {
-              console.error('Error marking messages as read:', err);
-            }
-          }
-        }
-      } catch (err) {
-        console.error('Error polling retailer chat:', err);
       }
     }
 
+    /**
+     * Updates notification badges in both sidebar and mobile footer.
+     */
+    function updateUnreadBadgeCount() {
+      // Unread messages are messages sent from Admin (0) to User that are not read
+      const unreadCount = chatHistory.filter(m => m.senderId === 0 && !m.isRead).length;
+      const sidebarBadge = document.getElementById('chat-sidebar-badge');
+      const mobBadge = document.getElementById('chat-mob-badge');
+
+      if (unreadCount > 0) {
+        if (sidebarBadge) { sidebarBadge.textContent = unreadCount; sidebarBadge.style.display = 'inline-block'; }
+        if (mobBadge) { mobBadge.textContent = unreadCount; mobBadge.style.display = 'inline-block'; }
+      } else {
+        if (sidebarBadge) sidebarBadge.style.display = 'none';
+        if (mobBadge) mobBadge.style.display = 'none';
+      }
+    }
+
+    /**
+     * Tells the backend to mark all messages in this conversation thread as read.
+     */
+    async function markRetailerMessagesAsRead() {
+      if (!RETAILER_ID) return;
+      try {
+        await fetch(`/api/chat/read/${RETAILER_ID}`, { method: 'PUT' });
+        
+        // Update local memory to match
+        chatHistory.forEach(m => {
+          if (m.senderId === 0) m.isRead = true;
+        });
+        updateUnreadBadgeCount();
+      } catch (err) {
+        console.error('Error marking messages as read:', err);
+      }
+    }
+
+    /**
+     * Renders local chatHistory records inside the message wrapper.
+     */
+    function renderChatMessages() {
+      const msgsEl = document.getElementById('chat-msgs');
+      if (!msgsEl) return;
+
+      // Extract clean owner name for greeting
+      const ownerMatch = RETAILER_NAME.match(/\(([^)]+)\)$/);
+      const cleanName = ownerMatch ? ownerMatch[1].trim() : RETAILER_NAME.trim();
+
+      // Always prepend the platform's warm greeting messages at the top
+      const welcomeHtml = `
+        <div class="mrow">
+          <div class="mbub adm">
+            Hello ${cleanName} ji! How can I help you today? 🙏
+            <span class="mtime">9:30 AM</span>
+          </div>
+        </div>
+        <div class="mrow">
+          <div class="mbub adm">
+            Feel free to ask about pricing, orders, or account queries.
+            <span class="mtime">9:30 AM</span>
+          </div>
+        </div>
+      `;
+
+      const historyHtml = chatHistory.map(m => {
+        const isMe = (m.senderId !== 0);
+        const text = m.message_text || m.text;
+        
+        // Render timestamp
+        const timeField = m.created_at || m.createdAt;
+        const dateObj = timeField ? new Date(timeField) : new Date();
+        const timeStr = dateObj.getHours() + ':' + String(dateObj.getMinutes()).padStart(2, '0');
+        
+        return `
+          <div class="mrow ${isMe ? 'me' : ''}">
+            <div class="mbub ${isMe ? 'mine' : 'adm'}">
+              ${text}
+              <span class="mtime">${timeStr}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      msgsEl.innerHTML = welcomeHtml + historyHtml;
+
+      // Smooth scroll to bottom
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    /**
+     * Fetches entire conversation history from MySQL backend.
+     */
+    async function loadChatHistory() {
+      if (!RETAILER_ID) return;
+      try {
+        const res = await fetch(`/api/chat/history/${RETAILER_ID}`);
+        if (res.ok) {
+          chatHistory = await res.json();
+          renderChatMessages();
+          updateUnreadBadgeCount();
+        }
+      } catch (err) {
+        console.error('Error loading chat history:', err);
+      }
+    }
+
+    /**
+     * Sends message via WebSocket client wrapper.
+     */
     async function sendMsg() {
       const inp = document.getElementById('chat-inp');
       if (!inp) return;
@@ -3172,28 +3391,78 @@
       inp.value = '';
       inp.focus();
 
-      try {
-        await fetch(API + '/api/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sender: 'retailer',
-            receiver: 'admin',
-            retailer_name: RETAILER_NAME,
-            text: text
-          })
-        });
-
-        pollRetailerChat();
-      } catch (err) {
-        console.error('Error sending message:', err);
-        toast('Failed to send message', 'error');
+      // Trigger WS client send
+      const sent = sendChatMessage(text);
+      if (!sent) {
+        toast('Connection offline. Failed to send message.', 'error');
       }
     }
 
     function initChatPage() {
-      lastMsgCount = 0; // reset scroll trigger
-      pollRetailerChat();
+      loadChatHistory();
+      markRetailerMessagesAsRead();
+    }
+
+    /**
+     * Starts WebSocket connection after ensuring the Retailer ID has been resolved.
+     */
+    function startWebSocketChat() {
+      if (!RETAILER_ID) return;
+      
+      connectRetailerChat(
+        RETAILER_ID, 
+        RETAILER_NAME, 
+        handleIncomingChatMessage, 
+        (isConnected) => {
+          const statusIndicator = document.getElementById('chat-status-indicator');
+          if (statusIndicator) {
+            statusIndicator.style.background = isConnected ? '#4CAF50' : '#F44336';
+            statusIndicator.title = isConnected ? 'Chat Online' : 'Chat Offline (Connecting...)';
+          }
+        }
+      );
+      
+      loadChatHistory();
+    }
+
+    // Auto-resolve ID for legacy sessions or initiate connection immediately
+    if (!RETAILER_ID) {
+      console.log(`[Chat Init] No ID in session. Resolving from backend API ${API}/api/retailers...`);
+      fetch(API + '/api/retailers')
+        .then(r => r.json())
+        .then(list => {
+          console.log(`[Chat Init] Fetched list of ${list.length} retailers from database.`);
+          const match = list.find(r => {
+            const cleanRPhone = r.phone.replace(/\D/g, '');
+            const cleanUserPhone = RETAILER_PHONE.replace(/\D/g, '');
+            return (cleanRPhone && cleanUserPhone && cleanRPhone.endsWith(cleanUserPhone)) ||
+                   r.name.toLowerCase() === RETAILER_NAME.toLowerCase() ||
+                   r.name.toLowerCase().includes(RETAILER_NAME.toLowerCase()) ||
+                   RETAILER_NAME.toLowerCase().includes(r.name.toLowerCase());
+          });
+          if (match) {
+            RETAILER_ID = match.id;
+            console.log(`[Chat Init] Resolved Retailer ID: ${RETAILER_ID}`);
+            
+            const fresh = JSON.parse(sessionStorage.getItem('spicelityUser') || '{}');
+            fresh.id = match.id;
+            sessionStorage.setItem('spicelityUser', JSON.stringify(fresh));
+            
+            const sess = JSON.parse(localStorage.getItem('sl_session') || '{}');
+            sess.id = match.id;
+            localStorage.setItem('sl_session', JSON.stringify(sess));
+            
+            startWebSocketChat();
+          } else {
+            console.error(`[Chat Init] Failed to match retailer name "${RETAILER_NAME}" or phone "${RETAILER_PHONE}" in database list!`);
+          }
+        })
+        .catch(err => {
+          console.error(`[Chat Init] API Fetch error resolving ID: ${err.message}`);
+        });
+    } else {
+      console.log(`[Chat Init] Retailer ID found in active session: ${RETAILER_ID}`);
+      startWebSocketChat();
     }
 
     /* ═══ EDIT PROFILE ═══ */
