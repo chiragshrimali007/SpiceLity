@@ -2847,6 +2847,37 @@
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
       ? 'http://localhost:3000'
       : window.location.origin;
+
+    function getSpiceImage(name) {
+      if (!name) return 'logo/red_chilli_powder.jpeg';
+      const n = name.toLowerCase().trim();
+      if (n.includes('red chili') || n.includes('red chilli')) return 'logo/red_chilli_powder.jpeg';
+      if (n.includes('coriander')) return 'logo/coriander_powder.jpeg';
+      if (n.includes('turmeric')) return 'logo/termeric_powder.jpeg';
+      if (n.includes('amchur')) return 'logo/Amchur.jpeg';
+      if (n.includes('cumin seeds')) return 'logo/cumin_seeds.jpeg';
+      if (n.includes('split mustard')) return 'logo/Split_mustard_seeds.jpeg';
+      if (n.includes('mustard seeds')) return 'logo/Mustard_seeds.jpeg';
+      if (n.includes('fenugreek')) return 'logo/Fenugreek_seeds.jpeg';
+      if (n.includes('fennel seeds')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('kirayta') || n.includes('kirayata')) return 'logo/Kirayta.jpeg';
+      if (n.includes('lucknowi fennel')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('yellow mustard')) return 'logo/Yellow_mustard.jpeg';
+      if (n.includes('asaliya')) return 'logo/Asaliya.jpeg';
+      if (n.includes('flax seeds')) return 'logo/Flax_seeds.jpeg';
+      if (n.includes('carom seeds')) return 'logo/Caro _seeds.jpeg';
+      if (n.includes('carom powder')) return 'logo/Carom_powder.jpeg';
+      if (n.includes('green methi')) return 'logo/Green_methi_bilara.jpeg';
+      if (n.includes('whole garam masala')) return 'logo/Whole_gzram_masala.jpeg';
+      if (n.includes('ground garam masala')) return 'logo/Ground_gzram_masala.jpeg';
+      if (n.includes('garam masala')) return 'logo/Whole_gzram_masala.jpeg';
+      if (n.includes('chili') || n.includes('chilli')) return 'logo/red_chilli_powder.jpeg';
+      if (n.includes('mustard')) return 'logo/Mustard_seeds.jpeg';
+      if (n.includes('methi')) return 'logo/Green_methi_bilara.jpeg';
+      if (n.includes('fennel')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('carom')) return 'logo/Carom_powder.jpeg';
+      return 'logo/red_chilli_powder.jpeg';
+    }
     /* ═══ SESSION GUARD ═══ */
     (function checkSession() {
       // Accept either sl_session (role=admin) or sl_admin_session
@@ -3288,7 +3319,7 @@
       const list = q ? SPICES.filter(s => s.n.toLowerCase().includes(q) || s.h.includes(q)) : SPICES;
       document.getElementById('price-grid').innerHTML = list.map((s, i) => `
   <div class="price-card">
-    <div class="pc-icon" style="background:${s.bg};">${s.e}</div>
+    <div class="pc-icon" style="background:${s.bg};"><img src="${getSpiceImage(s.n)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" alt="${s.n}"></div>
     <div class="pc-name">${s.n}</div>
     <div class="pc-hin">${s.h}</div>
     <div class="pc-price">₹${s.p}<span class="pc-unit"> / kg</span></div>
@@ -3862,7 +3893,7 @@
       if (senderId !== 0) {
         // Find retailer details
         const ret = RETAILERS.find(r => r.id === senderId) || { name: 'Retailer Partner' };
-        
+
         // If chat pane is active for this sender, append and render
         if (activeChatRetailerId === senderId) {
           if (!activeChatHistory.some(m => m.id === payload.id)) {
@@ -4025,7 +4056,7 @@
       body.innerHTML = activeChatHistory.map(m => {
         const isAdmin = (m.sender_id === 0 || m.senderId === 0);
         const text = m.message_text || m.text;
-        
+
         const timeField = m.created_at || m.createdAt;
         const dateObj = timeField ? new Date(timeField) : new Date();
         const timeStr = dateObj.getHours() + ':' + String(dateObj.getMinutes()).padStart(2, '0');
@@ -4070,7 +4101,7 @@
           }
         }
       );
-      
+
       refreshSidebarData();
     }
 

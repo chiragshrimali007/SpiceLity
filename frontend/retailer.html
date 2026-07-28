@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Spicelity — Retailer Portal</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
@@ -1698,14 +1699,13 @@
       .chat-wrap {
         display: flex;
         flex-direction: column;
-        height: calc(100dvh - 60px - 62px);
-        max-height: calc(100dvh - 60px - 62px);
+        height: calc(100dvh - 60px - 62px - 20px - 90px - env(safe-area-inset-bottom, 0px));
+        max-height: calc(100dvh - 60px - 62px - 20px - 90px - env(safe-area-inset-bottom, 0px));
       }
 
       .chat-layout {
-        height: 100%;
-        max-height: 100%;
         flex: 1;
+        min-height: 0;
       }
 
       .chat-msgs {
@@ -1953,44 +1953,233 @@
         white-space: nowrap !important;
       }
     }
+
     /* ═══ PULL TO REFRESH ═══ */
-    #ptr { position: absolute; top: 60px; left: 0; width: 100%; display: flex; justify-content: center; align-items: center; height: 50px; z-index: 90; transform: translateY(-100%); transition: transform 0.2s ease; pointer-events: none; }
-    .ptr-spinner { width: 28px; height: 28px; border: 3px solid rgba(184, 128, 32, 0.2); border-top-color: var(--a500); border-radius: 50%; transition: transform 0s; }
-    .ptr-spinner.spin { animation: ptr-spin 0.8s linear infinite; }
-    @keyframes ptr-spin { 100% { transform: rotate(360deg); } }
-    .main.ptr-pull { transition: transform 0s; }
-    .main.ptr-release { transition: transform 0.3s ease; }
+    #ptr {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50px;
+      z-index: 90;
+      transform: translateY(-100%);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .ptr-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(184, 128, 32, 0.2);
+      border-top-color: var(--a500);
+      border-radius: 50%;
+      transition: transform 0s;
+    }
+
+    .ptr-spinner.spin {
+      animation: ptr-spin 0.8s linear infinite;
+    }
+
+    @keyframes ptr-spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .main.ptr-pull {
+      transition: transform 0s;
+    }
+
+    .main.ptr-release {
+      transition: transform 0.3s ease;
+    }
 
     /* ═══ EDIT PROFILE PANEL ═══ */
-    .f-field { margin-bottom: 16px; }
-    .f-label { font-size: 11px; font-weight: 800; color: var(--t700); letter-spacing: .4px; display: block; margin-bottom: 6px; text-transform: uppercase; }
-    .f-wrap { position: relative; }
-    .f-input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 12px; background: var(--c50); font-size: 16px; font-weight: 600; color: var(--t900); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .2s, background .2s; }
-    .f-input:focus { border-color: var(--g500); background: #fff; }
-    .f-input.err { border-color: var(--red); background: var(--redl); }
-    .f-input::placeholder { color: var(--t200); font-weight: 500; }
-    .f-input:disabled { opacity: 0.7; background: var(--c100); color: var(--t400); }
-    .err-msg { font-size: 11px; font-weight: 600; color: var(--red); margin-top: 4px; display: none; }
-    .err-msg.show { display: block; }
-    .spin { width: 18px; height: 18px; border: 2.5px solid rgba(255, 255, 255, .35); border-top-color: #fff; border-radius: 50%; animation: sp .65s linear infinite; display: none; }
-    .spin.show { display: block; }
-    @keyframes sp { to { transform: rotate(360deg); } }
-    
-    .ep-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .5); z-index: 2000; display: none; opacity: 0; transition: opacity .3s; }
-    .ep-overlay.show { opacity: 1; }
-    .ep-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 2001; border-radius: 24px 24px 0 0; transform: translateY(100%); transition: transform .3s cubic-bezier(.4, 0, .2, 1); display: none; flex-direction: column; max-height: 90vh; padding-bottom: env(safe-area-inset-bottom, 0px); }
-    .ep-panel.show { transform: translateY(0); }
-    .ep-hdr { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--c200); flex-shrink: 0; }
-    .ep-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 800; color: var(--t900); }
-    .ep-close { width: 32px; height: 32px; border-radius: 50%; background: var(--c100); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; color: var(--t700); font-size: 18px; }
-    .ep-body { padding: 20px 24px 24px; overflow-y: auto; flex: 1; }
-    
-    @media (min-width: 481px) and (max-width: 768px) {
-      .ep-panel { width: 480px; left: 50%; margin-left: -240px; right: auto; max-height: 85vh; }
+    .f-field {
+      margin-bottom: 16px;
     }
+
+    .f-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--t700);
+      letter-spacing: .4px;
+      display: block;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .f-wrap {
+      position: relative;
+    }
+
+    .f-input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--c50);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--t900);
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+
+    .f-input:focus {
+      border-color: var(--g500);
+      background: #fff;
+    }
+
+    .f-input.err {
+      border-color: var(--red);
+      background: var(--redl);
+    }
+
+    .f-input::placeholder {
+      color: var(--t200);
+      font-weight: 500;
+    }
+
+    .f-input:disabled {
+      opacity: 0.7;
+      background: var(--c100);
+      color: var(--t400);
+    }
+
+    .err-msg {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .err-msg.show {
+      display: block;
+    }
+
+    .spin {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, .35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: sp .65s linear infinite;
+      display: none;
+    }
+
+    .spin.show {
+      display: block;
+    }
+
+    @keyframes sp {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .ep-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 2000;
+      display: none;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .ep-overlay.show {
+      opacity: 1;
+    }
+
+    .ep-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      z-index: 2001;
+      border-radius: 24px 24px 0 0;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1);
+      display: none;
+      flex-direction: column;
+      max-height: 90vh;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .ep-panel.show {
+      transform: translateY(0);
+    }
+
+    .ep-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--c200);
+      flex-shrink: 0;
+    }
+
+    .ep-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--t900);
+    }
+
+    .ep-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      color: var(--t700);
+      font-size: 18px;
+    }
+
+    .ep-body {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+      .ep-panel {
+        width: 480px;
+        left: 50%;
+        margin-left: -240px;
+        right: auto;
+        max-height: 85vh;
+      }
+    }
+
     @media (min-width: 769px) {
-      .ep-panel { width: 520px; left: 50%; top: 50%; bottom: auto; transform: translate(-50%, -50%) scale(0.95); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); opacity: 0; transition: opacity .3s, transform .3s; }
-      .ep-panel.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      .ep-panel {
+        width: 520px;
+        left: 50%;
+        top: 50%;
+        bottom: auto;
+        transform: translate(-50%, -50%) scale(0.95);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: opacity .3s, transform .3s;
+      }
+
+      .ep-panel.show {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -2362,7 +2551,8 @@
             <div class="prof-name" id="prof-disp-name">Retailer</div>
             <div class="prof-shop" id="prof-disp-shop"></div>
             <div class="prof-city" id="prof-disp-city"></div>
-            <div class="prof-phone" style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px;" id="prof-disp-phone"></div>
+            <div class="prof-phone" style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px;"
+              id="prof-disp-phone"></div>
           </div>
         </div>
         <div class="card">
@@ -2434,7 +2624,8 @@
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
       </svg>
       <span>Support</span>
-      <span class="nav-badge" id="chat-mob-badge" style="background:var(--red); display:none; position:absolute; top:4px; right:15px; font-size:9px; padding:1px 4px; min-width:12px; height:12px; line-height:10px; border-radius:10px; color:#fff; font-weight:700;">0</span>
+      <span class="nav-badge" id="chat-mob-badge"
+        style="background:var(--red); display:none; position:absolute; top:4px; right:15px; font-size:9px; padding:1px 4px; min-width:12px; height:12px; line-height:10px; border-radius:10px; color:#fff; font-weight:700;">0</span>
     </button>
     <button class="mob-nav-item" data-page="profile" onclick="showPage('profile',this)"><svg width="19" height="19"
         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -2495,8 +2686,9 @@
           <input type="text" class="f-input" id="ep-gstin" placeholder="15-character GSTIN">
         </div>
       </div>
-      
-      <button class="btn btn-primary" id="ep-save-btn" onclick="saveEditProfile()" style="width: 100%; justify-content: center; padding: 15px; font-size: 16px; margin-top: 8px;">
+
+      <button class="btn btn-primary" id="ep-save-btn" onclick="saveEditProfile()"
+        style="width: 100%; justify-content: center; padding: 15px; font-size: 16px; margin-top: 8px;">
         <div class="spin" id="ep-spin"></div>
         <span id="ep-save-txt">Save Changes</span>
       </button>
@@ -2508,6 +2700,37 @@
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
       ? 'http://localhost:3000'
       : window.location.origin;
+
+    function getSpiceImage(name) {
+      if (!name) return 'logo/red_chilli_powder.jpeg';
+      const n = name.toLowerCase().trim();
+      if (n.includes('red chili') || n.includes('red chilli')) return 'logo/red_chilli_powder.jpeg';
+      if (n.includes('coriander')) return 'logo/coriander_powder.jpeg';
+      if (n.includes('turmeric')) return 'logo/termeric_powder.jpeg';
+      if (n.includes('amchur')) return 'logo/Amchur.jpeg';
+      if (n.includes('cumin seeds')) return 'logo/cumin_seeds.jpeg';
+      if (n.includes('split mustard')) return 'logo/Split_mustard_seeds.jpeg';
+      if (n.includes('mustard seeds')) return 'logo/Mustard_seeds.jpeg';
+      if (n.includes('fenugreek')) return 'logo/Fenugreek_seeds.jpeg';
+      if (n.includes('fennel seeds')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('kirayta') || n.includes('kirayata')) return 'logo/Kirayta.jpeg';
+      if (n.includes('lucknowi fennel')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('yellow mustard')) return 'logo/Yellow_mustard.jpeg';
+      if (n.includes('asaliya')) return 'logo/Asaliya.jpeg';
+      if (n.includes('flax seeds')) return 'logo/Flax_seeds.jpeg';
+      if (n.includes('carom seeds')) return 'logo/Caro _seeds.jpeg';
+      if (n.includes('carom powder')) return 'logo/Carom_powder.jpeg';
+      if (n.includes('green methi')) return 'logo/Green_methi_bilara.jpeg';
+      if (n.includes('whole garam masala')) return 'logo/Whole_gzram_masala.jpeg';
+      if (n.includes('ground garam masala')) return 'logo/Ground_gzram_masala.jpeg';
+      if (n.includes('garam masala')) return 'logo/Whole_gzram_masala.jpeg';
+      if (n.includes('chili') || n.includes('chilli')) return 'logo/red_chilli_powder.jpeg';
+      if (n.includes('mustard')) return 'logo/Mustard_seeds.jpeg';
+      if (n.includes('methi')) return 'logo/Green_methi_bilara.jpeg';
+      if (n.includes('fennel')) return 'logo/Fennel_seeds.jpeg';
+      if (n.includes('carom')) return 'logo/Carom_powder.jpeg';
+      return 'logo/red_chilli_powder.jpeg';
+    }
     (function checkSession() {
       const raw = localStorage.getItem('sl_session');
       if (!raw) {
@@ -2565,21 +2788,21 @@
     function renderProfileHero() {
       // ✅ FIX: Always read fresh from storage, not frozen constants
       const fresh = JSON.parse(sessionStorage.getItem('spicelityUser') || '{}');
-      const ext   = JSON.parse(localStorage.getItem('sl_profile_ext') || '{}');
+      const ext = JSON.parse(localStorage.getItem('sl_profile_ext') || '{}');
 
-      const name  = fresh.name  || ext.name  || 'Retailer';
-      const shop  = fresh.shop  || ext.shop  || '';
-      const city  = fresh.city  || ext.city  || '';
+      const name = fresh.name || ext.name || 'Retailer';
+      const shop = fresh.shop || ext.shop || '';
+      const city = fresh.city || ext.city || '';
       const phone = fresh.phone || ext.phone || '';
-      const addr  = ext.address || '';
+      const addr = ext.address || '';
 
-      const initials = name.trim().split(/\s+/).map(w => w[0]).join('').substring(0,2).toUpperCase() || 'R';
+      const initials = name.trim().split(/\s+/).map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'R';
 
       document.getElementById('prof-av-initials').textContent = initials;
-      document.getElementById('prof-disp-name').textContent   = name;
-      document.getElementById('prof-disp-shop').textContent   = shop;
-      document.getElementById('prof-disp-phone').textContent  = phone ? '+91 ' + phone : '';
-      document.getElementById('prof-disp-city').textContent   = [addr, city].filter(Boolean).join(', ') || '';
+      document.getElementById('prof-disp-name').textContent = name;
+      document.getElementById('prof-disp-shop').textContent = shop;
+      document.getElementById('prof-disp-phone').textContent = phone ? '+91 ' + phone : '';
+      document.getElementById('prof-disp-city').textContent = [addr, city].filter(Boolean).join(', ') || '';
 
       const topAvatar = document.querySelector('.tb-avatar');
       if (topAvatar) topAvatar.textContent = initials;
@@ -2743,7 +2966,7 @@
         const _sb = document.getElementById('notif-sidebar-badge');
         if (_tb) _tb.style.display = 'none';
         if (_sb) _sb.style.display = 'none';
-        
+
         // Batch mark notifications as read in DB
         fetch(API + '/api/notifications/read-all/retailer', { method: 'PUT' })
           .then(() => {
@@ -2766,7 +2989,7 @@
       // ── Stat cards ──
       const now = new Date();
       const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0,0,0,0);
+      startOfWeek.setHours(0, 0, 0, 0);
 
       // Orders this week — parse date strings from ORDERS_HIST
       const weekOrders = ORDERS_HIST.filter(o => {
@@ -2800,7 +3023,7 @@
       const estMargin = Math.round(monthTotal * 0.18);
 
       // Format helpers
-      const fmtRs = n => n >= 100000 ? `₹${(n/100000).toFixed(2)}L` : n >= 1000 ? `₹${(n/1000).toFixed(1)}K` : `₹${n.toLocaleString('en-IN')}`;
+      const fmtRs = n => n >= 100000 ? `₹${(n / 100000).toFixed(2)}L` : n >= 1000 ? `₹${(n / 1000).toFixed(1)}K` : `₹${n.toLocaleString('en-IN')}`;
 
       document.getElementById('stat-week-orders').textContent = weekOrders.length;
       document.getElementById('stat-monthly-purchase').textContent = fmtRs(monthTotal);
@@ -2845,7 +3068,7 @@
         const dir = ch > 0 ? 'chg-up' : ch < 0 ? 'chg-dn' : 'chg-fl';
         const arrow = ch > 0 ? '↑' : ch < 0 ? '↓' : '–';
         return `<div class="ptick">
-    <div class="ptick-ico">${s.e}</div>
+    <div class="ptick-ico"><img src="${getSpiceImage(s.n)}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;" alt="${s.n}"></div>
     <div class="ptick-name">${s.n.split('(')[0].trim()}</div>
     <div class="ptick-price">₹${s.p}</div>
     <div class="ptick-unit">per kg</div>
@@ -2857,7 +3080,15 @@
       const sm = STATUS_META;
       document.getElementById('overview-orders').innerHTML = ORDERS_HIST.slice(0, 3).map(o => `
   <div class="ord-row">
-    <div class="ord-ico">${SPICES.find(s => o.product.includes(s.n.split('(')[0].trim()))?.e || '📦'}</div>
+    <div class="ord-ico" style="background:${(() => {
+          const spice = SPICES.find(s => o.product.includes(s.n.split('(')[0].trim()));
+          return spice ? spice.bg : 'var(--c100)';
+        })()};">${(() => {
+          const spice = SPICES.find(s => o.product.includes(s.n.split('(')[0].trim()));
+          return spice
+            ? `<img src="${getSpiceImage(spice.n)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" alt="${spice.n}">`
+            : '📦';
+        })()}</div>
     <div style="flex:1;">
       <div class="ord-id">#${o.id} · ${o.date}</div>
       <div class="ord-name">${o.product}</div>
@@ -2871,7 +3102,7 @@
       document.getElementById('spice-select-grid').innerHTML = SPICES.map((s, i) => `
   <div class="spice-item ${selectedSpices.has(i) ? 'sel' : ''}" onclick="toggleSpice(${i})">
     ${selectedSpices.has(i) ? '<div class="si-sel-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>' : ''}
-    <div class="si-ico">${s.e}</div>
+    <div class="si-ico"><img src="${getSpiceImage(s.n)}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 12px; background: ${s.bg};" alt="${s.n}"></div>
     <div class="si-name">${s.n}</div>
     <div class="si-hin">${s.h}</div>
     <div class="si-price">₹${s.p}/kg</div>
@@ -2898,7 +3129,7 @@
         const s = SPICES[i];
         const qty = selectedQuantities[i] || 10;
         return `<div class="cart-item-row">
-    <div class="ci-ico" style="background:${s.bg};">${s.e}</div>
+    <div class="ci-ico" style="background:${s.bg};"><img src="${getSpiceImage(s.n)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;" alt="${s.n}"></div>
     <div class="ci-info">
       <div class="ci-name">${s.n}</div>
       <div class="ci-price">₹${s.p}/kg</div>
@@ -3030,23 +3261,23 @@
     function renderLedger() {
       // ── Ledger summary stats (computed from ORDERS_HIST) ──
       const now = new Date();
-      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
       // Update period subtitle
       const periodEl = document.getElementById('ledger-period');
       if (periodEl) periodEl.textContent = `Your financial summary — ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
 
       const totalPurchase = ORDERS_HIST.reduce((s, o) => s + (o.total || 0), 0);
-      
+
       // Calculate revenue based on custom selling prices where possible, fallback to 18% markup
       const savedSellingPrices = JSON.parse(localStorage.getItem(`sl_selling_prices_${RETAILER_NAME}`) || '{}');
       let estSalesRevenue = 0;
-      
+
       ORDERS_HIST.forEach(o => {
         const items = o.product.split(' + ');
         let orderRevenue = 0;
         let matchedAll = true;
-        
+
         items.forEach(item => {
           const match = item.match(/(.+?)\s+(\d+)kg/);
           if (match) {
@@ -3064,14 +3295,14 @@
             matchedAll = false;
           }
         });
-        
+
         if (matchedAll && orderRevenue > 0) {
           estSalesRevenue += orderRevenue;
         } else {
           estSalesRevenue += o.total * 1.18;
         }
       });
-      
+
       estSalesRevenue = Math.round(estSalesRevenue);
       const netMargin = estSalesRevenue - totalPurchase;
       const marginPct = totalPurchase > 0 ? Math.round((netMargin / totalPurchase) * 100) : 0;
@@ -3113,7 +3344,7 @@
         }
         return `
   <div class="sp-card">
-    <div class="sp-ico">${s.e}</div>
+    <div class="sp-ico"><img src="${getSpiceImage(s.n)}" style="width: 28px; height: 28px; object-fit: cover; border-radius: 6px; background: ${s.bg};" alt="${s.n}"></div>
     <div class="sp-info">
       <div class="sp-name">${shortName}</div>
       <div class="sp-buy">Buy ₹${s.p}/kg</div>
@@ -3166,7 +3397,7 @@
       localStorage.setItem(`sl_selling_prices_${RETAILER_NAME}`, JSON.stringify(savedSellingPrices));
       sellingPricesDraft = {}; // clear drafts since they are now committed to saved prices
       toast('Selling prices saved successfully', 'success');
-      
+
       // Recalculate margins and sales revenue in ledger
       renderLedger();
     }
@@ -3179,8 +3410,8 @@
         const badge = ch > 0
           ? `<span style="position:absolute;top:8px;right:8px;font-size:18px;" title="Price increased">📈</span>`
           : ch < 0
-          ? `<span style="position:absolute;top:8px;right:8px;font-size:18px;" title="Price decreased">📉</span>`
-          : '';
+            ? `<span style="position:absolute;top:8px;right:8px;font-size:18px;" title="Price decreased">📉</span>`
+            : '';
         const isNew = s.lastChanged > 0 && (Date.now() - s.lastChanged < 86400000);
         const newBadge = isNew && ch !== 0
           ? `<span style="position:absolute;top:8px;left:8px;background:#CCA040;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;letter-spacing:.04em;">UPDATED</span>`
@@ -3189,7 +3420,7 @@
           <div class="card" style="padding:14px;position:relative;">
             ${badge}
             ${newBadge}
-            <div style="font-size:24px;margin-bottom:6px;">${s.e}</div>
+            <div style="font-size:24px;margin-bottom:6px;"><img src="${getSpiceImage(s.n)}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 10px; background: ${s.bg};" alt="${s.n}"></div>
             <div style="font-size:13px;font-weight:700;color:var(--t900);">${s.n}</div>
             <div style="font-size:11px;color:var(--t400);margin-top:1px;">${s.h}</div>
             <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--a700);margin-top:8px;">
@@ -3255,7 +3486,7 @@
      */
     function handleIncomingChatMessage(payload) {
       const isMe = (payload.senderId !== 0); // Sender is not Admin (0)
-      
+
       // Save message to local history if it's not already logged
       if (!chatHistory.some(m => m.id === payload.id)) {
         chatHistory.push(payload);
@@ -3279,7 +3510,11 @@
      */
     function updateUnreadBadgeCount() {
       // Unread messages are messages sent from Admin (0) to User that are not read
-      const unreadCount = chatHistory.filter(m => m.senderId === 0 && !m.isRead).length;
+      const unreadCount = chatHistory.filter(m => {
+        const senderId = m.sender_id !== undefined ? m.sender_id : m.senderId;
+        const isRead = m.isRead !== undefined ? m.isRead : m.is_read;
+        return senderId === 0 && !isRead;
+      }).length;
       const sidebarBadge = document.getElementById('chat-sidebar-badge');
       const mobBadge = document.getElementById('chat-mob-badge');
 
@@ -3299,10 +3534,14 @@
       if (!RETAILER_ID) return;
       try {
         await fetch(`/api/chat/read/${RETAILER_ID}`, { method: 'PUT' });
-        
+
         // Update local memory to match
         chatHistory.forEach(m => {
-          if (m.senderId === 0) m.isRead = true;
+          const senderId = m.sender_id !== undefined ? m.sender_id : m.senderId;
+          if (senderId === 0) {
+            if (m.isRead !== undefined) m.isRead = true;
+            if (m.is_read !== undefined) m.is_read = 1;
+          }
         });
         updateUnreadBadgeCount();
       } catch (err) {
@@ -3338,14 +3577,15 @@
       `;
 
       const historyHtml = chatHistory.map(m => {
-        const isMe = (m.senderId !== 0);
+        const senderId = m.sender_id !== undefined ? m.sender_id : m.senderId;
+        const isMe = (senderId !== 0);
         const text = m.message_text || m.text;
-        
+
         // Render timestamp
         const timeField = m.created_at || m.createdAt;
         const dateObj = timeField ? new Date(timeField) : new Date();
         const timeStr = dateObj.getHours() + ':' + String(dateObj.getMinutes()).padStart(2, '0');
-        
+
         return `
           <div class="mrow ${isMe ? 'me' : ''}">
             <div class="mbub ${isMe ? 'mine' : 'adm'}">
@@ -3408,11 +3648,11 @@
      */
     function startWebSocketChat() {
       if (!RETAILER_ID) return;
-      
+
       connectRetailerChat(
-        RETAILER_ID, 
-        RETAILER_NAME, 
-        handleIncomingChatMessage, 
+        RETAILER_ID,
+        RETAILER_NAME,
+        handleIncomingChatMessage,
         (isConnected) => {
           const statusIndicator = document.getElementById('chat-status-indicator');
           if (statusIndicator) {
@@ -3421,7 +3661,7 @@
           }
         }
       );
-      
+
       loadChatHistory();
     }
 
@@ -3436,22 +3676,22 @@
             const cleanRPhone = r.phone.replace(/\D/g, '');
             const cleanUserPhone = RETAILER_PHONE.replace(/\D/g, '');
             return (cleanRPhone && cleanUserPhone && cleanRPhone.endsWith(cleanUserPhone)) ||
-                   r.name.toLowerCase() === RETAILER_NAME.toLowerCase() ||
-                   r.name.toLowerCase().includes(RETAILER_NAME.toLowerCase()) ||
-                   RETAILER_NAME.toLowerCase().includes(r.name.toLowerCase());
+              r.name.toLowerCase() === RETAILER_NAME.toLowerCase() ||
+              r.name.toLowerCase().includes(RETAILER_NAME.toLowerCase()) ||
+              RETAILER_NAME.toLowerCase().includes(r.name.toLowerCase());
           });
           if (match) {
             RETAILER_ID = match.id;
             console.log(`[Chat Init] Resolved Retailer ID: ${RETAILER_ID}`);
-            
+
             const fresh = JSON.parse(sessionStorage.getItem('spicelityUser') || '{}');
             fresh.id = match.id;
             sessionStorage.setItem('spicelityUser', JSON.stringify(fresh));
-            
+
             const sess = JSON.parse(localStorage.getItem('sl_session') || '{}');
             sess.id = match.id;
             localStorage.setItem('sl_session', JSON.stringify(sess));
-            
+
             startWebSocketChat();
           } else {
             console.error(`[Chat Init] Failed to match retailer name "${RETAILER_NAME}" or phone "${RETAILER_PHONE}" in database list!`);
@@ -3467,31 +3707,31 @@
 
     /* ═══ EDIT PROFILE ═══ */
     function openEditProfile() {
-      const u   = JSON.parse(sessionStorage.getItem('spicelityUser') || '{}');
-      const ls  = JSON.parse(localStorage.getItem('sl_session') || '{}');
+      const u = JSON.parse(sessionStorage.getItem('spicelityUser') || '{}');
+      const ls = JSON.parse(localStorage.getItem('sl_session') || '{}');
       const ext = JSON.parse(localStorage.getItem('sl_profile_ext') || '{}');
 
-      document.getElementById('ep-name').value    = u.name    || ls.name    || ext.name    || RETAILER_NAME  || '';
-      document.getElementById('ep-phone').value   = u.phone   || ls.phone   || ext.phone   || RETAILER_PHONE || '';
-      document.getElementById('ep-city').value    = u.city    || ls.city    || ext.city    || RETAILER_CITY  || '';
-      document.getElementById('ep-shop').value    = u.shop    || ls.shop    || ext.shop    || RETAILER_SHOP  || '';
+      document.getElementById('ep-name').value = u.name || ls.name || ext.name || RETAILER_NAME || '';
+      document.getElementById('ep-phone').value = u.phone || ls.phone || ext.phone || RETAILER_PHONE || '';
+      document.getElementById('ep-city').value = u.city || ls.city || ext.city || RETAILER_CITY || '';
+      document.getElementById('ep-shop').value = u.shop || ls.shop || ext.shop || RETAILER_SHOP || '';
       document.getElementById('ep-address').value = ls.address || ext.address || '';
-      document.getElementById('ep-email').value   = ls.email   || ext.email   || '';
-      document.getElementById('ep-gstin').value   = ls.gstin   || ext.gstin   || '';
-      
+      document.getElementById('ep-email').value = ls.email || ext.email || '';
+      document.getElementById('ep-gstin').value = ls.gstin || ext.gstin || '';
+
       document.getElementById('ep-name').classList.remove('err');
       document.getElementById('ep-city').classList.remove('err');
       document.getElementById('ep-err-name').classList.remove('show');
       document.getElementById('ep-err-city').classList.remove('show');
-      
+
       const ov = document.getElementById('ep-overlay');
       const p = document.getElementById('ep-panel');
       ov.style.display = 'block';
       p.style.display = 'flex';
-      
+
       // Force reflow
       void p.offsetWidth;
-      
+
       ov.classList.add('show');
       p.classList.add('show');
     }
@@ -3510,10 +3750,10 @@
     async function saveEditProfile() {
       const nameEl = document.getElementById('ep-name');
       const cityEl = document.getElementById('ep-city');
-      const shop    = document.getElementById('ep-shop').value.trim();
+      const shop = document.getElementById('ep-shop').value.trim();
       const address = document.getElementById('ep-address').value.trim();
-      const email   = document.getElementById('ep-email').value.trim();
-      const gstin   = document.getElementById('ep-gstin').value.trim().toUpperCase();
+      const email = document.getElementById('ep-email').value.trim();
+      const gstin = document.getElementById('ep-gstin').value.trim().toUpperCase();
 
       const name = nameEl.value.trim();
       const city = cityEl.value.trim();
@@ -3537,8 +3777,8 @@
       }
       if (!valid) return;
 
-      const btn    = document.getElementById('ep-save-btn');
-      const spin   = document.getElementById('ep-spin');
+      const btn = document.getElementById('ep-save-btn');
+      const spin = document.getElementById('ep-spin');
       const btnTxt = document.getElementById('ep-save-txt');
       btn.style.pointerEvents = 'none';
       btn.style.opacity = '0.8';
@@ -3558,8 +3798,10 @@
         }
 
         // Save extended fields to localStorage (persists across sessions)
-        const ext = { name, city, shop, address, email, gstin,
-                      phone: RETAILER_PHONE, savedAt: Date.now() };
+        const ext = {
+          name, city, shop, address, email, gstin,
+          phone: RETAILER_PHONE, savedAt: Date.now()
+        };
         localStorage.setItem('sl_profile_ext', JSON.stringify(ext));
 
         // Update sessionStorage so rest of dashboard reflects changes immediately
@@ -3665,8 +3907,8 @@
           main.style.transform = `translateY(50px)`;
           ptr.style.transform = `translateY(0px)`;
           spinner.classList.add('spin');
-          
-          try { await initApp(); } catch(e){}
+
+          try { await initApp(); } catch (e) { }
 
           main.style.transform = 'translateY(0)';
           ptr.style.transform = 'translateY(-100%)';

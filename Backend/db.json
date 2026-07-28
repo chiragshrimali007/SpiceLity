@@ -295,6 +295,17 @@
       "orders": 0,
       "outstanding": 0,
       "last_order": "Never"
+    },
+    {
+      "id": 12,
+      "initials": "TR",
+      "name": "Test Kirana (Test Retailer)",
+      "city": "Jodhpur",
+      "phone": "+91 8112208053",
+      "password": "password123",
+      "orders": 0,
+      "outstanding": 0,
+      "last_order": "Never"
     }
   ],
   "orders": [
