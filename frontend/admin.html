@@ -2842,6 +2842,12 @@
     </button>
   </nav>
 
+  <!-- Firebase SDKs & Config -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="services/firebaseChat.js"></script>
   <script src="admin.js"></script>
   <script>
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
@@ -3494,7 +3500,20 @@
     }
 
     /* ═══ INIT ═══ */
-    initApp();
+    if (window.USE_FIREBASE_CHAT) {
+      firebase.auth().signInAnonymously()
+        .then(() => {
+          console.log("[Firebase] Admin signed in anonymously.");
+          initApp();
+        })
+        .catch((error) => {
+          console.error("Firebase anonymous auth failed:", error);
+          // Fallback to load app anyway in case Firebase is temporarily unreachable
+          initApp();
+        });
+    } else {
+      initApp();
+    }
 
     /* ═══ PULL TO REFRESH ═══ */
     (function initPTR() {
@@ -4005,8 +4024,12 @@
       const container = document.querySelector('.chat-container');
       if (container) container.classList.add('show-main');
 
-      // Sync unread status to database
-      await markChatAsRead(retailerId);
+      // Sync unread status
+      if (window.USE_FIREBASE_CHAT) {
+        await window.firebaseChat.markAsRead(retailerId, 'admin');
+      } else {
+        await markChatAsRead(retailerId);
+      }
 
       const ret = RETAILERS.find(r => r.id === retailerId) || { name: 'Retailer Partner', shop: 'Retailer' };
       const initials = generateInitials(ret.rawName || ret.name);
@@ -4026,15 +4049,35 @@
       const inputArea = document.getElementById('chat-input-area');
       if (inputArea) inputArea.style.display = 'flex';
 
-      activeChatHistory = await fetchChatHistory(retailerId);
-      renderActiveChatMessages();
-      await refreshSidebarData();
+      if (window.USE_FIREBASE_CHAT) {
+        if (window.activeFirebaseChatUnsubscribe) {
+          window.activeFirebaseChatUnsubscribe();
+        }
+        window.activeFirebaseChatUnsubscribe = window.firebaseChat.listenToChat(retailerId, (messages) => {
+          if (activeChatRetailerId === retailerId) {
+            activeChatHistory = messages;
+            renderActiveChatMessages();
+            // Automatically mark incoming chats as read
+            window.firebaseChat.markAsRead(retailerId, 'admin');
+          }
+        });
+      } else {
+        activeChatHistory = await fetchChatHistory(retailerId);
+        renderActiveChatMessages();
+        await refreshSidebarData();
+      }
     }
 
     function backToChatList() {
       const container = document.querySelector('.chat-container');
       if (container) container.classList.remove('show-main');
       activeChatRetailerId = null;
+      
+      if (window.USE_FIREBASE_CHAT && window.activeFirebaseChatUnsubscribe) {
+        window.activeFirebaseChatUnsubscribe();
+        window.activeFirebaseChatUnsubscribe = null;
+      }
+      
       renderChatSidebar();
     }
 
@@ -4082,27 +4125,66 @@
       inp.value = '';
       inp.focus();
 
-      // Transmit message over socket
-      const sent = sendAdminWebSocketMessage(activeChatRetailerId, text);
-      if (!sent) {
-        toast('Connection offline. Failed to send message.', 'error');
+      if (window.USE_FIREBASE_CHAT) {
+        try {
+          await window.firebaseChat.sendMessage(activeChatRetailerId, text, 'admin');
+        } catch (err) {
+          toast('Failed to send message via Firebase.', 'error');
+          console.error(err);
+        }
+      } else {
+        // Transmit message over socket
+        const sent = sendAdminWebSocketMessage(activeChatRetailerId, text);
+        if (!sent) {
+          toast('Connection offline. Failed to send message.', 'error');
+        }
       }
     }
 
     function initChat() {
-      // Connect WS
-      connectAdminChat(
-        handleIncomingChatMessage,
-        (isConnected) => {
-          const indicator = document.getElementById('chat-status-indicator');
-          if (indicator) {
-            indicator.style.background = isConnected ? '#4CAF50' : '#F44336';
-            indicator.title = isConnected ? 'Online' : 'Connecting...';
-          }
+      if (window.USE_FIREBASE_CHAT) {
+        // Set Firebase Chat status indicator to online
+        const statusIndicator = document.getElementById('chat-status-indicator');
+        if (statusIndicator) {
+          statusIndicator.style.background = '#4CAF50';
+          statusIndicator.title = 'Firebase Chat Online';
         }
-      );
 
-      refreshSidebarData();
+        // Subscribe to real-time conversation updates for sidebar
+        if (window.activeSidebarUnsubscribe) {
+          window.activeSidebarUnsubscribe();
+        }
+        window.activeSidebarUnsubscribe = window.firebaseChat.listenToSidebar((threads) => {
+          sidebarList = threads;
+          renderChatSidebar();
+
+          const totalUnread = sidebarList.reduce((sum, conv) => sum + conv.unread_count, 0);
+          const navBadge = document.getElementById('chat-nav-badge');
+          const mobBadge = document.getElementById('chat-mob-badge');
+
+          if (totalUnread > 0) {
+            if (navBadge) { navBadge.textContent = totalUnread; navBadge.style.display = 'inline-block'; }
+            if (mobBadge) { mobBadge.textContent = totalUnread; mobBadge.style.display = 'inline-block'; }
+          } else {
+            if (navBadge) navBadge.style.display = 'none';
+            if (mobBadge) mobBadge.style.display = 'none';
+          }
+        });
+      } else {
+        // Connect WS
+        connectAdminChat(
+          handleIncomingChatMessage,
+          (isConnected) => {
+            const indicator = document.getElementById('chat-status-indicator');
+            if (indicator) {
+              indicator.style.background = isConnected ? '#4CAF50' : '#F44336';
+              indicator.title = isConnected ? 'Online' : 'Connecting...';
+            }
+          }
+        );
+
+        refreshSidebarData();
+      }
     }
 
   </script>

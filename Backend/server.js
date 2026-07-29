@@ -75,16 +75,16 @@ app.delete('/api/retailers/:id', (req, res) => {
   try {
     const db = readDB();
     const id = parseInt(req.params.id);
-    
+
     // Find the retailer first to get their exact name for scrub matches
     const retailerIndex = db.retailers.findIndex(r => r.id === id);
     if (retailerIndex === -1) {
       return res.status(404).json({ success: false, message: 'Retailer not found' });
     }
-    
+
     const retailer = db.retailers[retailerIndex];
     const rName = retailer.name; // exact full name, e.g. "Ramesh Sharma"
-    
+
     // Also parse owner name and shop name just in case there are variations
     const ownerMatch = rName.match(/\(([^)]+)\)$/);
     const ownerName = ownerMatch ? ownerMatch[1].trim() : '';
@@ -92,13 +92,13 @@ app.delete('/api/retailers/:id', (req, res) => {
 
     // 1. Delete the retailer document
     db.retailers.splice(retailerIndex, 1);
-    
+
     // 2. WIPE all orders associated with this retailer's names
     db.orders = db.orders.filter(o => {
       const oName = (o.retailer_name || '').toLowerCase();
-      const match = oName.includes(rName.toLowerCase()) || 
-                    (ownerName && oName.includes(ownerName.toLowerCase())) ||
-                    (shopName && oName.includes(shopName.toLowerCase()));
+      const match = oName.includes(rName.toLowerCase()) ||
+        (ownerName && oName.includes(ownerName.toLowerCase())) ||
+        (shopName && oName.includes(shopName.toLowerCase()));
       return !match;
     });
 
@@ -106,14 +106,14 @@ app.delete('/api/retailers/:id', (req, res) => {
     db.messages = db.messages.filter(m => {
       const mName = (m.retailer_name || '').toLowerCase();
       const match = mName.includes(rName.toLowerCase()) ||
-                    (ownerName && mName.includes(ownerName.toLowerCase())) ||
-                    (shopName && mName.includes(shopName.toLowerCase()));
+        (ownerName && mName.includes(ownerName.toLowerCase())) ||
+        (shopName && mName.includes(shopName.toLowerCase()));
       return !match;
     });
 
     // 4. Save clean database back to disk
     writeDB(db);
-    
+
     res.json({ success: true, message: 'Retailer and all associated data scrubbed successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -182,7 +182,7 @@ app.post('/api/orders', (req, res) => {
       order_id, retailer_name, city, product_details, amount, status, date, time
     };
     db.orders.push(newOrder);
-    
+
     const ret = db.retailers.find(r => r.name === retailer_name);
     if (ret) {
       ret.orders += 1;
@@ -296,10 +296,10 @@ app.post('/api/messages', (req, res) => {
   try {
     const db = readDB();
     const { sender, receiver, retailer_name, text } = req.body;
-    
+
     const now = new Date();
     const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const date = now.getDate() + ' ' + months[now.getMonth()];
 
     const newMsg = {
@@ -386,7 +386,7 @@ function verifyToken(token) {
         name: payload.name
       };
     }
-    
+
     // Fallback: simple token structure "id-role-name" for manual/direct tests
     const [idStr, role, name] = token.split('-');
     if (idStr && role) {
@@ -407,7 +407,7 @@ server.on('upgrade', (request, socket, head) => {
   try {
     const parsedUrl = url.parse(request.url, true);
     const token = parsedUrl.query.token;
-    
+
     const user = verifyToken(token);
     if (!user) {
       console.warn(`[WS Auth Failed] Unauthorized connection attempt from ${request.socket.remoteAddress}`);
@@ -415,7 +415,7 @@ server.on('upgrade', (request, socket, head) => {
       socket.destroy();
       return;
     }
-    
+
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request, user);
     });
@@ -428,35 +428,35 @@ server.on('upgrade', (request, socket, head) => {
 // WebSocket Connection Lifecycle
 wss.on('connection', (ws, request, user) => {
   console.log(`[WS Connected] User ID: ${user.id}, Role: ${user.role}, Name: ${user.name}`);
-  
+
   // Register client socket
   clients.set(user.id, ws);
-  
+
   // Send connection acknowledgment to client
   ws.send(JSON.stringify({
     type: 'connection_established',
     user: { id: user.id, role: user.role, name: user.name }
   }));
-  
+
   // Handle incoming message events
   ws.on('message', async (messageBuffer) => {
     try {
       const messageStr = messageBuffer.toString('utf8');
       const payload = JSON.parse(messageStr);
       const { receiverId, text } = payload;
-      
+
       if (receiverId === undefined || receiverId === null || !text) {
         ws.send(JSON.stringify({ type: 'error', message: 'Missing receiverId or text payload' }));
         return;
       }
-      
+
       const senderId = user.id;
       const textTrim = text.trim();
       if (!textTrim) return;
-      
+
       // Save message immediately to the MySQL DB
       const messageId = await saveMessage(senderId, parseInt(receiverId), textTrim);
-      
+
       const outgoingPayload = {
         id: messageId,
         senderId,
@@ -465,7 +465,7 @@ wss.on('connection', (ws, request, user) => {
         createdAt: new Date().toISOString(),
         isRead: false
       };
-      
+
       // Send acknowledgment back to sender
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
@@ -473,7 +473,7 @@ wss.on('connection', (ws, request, user) => {
           ...outgoingPayload
         }));
       }
-      
+
       // Check registry for active socket of receiver and deliver
       const receiverSocket = clients.get(parseInt(receiverId));
       if (receiverSocket && receiverSocket.readyState === WebSocket.OPEN) {
@@ -485,19 +485,19 @@ wss.on('connection', (ws, request, user) => {
         // Fallback console log indicating offline recipient push notification hook
         console.log(`[Push Fallback] Recipient ${receiverId} offline. Trigger FCM push notification to target user: "${textTrim.substring(0, 50)}..."`);
       }
-      
+
     } catch (err) {
       console.error('[WS Message Error] Error handling payload:', err);
       ws.send(JSON.stringify({ type: 'error', message: 'Error processing message payload' }));
     }
   });
-  
+
   // Handle socket closure to prevent memory leaks
   ws.on('close', (code, reason) => {
     console.log(`[WS Closed] User ID: ${user.id}, Code: ${code}, Reason: ${reason}`);
     clients.delete(user.id);
   });
-  
+
   // Handle socket errors
   ws.on('error', (error) => {
     console.error(`[WS Socket Error] User ID: ${user.id}:`, error);

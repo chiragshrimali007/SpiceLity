@@ -2695,6 +2695,12 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs & Config -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="services/firebaseChat.js"></script>
   <script src="client.js"></script>
   <script>
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
@@ -3533,17 +3539,31 @@
     async function markRetailerMessagesAsRead() {
       if (!RETAILER_ID) return;
       try {
-        await fetch(`/api/chat/read/${RETAILER_ID}`, { method: 'PUT' });
-
-        // Update local memory to match
-        chatHistory.forEach(m => {
-          const senderId = m.sender_id !== undefined ? m.sender_id : m.senderId;
-          if (senderId === 0) {
-            if (m.isRead !== undefined) m.isRead = true;
-            if (m.is_read !== undefined) m.is_read = 1;
+        if (window.USE_FIREBASE_CHAT) {
+          if (typeof firebase !== 'undefined' && !firebase.auth().currentUser) {
+            await new Promise((resolve) => {
+              const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                  unsubscribe();
+                  resolve();
+                }
+              });
+            });
           }
-        });
-        updateUnreadBadgeCount();
+          await window.firebaseChat.markAsRead(RETAILER_ID, 'retailer');
+        } else {
+          await fetch(`/api/chat/read/${RETAILER_ID}`, { method: 'PUT' });
+
+          // Update local memory to match
+          chatHistory.forEach(m => {
+            const senderId = m.sender_id !== undefined ? m.sender_id : m.senderId;
+            if (senderId === 0) {
+              if (m.isRead !== undefined) m.isRead = true;
+              if (m.is_read !== undefined) m.is_read = 1;
+            }
+          });
+          updateUnreadBadgeCount();
+        }
       } catch (err) {
         console.error('Error marking messages as read:', err);
       }
@@ -3620,7 +3640,7 @@
     }
 
     /**
-     * Sends message via WebSocket client wrapper.
+     * Sends message via WebSocket client wrapper or Firebase Firestore.
      */
     async function sendMsg() {
       const inp = document.getElementById('chat-inp');
@@ -3631,23 +3651,79 @@
       inp.value = '';
       inp.focus();
 
-      // Trigger WS client send
-      const sent = sendChatMessage(text);
-      if (!sent) {
-        toast('Connection offline. Failed to send message.', 'error');
+      if (window.USE_FIREBASE_CHAT) {
+        try {
+          if (typeof firebase !== 'undefined' && !firebase.auth().currentUser) {
+            await new Promise((resolve) => {
+              const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                  unsubscribe();
+                  resolve();
+                }
+              });
+            });
+          }
+          await window.firebaseChat.sendMessage(RETAILER_ID, text, 'retailer');
+        } catch (err) {
+          toast('Failed to send message via Firebase.', 'error');
+          console.error(err);
+        }
+      } else {
+        // Trigger WS client send
+        const sent = sendChatMessage(text);
+        if (!sent) {
+          toast('Connection offline. Failed to send message.', 'error');
+        }
       }
     }
 
     function initChatPage() {
-      loadChatHistory();
-      markRetailerMessagesAsRead();
+      if (window.USE_FIREBASE_CHAT) {
+        markRetailerMessagesAsRead();
+      } else {
+        loadChatHistory();
+        markRetailerMessagesAsRead();
+      }
     }
 
     /**
-     * Starts WebSocket connection after ensuring the Retailer ID has been resolved.
+     * Starts WebSocket connection or Firebase listener after ensuring the Retailer ID has been resolved.
      */
     function startWebSocketChat() {
       if (!RETAILER_ID) return;
+
+      if (window.USE_FIREBASE_CHAT) {
+        firebase.auth().signInAnonymously()
+          .then(() => {
+            // Initialize Firebase Chat status indicator
+            const statusIndicator = document.getElementById('chat-status-indicator');
+            if (statusIndicator) {
+              statusIndicator.style.background = '#4CAF50';
+              statusIndicator.title = 'Firebase Chat Online';
+            }
+
+            // Subscribe to Firebase Firestore real-time updates
+            if (window.activeFirebaseChatUnsubscribe) {
+              window.activeFirebaseChatUnsubscribe();
+            }
+            window.activeFirebaseChatUnsubscribe = window.firebaseChat.listenToChat(RETAILER_ID, (messages) => {
+              chatHistory = messages;
+              renderChatMessages();
+
+              // If user is currently looking at the chat screen, instantly mark as read
+              const activePage = document.querySelector('.page.active');
+              if (activePage && activePage.id === 'page-chat') {
+                markRetailerMessagesAsRead();
+              } else {
+                updateUnreadBadgeCount();
+              }
+            });
+          })
+          .catch((error) => {
+            console.error("Firebase anonymous auth failed for retailer:", error);
+          });
+        return;
+      }
 
       connectRetailerChat(
         RETAILER_ID,
