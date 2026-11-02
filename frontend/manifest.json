@@ -1,0 +1,19 @@
+{
+  "name": "SpiceLity - Quality Spices",
+  "short_name": "SpiceLity",
+  "description": "SpiceLity wholesale platform for spices mandi rates, orders, and real-time support",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0F1E08",
+  "theme_color": "#0F1E08",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo/red_chilli_powder.jpeg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
