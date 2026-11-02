@@ -16,38 +16,38 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/logo/red_chilli_powder.jpeg",
+      "src": "/logo/icon-192.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo/red_chilli_powder.jpeg",
+      "src": "/logo/icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo/red_chilli_powder.jpeg",
+      "src": "/logo/icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/logo/red_chilli_powder.jpeg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
+      "src": "/logo/screenshot-mobile.png",
+      "sizes": "540x960",
+      "type": "image/png",
       "form_factor": "narrow",
-      "label": "SpiceLity Wholesale Mobile Portal"
+      "label": "SpiceLity Mobile Wholesale Portal"
     },
     {
-      "src": "/logo/coriander_powder.jpeg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
+      "src": "/logo/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
       "form_factor": "wide",
-      "label": "SpiceLity Dashboard"
+      "label": "SpiceLity Dashboard Screen"
     }
   ],
   "shortcuts": [
@@ -58,9 +58,9 @@
       "url": "/retailer.html",
       "icons": [
         {
-          "src": "/logo/red_chilli_powder.jpeg",
+          "src": "/logo/icon-192.png",
           "sizes": "192x192",
-          "type": "image/jpeg"
+          "type": "image/png"
         }
       ]
     },
@@ -71,9 +71,9 @@
       "url": "/admin.html",
       "icons": [
         {
-          "src": "/logo/red_chilli_powder.jpeg",
+          "src": "/logo/icon-192.png",
           "sizes": "192x192",
-          "type": "image/jpeg"
+          "type": "image/png"
         }
       ]
     }
