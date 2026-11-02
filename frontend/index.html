@@ -8,8 +8,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap"
     rel="stylesheet">
-  <link rel="icon" type="image/png" href="logo/App%20Logo.png">
-  <link rel="apple-touch-icon" href="logo/App%20Logo.png">
 
   <!-- ── FIREBASE SDK (compat build) ── -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -889,7 +887,7 @@
         <!-- Brand Hero -->
         <div class="hero-strip">
           <div class="brand-row">
-            <div class="mono" style="overflow:hidden;padding:0;"><img src="logo/App%20Logo.png" style="width:100%;height:100%;object-fit:cover;" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='SL';"></div>
+            <div class="mono">SL</div>
             <div class="brand-name">Spice<span>Lity</span></div>
           </div>
           <div class="hero-sub">India's B2B Spice Marketplace</div>
@@ -964,7 +962,7 @@
 
         <div class="hero-strip" style="padding-bottom:48px;">
           <div class="brand-row">
-            <div class="mono" style="overflow:hidden;padding:0;"><img src="logo/App%20Logo.png" style="width:100%;height:100%;object-fit:cover;" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='SL';"></div>
+            <div class="mono">SL</div>
             <div class="brand-name">Spice<span>Lity</span></div>
           </div>
           <div class="hero-sub">Who are you joining as?</div>
@@ -1012,7 +1010,7 @@
 
         <div class="hero-strip" style="padding-bottom:48px;">
           <div class="brand-row">
-            <div class="mono" style="overflow:hidden;padding:0;"><img src="logo/App%20Logo.png" style="width:100%;height:100%;object-fit:cover;" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='SL';"></div>
+            <div class="mono">SL</div>
             <div class="brand-name">Spice<span>Lity</span></div>
           </div>
           <div class="hero-sub">Consumer Registration</div>
@@ -1141,7 +1139,7 @@
 
         <div class="hero-strip" style="padding-bottom:48px;">
           <div class="brand-row">
-            <div class="mono" style="overflow:hidden;padding:0;"><img src="logo/App%20Logo.png" style="width:100%;height:100%;object-fit:cover;" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='SL';"></div>
+            <div class="mono">SL</div>
             <div class="brand-name">Spice<span>Lity</span></div>
           </div>
           <div class="hero-sub">Retailer Registration</div>
@@ -1349,7 +1347,7 @@
         <div class="hero-strip"
           style="padding-bottom:48px;background:linear-gradient(135deg,#1A1A1A 0%,#333 60%,#555 100%);">
           <div class="brand-row">
-            <div class="mono" style="overflow:hidden;padding:0;"><img src="logo/App%20Logo.png" style="width:100%;height:100%;object-fit:cover;" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='SL';"></div>
+            <div class="mono">SL</div>
             <div class="brand-name">Spice<span>Lity</span></div>
           </div>
           <div class="hero-sub">Admin Access Portal</div>
@@ -1499,14 +1497,9 @@
   </script>
 
   <script>
-    const API = (function() {
-      const custom = localStorage.getItem('sl_api_url');
-      if (custom) return custom.replace(/\/$/, '');
-      if (window.location.origin !== 'null' && !window.location.protocol.startsWith('file')) {
-        return window.location.origin;
-      }
-      return 'http://192.168.29.187:3000';
-    })();
+    const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
+      ? 'http://localhost:3000'
+      : window.location.origin;
 
     // ── ONE-TIME LOGIN: check if already logged in ──
     (function checkSession() {
