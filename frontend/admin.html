@@ -2483,6 +2483,18 @@
     <!-- MAIN CONTENT -->
     <main class="main" id="main-content">
 
+      <!-- Notification Permission Banner -->
+      <div id="admin-notif-perm-banner" style="display:none;background:linear-gradient(135deg,var(--g900),var(--g800));color:#fff;padding:12px 18px;border-radius:var(--r);margin-bottom:16px;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 15px rgba(0,0,0,0.12);flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+          <span style="font-size:20px;">🔔</span>
+          <span><strong>Enable Browser Notifications:</strong> Get real-time alerts when retailers place new orders or send chat messages.</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-sm btn-primary" onclick="requestAdminNotificationPermission()" style="background:var(--a400);color:#fff;border:none;">Enable Alerts</button>
+          <button class="btn btn-sm btn-ghost" onclick="document.getElementById('admin-notif-perm-banner').style.display='none'" style="color:rgba(255,255,255,0.7);">Dismiss</button>
+        </div>
+      </div>
+
       <!-- ── OVERVIEW ── -->
       <section class="page active" id="page-overview">
         <div class="page-header">
@@ -2713,11 +2725,11 @@
             </div>
             <div class="set-chev">›</div>
           </div>
-          <div class="set-row" onclick="toast('Feature coming soon')">
+          <div class="set-row" onclick="requestAdminNotificationPermission()">
             <div class="set-ico">🔔</div>
             <div>
               <div class="set-lbl">Notification Rules</div>
-              <div class="set-desc">Control when retailers and consumers receive alerts</div>
+              <div class="set-desc" id="admin-notif-rule-desc">Browser notifications: Click to check or enable alerts</div>
             </div>
             <div class="set-chev">›</div>
           </div>
@@ -2972,6 +2984,7 @@
     async function initApp() {
       // Render dynamic admin identity on every load
       renderAdminHero();
+      updateAdminNotificationPermissionUI();
 
       try {
         const [spicesRes, ordersRes, retailersRes, notifsRes] = await Promise.all([
@@ -3151,14 +3164,67 @@
       } catch (e) { /* audio Context blocked */ }
     }
 
-    function triggerAdminAlert(title, text) {
+    function triggerAdminAlert(title, text, type = 'success') {
       playAlertSound();
-      toast(`${title} — ${text}`, 'success');
+      toast(`${title} — ${text}`, type);
+
+      // Desktop system notification
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+          const n = new Notification(title, {
+            body: text,
+            icon: 'logo/red_chilli_powder.jpeg',
+            badge: 'logo/red_chilli_powder.jpeg'
+          });
+          n.onclick = () => {
+            window.focus();
+            if (title.toLowerCase().includes('order')) showPage('orders');
+            else if (title.toLowerCase().includes('message')) showPage('chat');
+          };
+        } catch (e) {
+          console.warn('Browser notification error:', e);
+        }
+      }
 
       // Update UI panels instantly
       if (typeof renderOverview === 'function') renderOverview();
       if (typeof renderOrders === 'function') renderOrders();
       if (typeof renderRetailers === 'function') renderRetailers();
+    }
+
+    function requestAdminNotificationPermission() {
+      if (!('Notification' in window)) {
+        toast('Browser notifications not supported in this browser', 'info');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        updateAdminNotificationPermissionUI(permission);
+        if (permission === 'granted') {
+          toast('🔔 Notification permissions granted!', 'success');
+          try {
+            new Notification('SpiceLity Admin Alerts Active', {
+              body: 'You will receive desktop alerts for new incoming orders and messages.',
+              icon: 'logo/red_chilli_powder.jpeg'
+            });
+          } catch (e) {}
+        } else if (permission === 'denied') {
+          toast('⚠️ Notification permission blocked in browser settings', 'error');
+        }
+      });
+    }
+
+    function updateAdminNotificationPermissionUI(perm) {
+      const p = perm || (('Notification' in window) ? Notification.permission : 'denied');
+      const banner = document.getElementById('admin-notif-perm-banner');
+      if (banner) {
+        banner.style.display = (p === 'default') ? 'flex' : 'none';
+      }
+      const desc = document.getElementById('admin-notif-rule-desc');
+      if (desc) {
+        desc.textContent = p === 'granted'
+          ? 'Browser notifications enabled: Orders & chats active ✅'
+          : (p === 'denied' ? 'Browser notifications blocked in browser settings ❌' : 'Browser notifications: Click to enable desktop alerts 🔔');
+      }
     }
 
     async function deleteRetailerAccount(id, name) {

@@ -32,6 +32,21 @@ app.put('/api/spices/:id', async (req, res) => {
     if (spice) {
       const oldPrice = spice.price;      // capture before overwriting
       spice.price = price;
+
+      // In-app notification for retailers
+      if (!db.notifications) db.notifications = [];
+      const delta = price - oldPrice;
+      const dir = delta > 0 ? 'increased' : 'decreased';
+      const sign = delta > 0 ? '+' : '';
+      db.notifications.push({
+        id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+        target: 'retailer',
+        text: `${spice.emoji || '🌶️'} ${spice.name} wholesale rate ${dir}: ${sign}₹${Math.abs(delta)}/kg (now ₹${price}/kg)`,
+        time: 'Just now',
+        ico: spice.emoji || '📈',
+        read: false
+      });
+
       writeDB(db);
 
       // Fire-and-forget: push notification to all 'retailers' topic subscribers.
@@ -188,6 +203,18 @@ app.post('/api/orders', (req, res) => {
       ret.orders += 1;
       ret.last_order = date;
     }
+
+    // In-app notification for admin
+    if (!db.notifications) db.notifications = [];
+    db.notifications.push({
+      id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+      target: 'admin',
+      text: `📦 New order #${order_id} placed by ${retailer_name} for ₹${amount.toLocaleString('en-IN')}`,
+      time: 'Just now',
+      ico: '📦',
+      read: false
+    });
+
     writeDB(db);
     res.json({ id: newOrder.id, success: true });
   } catch (error) {
@@ -204,6 +231,23 @@ app.put('/api/orders/:id', (req, res) => {
     if (order) {
       if (status) order.status = status;
       if (delivery) order.delivery = delivery;
+
+      // In-app notification for retailer
+      if (!db.notifications) db.notifications = [];
+      const statusText = status === 'confirmed'
+        ? `confirmed (Delivery: ${delivery || 'Scheduled'})`
+        : (status ? `status updated to ${status}` : `delivery set to ${delivery}`);
+
+      db.notifications.push({
+        id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+        target: 'retailer',
+        retailer_name: order.retailer_name,
+        text: `🚚 Order #${order.order_id} was ${statusText}!`,
+        time: 'Just now',
+        ico: '🚚',
+        read: false
+      });
+
       writeDB(db);
     }
     res.json({ success: true });
