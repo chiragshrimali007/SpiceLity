@@ -2,19 +2,80 @@
   "name": "SpiceLity - Quality Spices",
   "short_name": "SpiceLity",
   "description": "SpiceLity wholesale platform for spices mandi rates, orders, and real-time support",
+  "id": "/index.html",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#0F1E08",
   "theme_color": "#0F1E08",
   "orientation": "portrait",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "shopping", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/logo/red_chilli_powder.jpeg",
-      "sizes": "192x192 512x512",
+      "sizes": "192x192",
       "type": "image/jpeg",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/logo/red_chilli_powder.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo/red_chilli_powder.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/logo/red_chilli_powder.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "SpiceLity Wholesale Mobile Portal"
+    },
+    {
+      "src": "/logo/coriander_powder.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "SpiceLity Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Market Rates",
+      "short_name": "Rates",
+      "description": "View live wholesale mandi rates",
+      "url": "/retailer.html",
+      "icons": [
+        {
+          "src": "/logo/red_chilli_powder.jpeg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Admin Panel",
+      "short_name": "Admin",
+      "description": "Access admin control dashboard",
+      "url": "/admin.html",
+      "icons": [
+        {
+          "src": "/logo/red_chilli_powder.jpeg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
     }
   ]
 }
-
