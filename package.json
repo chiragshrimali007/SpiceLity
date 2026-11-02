@@ -1,0 +1,10 @@
+{
+  "name": "spicelity",
+  "version": "1.0.0",
+  "description": "SpiceLity wholesale platform",
+  "main": "Backend/server.js",
+  "scripts": {
+    "build": "cd Backend && npm install",
+    "start": "node Backend/server.js"
+  }
+}
