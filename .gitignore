@@ -4,3 +4,8 @@ node_modules/
 .DS_Store
 dist/
 build/
+.idea/
+*.apk
+android/.gradle/
+android/app/build/
+android/build/

@@ -2725,7 +2725,7 @@
   <script src="client.js"></script>
   <script>
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
-      ? 'http://localhost:3000'
+      ? 'https://spicelity.onrender.com'
       : window.location.origin;
 
     function getSpiceImage(name) {
@@ -2816,6 +2816,15 @@
       playAlertSound();
       toast(`${title} — ${text}`, type);
 
+      // Native Android system status-bar notification
+      if (window.AndroidNative && typeof window.AndroidNative.showNotification === 'function') {
+        try {
+          window.AndroidNative.showNotification(title, text, targetPage || 'overview');
+        } catch (e) {
+          console.warn('Native notification error:', e);
+        }
+      }
+
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
           const n = new Notification(title, {
@@ -2834,6 +2843,9 @@
     }
 
     function requestRetailerNotificationPermission() {
+      if (window.AndroidNative && typeof window.AndroidNative.requestPermission === 'function') {
+        window.AndroidNative.requestPermission();
+      }
       if (!('Notification' in window)) {
         toast('Browser notifications not supported on this device', 'info');
         return;
@@ -2922,6 +2934,9 @@
     }
 
     async function initApp() {
+      if (window.AndroidNative && typeof window.AndroidNative.setUserRole === 'function') {
+        window.AndroidNative.setUserRole('retailer');
+      }
       // Update welcome heading with real name
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });

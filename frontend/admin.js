@@ -27,7 +27,7 @@ function connectAdminChat(onMessageReceived, onConnectionStatus) {
   const token = `0-admin-Admin`;
   
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const host = window.location.host || 'localhost:3000';
+  const host = window.location.host || 'spicelity.onrender.com';
   const wsUrl = `${protocol}//${host}?token=${token}`;
 
   dbg(`Connecting Admin WebSocket to ${wsUrl}...`);

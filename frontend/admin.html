@@ -2870,7 +2870,7 @@
   <script src="admin.js"></script>
   <script>
     const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
-      ? 'http://localhost:3000'
+      ? 'https://spicelity.onrender.com'
       : window.location.origin;
 
     function getSpiceImage(name) {
@@ -2985,6 +2985,9 @@
     let retFilter = 'all';
 
     async function initApp() {
+      if (window.AndroidNative && typeof window.AndroidNative.setUserRole === 'function') {
+        window.AndroidNative.setUserRole('admin');
+      }
       // Render dynamic admin identity on every load
       renderAdminHero();
       updateAdminNotificationPermissionUI();
@@ -3171,6 +3174,16 @@
       playAlertSound();
       toast(`${title} — ${text}`, type);
 
+      // Native Android system status-bar notification
+      if (window.AndroidNative && typeof window.AndroidNative.showNotification === 'function') {
+        try {
+          const target = title.toLowerCase().includes('order') ? 'orders' : (title.toLowerCase().includes('message') ? 'chat' : 'overview');
+          window.AndroidNative.showNotification(title, text, target);
+        } catch (e) {
+          console.warn('Native notification error:', e);
+        }
+      }
+
       // Desktop system notification
       if ('Notification' in window && Notification.permission === 'granted') {
         try {
@@ -3196,6 +3209,9 @@
     }
 
     function requestAdminNotificationPermission() {
+      if (window.AndroidNative && typeof window.AndroidNative.requestPermission === 'function') {
+        window.AndroidNative.requestPermission();
+      }
       if (!('Notification' in window)) {
         toast('Browser notifications not supported in this browser', 'info');
         return;

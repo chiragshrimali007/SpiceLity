@@ -261,7 +261,7 @@ app.get('/api/notifications/:target', (req, res) => {
   try {
     const db = readDB();
     const { target } = req.params;
-    const notifs = db.notifications.filter(n => n.target === target || n.target === 'all').reverse();
+    const notifs = (db.notifications || []).filter(n => target === 'all' || n.target === target || n.target === 'all').reverse();
     res.json(notifs);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -528,6 +528,28 @@ wss.on('connection', (ws, request, user) => {
       } else {
         // Fallback console log indicating offline recipient push notification hook
         console.log(`[Push Fallback] Recipient ${receiverId} offline. Trigger FCM push notification to target user: "${textTrim.substring(0, 50)}..."`);
+      }
+
+      // Add to in-app notification list for polling/background alerts
+      try {
+        const notifDb = readDB();
+        if (!notifDb.notifications) notifDb.notifications = [];
+        const isToAdmin = parseInt(receiverId) === 0;
+        const notifTarget = isToAdmin ? 'admin' : 'retailer';
+        const senderLabel = isToAdmin ? (user.name || `Retailer #${senderId}`) : 'Admin';
+        const chatNotif = {
+          id: notifDb.notifications.length > 0 ? Math.max(...notifDb.notifications.map(n => n.id)) + 1 : 1,
+          target: notifTarget,
+          retailer_id: isToAdmin ? senderId : parseInt(receiverId),
+          text: `💬 ${senderLabel}: "${textTrim.length > 60 ? textTrim.substring(0, 57) + '...' : textTrim}"`,
+          time: 'Just now',
+          ico: '💬',
+          read: false
+        };
+        notifDb.notifications.push(chatNotif);
+        writeDB(notifDb);
+      } catch (eNotif) {
+        console.warn('[Chat Notification] Error saving notification:', eNotif.message);
       }
 
     } catch (err) {
