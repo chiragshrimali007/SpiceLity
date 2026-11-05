@@ -181,43 +181,119 @@
     {
       "id": 1,
       "initials": "DP",
-      "name": "shri ram bharose kirana store (Dinesh parihar)",
+      "name": "Shri Ram Bharose Kirana Store (Dinesh Parihar)",
       "city": "Jodhpur",
       "phone": "+91 9166945045",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "shop_name": "Shri Ram Bharose Kirana Store",
+      "owner_name": "Dinesh Parihar",
+      "address": "Main Market Road, Shastri Nagar",
+      "pincode": "342001",
+      "coords": {
+        "lat": 26.2731,
+        "lng": 73.0182
+      },
+      "upi_id": "shriramkirana@okaxis",
+      "upi_qr": "logo/qr_sample.png",
+      "pickup_time": "Ready in 20 mins",
+      "delivery_available": true,
+      "rating": 4.6,
+      "review_count": 128,
+      "monthly_orders": 300,
+      "verified": true,
+      "featured": true,
+      "isBlocked": false,
+      "shop_image": "logo/red_chilli_powder.jpeg"
     },
     {
       "id": 2,
       "initials": "NR",
-      "name": "New Retailer (New Retailer)",
-      "city": "Unknown City",
-      "phone": "+91 0000000000",
+      "name": "Shree Masala Traders (Ramesh Patel)",
+      "city": "Jodhpur",
+      "phone": "+91 9825012345",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "shop_name": "Shree Masala Traders",
+      "owner_name": "Ramesh Patel",
+      "address": "Main Market Road",
+      "pincode": "342001",
+      "coords": {
+        "lat": 26.2785,
+        "lng": 73.021
+      },
+      "upi_id": "shreemasala@okaxis",
+      "upi_qr": "logo/qr_sample.png",
+      "pickup_time": "Ready in 20 mins",
+      "delivery_available": true,
+      "rating": 4.6,
+      "review_count": 128,
+      "monthly_orders": 300,
+      "verified": true,
+      "featured": true,
+      "isBlocked": false,
+      "shop_image": "logo/red_chilli_powder.jpeg"
     },
     {
       "id": 3,
       "initials": "RS",
-      "name": "shri ram bharose kirana store (ramesh sharma)",
+      "name": "Patel Super Store (Suresh Patel)",
       "city": "Jodhpur",
-      "phone": "+91 9166945045",
+      "phone": "+91 9825098765",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "shop_name": "Patel Super Store",
+      "owner_name": "Suresh Patel",
+      "address": "CG Road, Sardarpura",
+      "pincode": "342003",
+      "coords": {
+        "lat": 26.282,
+        "lng": 73.029
+      },
+      "upi_id": "patelstore@paytm",
+      "upi_qr": "logo/qr_sample.png",
+      "pickup_time": "Home delivery in 2 hrs",
+      "delivery_available": true,
+      "rating": 4.4,
+      "review_count": 95,
+      "monthly_orders": 150,
+      "verified": true,
+      "featured": false,
+      "isBlocked": false,
+      "shop_image": "logo/coriander_powder.jpeg"
     },
     {
       "id": 4,
       "initials": "NR",
-      "name": "New Retailer (New Retailer)",
-      "city": "Unknown City",
-      "phone": "+91 0000000000",
+      "name": "Kirana King (Mahesh Verma)",
+      "city": "Jodhpur",
+      "phone": "+91 9825045678",
       "password": "",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "shop_name": "Kirana King",
+      "owner_name": "Mahesh Verma",
+      "address": "Vastrapur, Ratanada",
+      "pincode": "342001",
+      "coords": {
+        "lat": 26.289,
+        "lng": 73.035
+      },
+      "upi_id": "kiranaking@upi",
+      "upi_qr": "logo/qr_sample.png",
+      "pickup_time": "Pickup in 30 mins",
+      "delivery_available": true,
+      "rating": 4.3,
+      "review_count": 76,
+      "monthly_orders": 120,
+      "verified": true,
+      "featured": false,
+      "isBlocked": false,
+      "shop_image": "logo/termeric_powder.jpeg"
     },
     {
       "id": 5,
@@ -228,7 +304,15 @@
       "password": "",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.253184882058818,
+        "lng": 73.01255719601515
+      },
+      "upi_id": "spicelity.5@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 6,
@@ -239,7 +323,15 @@
       "password": "123456",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.248520924909535,
+        "lng": 73.00889962616463
+      },
+      "upi_id": "spicelity.6@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 7,
@@ -250,7 +342,15 @@
       "password": "123456",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.269190204867968,
+        "lng": 73.03267817053943
+      },
+      "upi_id": "spicelity.7@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 8,
@@ -261,7 +361,15 @@
       "password": "",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.2574414339717,
+        "lng": 72.99665401736809
+      },
+      "upi_id": "spicelity.8@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 9,
@@ -272,7 +380,15 @@
       "password": "098765",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.265027489098458,
+        "lng": 73.02237361153179
+      },
+      "upi_id": "spicelity.9@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 10,
@@ -283,7 +399,15 @@
       "password": "123456",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.25982736287103,
+        "lng": 73.02917722093994
+      },
+      "upi_id": "spicelity.10@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 11,
@@ -294,7 +418,15 @@
       "password": "123456",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.254960128956093,
+        "lng": 73.03039572511861
+      },
+      "upi_id": "spicelity.11@okaxis",
+      "pickup_time": "Ready in 25 mins"
     },
     {
       "id": 12,
@@ -305,7 +437,15 @@
       "password": "password123",
       "orders": 0,
       "outstanding": 0,
-      "last_order": "Never"
+      "last_order": "Never",
+      "verified": true,
+      "isBlocked": false,
+      "coords": {
+        "lat": 26.259711364179218,
+        "lng": 73.02748362110957
+      },
+      "upi_id": "spicelity.12@okaxis",
+      "pickup_time": "Ready in 25 mins"
     }
   ],
   "orders": [
@@ -387,6 +527,119 @@
       "message_text": "Hello admin",
       "created_at": "2026-07-28T07:05:57.420Z",
       "is_read": false
+    }
+  ],
+  "consumers": [
+    {
+      "id": 1,
+      "name": "Dipesh Kumar Verma",
+      "phone": "+91 98765 43210",
+      "email": "dipesh.verma23@gmail.com",
+      "password": "password123",
+      "dob": "1998-08-15",
+      "address": "12, Shastri Nagar, Pal Road, Jodhpur, Rajasthan 342001",
+      "city": "Jodhpur",
+      "state": "Rajasthan",
+      "pincode": "342001",
+      "coords": {
+        "lat": 26.2731,
+        "lng": 73.0182
+      },
+      "verified": true,
+      "isBlocked": false,
+      "totalOrders": 18,
+      "pendingOrders": 2,
+      "completedOrders": 16,
+      "savedStores": [
+        1,
+        2,
+        3
+      ],
+      "createdAt": "2026-05-10T10:00:00Z"
+    }
+  ],
+  "consumer_orders": [
+    {
+      "id": 1,
+      "order_id": "#SPC-78432",
+      "consumer_id": 1,
+      "consumer_name": "Dipesh Kumar Verma",
+      "consumer_phone": "+91 98765 43210",
+      "retailer_id": 1,
+      "retailer_name": "Shri Ram Bharose Kirana Store",
+      "retailer_address": "Main Market Road, Ahmedabad",
+      "retailer_upi_id": "shriramkirana@okaxis",
+      "retailer_qr_image": "",
+      "retailer_upi_qr": "",
+      "items": [
+        {
+          "id": 5,
+          "name": "Cumin Seeds (Jeera)",
+          "hindi_name": "जीरा",
+          "pack": "1 kg Pack",
+          "qty": 1,
+          "price": 240,
+          "unit": "/ kg",
+          "img": "logo/cumin_seeds.jpeg"
+        },
+        {
+          "id": 9,
+          "name": "Fennel Seeds (Saunf)",
+          "hindi_name": "सौंफ",
+          "pack": "500 g Pack",
+          "qty": 1,
+          "price": 180,
+          "unit": "/ 500 g",
+          "img": "logo/Fennel_seeds.jpeg"
+        },
+        {
+          "id": 11,
+          "name": "Kirayta (Kirayat)",
+          "hindi_name": "किरायता",
+          "pack": "250 g Pack",
+          "qty": 1,
+          "price": 220,
+          "unit": "/ 250 g",
+          "img": "logo/Kirayta.jpeg"
+        }
+      ],
+      "subtotal": 640,
+      "packaging_charges": 10,
+      "platform_fee": 10,
+      "total_amount": 660,
+      "status": "pending",
+      "status_timeline": [
+        {
+          "step": "placed",
+          "label": "Placed",
+          "time": "12 May, 10:30 AM",
+          "done": true
+        },
+        {
+          "step": "preparing",
+          "label": "Preparing",
+          "time": "12 May, 10:35 AM",
+          "done": true
+        },
+        {
+          "step": "ready",
+          "label": "Ready",
+          "time": "Upcoming",
+          "done": false
+        },
+        {
+          "step": "completed",
+          "label": "Picked Up",
+          "time": "Upcoming",
+          "done": false
+        }
+      ],
+      "pickup_time_estimate": "Ready for pickup in 20 mins",
+      "pickup_info": "Main Market Road, Ahmedabad, Gujarat 380001",
+      "pickup_instructions": "Show this order ID at the counter",
+      "payment_method": "upi_counter",
+      "payment_received": false,
+      "createdAt": "2026-05-12T10:30:00Z"
     }
   ]
 }

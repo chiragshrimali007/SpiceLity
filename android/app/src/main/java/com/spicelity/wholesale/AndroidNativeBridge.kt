@@ -35,3 +35,4 @@ class AndroidNativeBridge(private val activity: MainActivity) {
         return true
     }
 }
+

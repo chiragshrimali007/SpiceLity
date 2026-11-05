@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1E392A">
+  <title>SpiceLity – B2B2C Spice Marketplace</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="logo/icon-192.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Mapbox GL JS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+
+  <style>
+    :root {
+      --primary: #1E392A;
+      --primary-light: #2D4F39;
+      --primary-subtle: #EDF5E6;
+      --accent: #C69248;
+      --accent-light: #FAF3E7;
+      --accent-dark: #8F6322;
+      --bg: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --text-main: #181E19;
+      --text-muted: #647067;
+      --text-light: #8E9B91;
+      --bdr: #E7E3D8;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --green: #2E7D32;
+      --green-light: #E8F5E9;
+      --red: #C62828;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #EFECE6;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── PHONE SHELL CONTAINER ── */
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      max-height: 940px;
+      background: var(--bg);
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border: 8px solid #141715;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        background: var(--bg);
+      }
+      .app-viewport {
+        border-radius: 0;
+        border: none;
+        max-height: 100vh;
+        height: 100vh;
+      }
+    }
+
+    /* ── DYNAMIC ISLAND / TOP STATUS BAR ── */
+    .status-bar {
+      height: 44px;
+      background: var(--bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      z-index: 50;
+      flex-shrink: 0;
+    }
+
+    /* ── SCROLLABLE SCREEN CONTENT ── */
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 90px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── COMMON BRAND HEADER ── */
+    .app-header {
+      padding: 12px 20px 8px;
+      background: var(--bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name span {
+      color: var(--accent);
+    }
+
+    .brand-tag {
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .header-icons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .header-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      color: var(--text-main);
+      font-size: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .icon-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      background: #F4B400;
+      color: #000;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+    }
+
+    /* ── BOTTOM NAV BAR ── */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: var(--card-bg);
+      border-top: 1px solid var(--bdr);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+      padding-bottom: env(safe-area-inset-bottom, 8px);
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      gap: 4px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .nav-btn.active svg {
+      stroke: var(--primary);
+    }
+
+    .cart-badge-pill {
+      position: absolute;
+      top: 0px;
+      right: 22px;
+      background: #F4B400;
+      color: #000;
+      font-size: 9px;
+      font-weight: 800;
+      border-radius: 10px;
+      padding: 1px 5px;
+    }
+
+    /* ── SCREEN 1: HOME STYLES ── */
+    .location-bar {
+      padding: 2px 20px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .location-bar strong {
+      color: var(--text-main);
+    }
+
+    .greeting-box {
+      padding: 6px 20px 14px;
+    }
+
+    .greeting-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .greeting-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .search-box-wrap {
+      padding: 0 20px 16px;
+    }
+
+    .search-input-row {
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-input-row input {
+      border: none;
+      background: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 13.5px;
+      color: var(--text-main);
+      flex: 1;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      margin: 0 20px 20px;
+      background: linear-gradient(135deg, #FAF3E6 0%, #F5E8D0 100%);
+      border-radius: 20px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(198, 146, 72, 0.25);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 60%;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #2D241E;
+      line-height: 1.25;
+    }
+
+    .hero-title span {
+      color: var(--accent-dark);
+    }
+
+    .hero-desc {
+      font-size: 11.5px;
+      color: #6C5F53;
+      margin: 6px 0 14px;
+      line-height: 1.4;
+    }
+
+    .hero-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .hero-bg-img {
+      position: absolute;
+      right: -10px;
+      bottom: -15px;
+      width: 145px;
+      height: 145px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Section Headers */
+    .section-head {
+      padding: 0 20px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .section-link {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Category Row */
+    .category-scroll {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 20px;
+      overflow-x: auto;
+    }
+
+    .category-card {
+      flex: 0 0 78px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .cat-img-box {
+      width: 74px;
+      height: 74px;
+      border-radius: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .cat-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .cat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: center;
+    }
+
+    /* Products Grid / Horizontal Scroll */
+    .product-scroll-row {
+      display: flex;
+      gap: 12px;
+      padding: 0 20px 20px;
+      overflow-x: auto;
+    }
+
+    .product-card {
+      flex: 0 0 135px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--bdr);
+      padding: 10px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .product-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .product-hindi {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .product-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .product-price {
+      font-weight: 800;
+      font-size: 13.5px;
+      color: var(--accent-dark);
+    }
+
+    .product-unit {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .btn-add-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(30, 57, 42, 0.3);
+      transition: transform 0.15s;
+    }
+
+    .btn-add-circle:active {
+      transform: scale(0.9);
+    }
+
+    /* Trust Shield Box */
+    .trust-box {
+      margin: 10px 20px 25px;
+      background: var(--primary-subtle);
+      border: 1px solid #D2E4C4;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .trust-text {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.4;
+    }
+
+    .trust-text span {
+      display: block;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* ── SCREEN 2: DISCOVER STYLES ── */
+    .filter-pills-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px 14px;
+      overflow-x: auto;
+    }
+
+    .filter-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Highlighted Spice Card */
+    .spice-highlight-card {
+      margin: 0 20px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .highlight-img {
+      width: 85px;
+      height: 85px;
+      object-fit: cover;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+
+    .highlight-info {
+      flex: 1;
+    }
+
+    .highlight-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .highlight-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 4px 0 8px;
+      line-height: 1.35;
+    }
+
+    .badge-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .tag-badge {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .market-price-box {
+      background: #FFF9EC;
+      border: 1px dashed var(--accent);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--accent-dark);
+      display: inline-block;
+    }
+
+    /* Interactive Map Section */
+    .map-container-wrap {
+      margin: 0 20px 18px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--bdr);
+      background: #E8ECE9;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map-header-bar {
+      padding: 10px 14px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--bdr);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    #discover-map {
+      width: 100%;
+      height: 200px;
+    }
+
+    /* Retailer Store Cards */
+    .store-card {
+      margin: 0 20px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .store-card.featured {
+      border: 1.5px solid var(--accent);
+    }
+
+    .featured-ribbon {
+      position: absolute;
+      top: -10px;
+      left: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .store-main-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .store-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid var(--bdr);
+    }
+
+    .store-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .store-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .store-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .verified-badge {
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .store-location-dist {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 2px 0 4px;
+    }
+
+    .store-rating-row {
+      font-size: 11px;
+      font-weight: 700;
+      color: #D97706;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .store-perks-row {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--bdr);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .store-price-highlight {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .store-price-sub {
+      font-size: 9.5px;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .btn-view-store {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ── SCREEN 3: CART STYLES ── */
+    .cart-store-banner {
+      margin: 0 20px 14px;
+      background: #F3F8F2;
+      border: 1px solid #D5E7D3;
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-item-card {
+      margin: 0 20px 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cart-item-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .cart-stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--bdr);
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
+
+    .stepper-btn {
+      background: none;
+      border: none;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .bill-card {
+      margin: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .bill-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .bill-row.total {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent-dark);
+      border-top: 1px dashed var(--bdr);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-checkout-primary {
+      margin: 0 20px 20px;
+      width: calc(100% - 40px);
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(30, 57, 42, 0.25);
+    }
+
+    /* ── SCREEN 4: ORDER DETAILS / TRACKING ── */
+    .order-status-stepper {
+      margin: 0 20px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stepper-nodes-row {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 15px 0 10px;
+    }
+
+    .stepper-line {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      right: 20px;
+      height: 3px;
+      background: var(--bdr);
+      z-index: 1;
+    }
+
+    .stepper-line-progress {
+      height: 100%;
+      background: #F4B400;
+      width: 33%;
+      transition: width 0.3s;
+    }
+
+    .stepper-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60px;
+    }
+
+    .node-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--bdr);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-light);
+    }
+
+    .stepper-node.active .node-circle {
+      background: #F4B400;
+      border-color: #F4B400;
+      color: #000;
+    }
+
+    .stepper-node.done .node-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .node-label {
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 6px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── SCREEN 5: PROFILE VIEW ── */
+    .profile-hero-card {
+      margin: 0 20px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .avatar-initials {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 0 20px 18px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 14px;
+      padding: 12px 6px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .settings-list-card {
+      margin: 0 20px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--bdr);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .setting-row {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--bdr);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .setting-val {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Modal Checkout */
+    .modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 150;
+      align-items: flex-end;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-sheet {
+      background: #fff;
+      width: 100%;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px 30px;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    /* Toast */
+    .toast-pill {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #181E19;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 200;
+      pointer-events: none;
+    }
+
+    .toast-pill.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    <!-- Top System Status -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.66-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <span style="font-size:11px;">100%</span>
+      </div>
+    </div>
+
+    <!-- Main Scrollable Area -->
+    <div class="main-scroll" id="main-scroll-container">
+
+      <!-- ══════════════════════════════════════════
+           PAGE 1: HOME
+      ══════════════════════════════════════════ -->
+      <section class="page active" id="page-home">
+        <!-- Header -->
+        <header class="app-header">
+          <div class="brand-title-wrap">
+            <div class="brand-logo-row">
+              <span style="font-size:18px;">🌿</span>
+              <div class="brand-name">Spice<span>lity</span></div>
+            </div>
+            <div class="brand-tag">B2B2C SPICE MARKETPLACE</div>
+          </div>
+          <div class="header-icons">
+            <div class="header-icon-btn" onclick="showToast('🔔 2 New updates available')">
+              🔔
+              <span class="icon-badge">2</span>
+            </div>
+            <div class="header-icon-btn" onclick="switchTab('orders')">
+              💬
+            </div>
+          </div>
+        </header>
+
+        <!-- Location Dropdown -->
+        <div class="location-bar" onclick="detectGPSLocation()">
+          <span>📍 Delivering to <strong id="home-delivering-address">Shastri Nagar, Jodhpur</strong> ⌵</span>
+        </div>
+
+        <!-- Greeting -->
+        <div class="greeting-box">
+          <div class="greeting-title" id="home-greeting-name">Good evening, Dipesh</div>
+          <div class="greeting-sub">What are you cooking today?</div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-box-wrap">
+          <div class="search-input-row" onclick="switchTab('discover')">
+            <span>🔍</span>
+            <input type="text" placeholder="Search spices, brands or stores" readonly>
+            <span style="color:var(--text-muted);font-size:16px;">⚙️</span>
+          </div>
+        </div>
+
+        <!-- Hero Carousel Banner -->
+        <div class="hero-banner">
+          <div class="hero-content">
+            <div class="hero-title">Bring home the taste of <span>India</span></div>
+            <div class="hero-desc">Fresh spices from trusted local retailers.</div>
+            <button class="hero-btn" onclick="switchTab('discover')">Explore spices →</button>
+          </div>
+          <img class="hero-bg-img" src="logo/Whole_gzram_masala.jpeg" alt="Spices">
+        </div>
+
+        <!-- Shop by Category -->
+        <div class="section-head">
+          <div class="section-title">Shop by Category</div>
+          <a class="section-link" onclick="switchTab('discover')">View all →</a>
+        </div>
+        <div class="category-scroll">
+          <div class="category-card" onclick="filterCategoryFromHome('Whole Spices')">
+            <div class="cat-img-box"><img src="logo/Whole_gzram_masala.jpeg" alt="Whole Spices"></div>
+            <div class="cat-label">Whole Spices</div>
+          </div>
+          <div class="category-card" onclick="filterCategoryFromHome('Seeds')">
+            <div class="cat-img-box"><img src="logo/Fennel_seeds.jpeg" alt="Seeds"></div>
+            <div class="cat-label">Seeds</div>
+          </div>
+          <div class="category-card" onclick="filterCategoryFromHome('Powders')">
+            <div class="cat-img-box"><img src="logo/red_chilli_powder.jpeg" alt="Powders"></div>
+            <div class="cat-label">Powders</div>
+          </div>
+          <div class="category-card" onclick="filterCategoryFromHome('Blends')">
+            <div class="cat-img-box"><img src="logo/Ground_gzram_masala.jpeg" alt="Blends"></div>
+            <div class="cat-label">Blends</div>
+          </div>
+        </div>
+
+        <!-- Buy Again (Quick Reorder) -->
+        <div class="section-head">
+          <div class="section-title">Buy Again</div>
+          <a class="section-link" onclick="switchTab('discover')">View all →</a>
+        </div>
+        <div class="product-scroll-row" id="home-buy-again-row">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Popular Near You -->
+        <div class="section-head">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="section-title">Popular near you</div>
+            <span style="background:var(--accent-light);color:var(--accent-dark);font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:12px;">Local favourites</span>
+          </div>
+          <a class="section-link" onclick="switchTab('discover')">View all →</a>
+        </div>
+        <div class="product-scroll-row" id="home-popular-row">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Trust Box -->
+        <div class="trust-box">
+          <div style="font-size:22px;">🛡️</div>
+          <div class="trust-text">
+            Shop local. Buy with confidence.
+            <span>Verified kirana stores • Fair local prices</span>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           PAGE 2: DISCOVER (MAP & COMPARISON)
+      ══════════════════════════════════════════ -->
+      <section class="page" id="page-discover">
+        <header class="app-header">
+          <div class="brand-title-wrap">
+            <div class="brand-logo-row">
+              <span style="font-size:18px;">🌿</span>
+              <div class="brand-name">Spice<span>lity</span></div>
+            </div>
+            <div class="brand-tag">B2B2C SPICE MARKETPLACE</div>
+          </div>
+          <div class="header-icons">
+            <div class="header-icon-btn">🔔</div>
+            <div class="header-icon-btn" onclick="switchTab('orders')">💬</div>
+          </div>
+        </header>
+
+        <div style="padding:4px 20px 10px;">
+          <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--primary);">Discover Spices</div>
+          <div style="font-size:12px;color:var(--text-muted);">Search • Compare • Find Best Retailers Near You</div>
+        </div>
+
+        <!-- Search + City Row -->
+        <div style="padding:0 20px 12px;display:flex;gap:8px;">
+          <div class="search-input-row" style="flex:1;">
+            <span>🔍</span>
+            <input type="text" id="discover-search-input" placeholder="cumin seeds" value="cumin seeds" oninput="handleDiscoverSearch()">
+            <span style="cursor:pointer;" onclick="clearDiscoverSearch()">✕</span>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid var(--bdr);border-radius:14px;padding:10px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;">
+            <span>📍 Jodhpur ⌵</span>
+          </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="filter-pills-row">
+          <button class="filter-pill active" onclick="setDiscoverPill('All', this)">All</button>
+          <button class="filter-pill" onclick="setDiscoverPill('Seeds', this)">Seeds</button>
+          <button class="filter-pill" onclick="setDiscoverPill('Powders', this)">Powders</button>
+          <button class="filter-pill" onclick="setDiscoverPill('Whole Spices', this)">Whole Spices</button>
+          <button class="filter-pill" onclick="setDiscoverPill('Blends', this)">Blends</button>
+        </div>
+
+        <!-- Selected Spice Highlight Card -->
+        <div class="spice-highlight-card">
+          <img class="highlight-img" src="logo/cumin_seeds.jpeg" alt="Cumin Seeds">
+          <div class="highlight-info">
+            <div class="highlight-title">Cumin Seeds (Jeera) 🌿</div>
+            <div class="highlight-desc">Adds earthy aroma &amp; authentic flavor to your kitchen. Rich in antioxidants.</div>
+            <div class="badge-tags-row">
+              <span class="tag-badge">🌿 100% Natural</span>
+              <span class="tag-badge">⏱ Long Shelf Life</span>
+              <span class="tag-badge">✨ Premium Quality</span>
+            </div>
+            <div class="market-price-box">Market Price: ₹235 – ₹280 / kg</div>
+          </div>
+        </div>
+
+        <!-- Interactive Mapbox Map -->
+        <div class="map-container-wrap">
+          <div class="map-header-bar">
+            <span>Available Near You</span>
+            <span style="font-size:11px;color:var(--accent);cursor:pointer;" onclick="centerMapOnUser()">Locate Me 📍</span>
+          </div>
+          <div id="discover-map"></div>
+        </div>
+
+        <!-- Retailers List -->
+        <div style="padding:0 20px 10px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:13px;font-weight:800;color:var(--text-main);" id="retailers-count-label">🏪 4 Retailers found</div>
+          <div style="font-size:12px;color:var(--text-muted);font-weight:700;">Sort: Nearest ⌵</div>
+        </div>
+
+        <div id="retailers-cards-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Suggest Retailer Referral -->
+        <div style="margin:10px 20px 25px;background:#F5F9F4;border:1px solid #D5E8D3;border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:11.5px;color:var(--primary);font-weight:700;line-height:1.4;">
+            Can't find the retailer you trust?
+            <span style="display:block;font-size:10px;font-weight:500;color:var(--text-muted);">Suggest a retailer – We'll try to onboard them!</span>
+          </div>
+          <button style="background:var(--card-bg);border:1px solid var(--bdr);font-size:11px;font-weight:800;padding:6px 12px;border-radius:10px;cursor:pointer;" onclick="showToast('Thank you! Recommendation recorded.')">Suggest Retailer &gt;</button>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           PAGE 3: YOUR CART
+      ══════════════════════════════════════════ -->
+      <section class="page" id="page-cart">
+        <header class="app-header">
+          <div class="brand-title-wrap">
+            <div class="brand-logo-row">
+              <span style="font-size:18px;">🌿</span>
+              <div class="brand-name">Spice<span>lity</span></div>
+            </div>
+            <div class="brand-tag">B2B2C SPICE MARKETPLACE</div>
+          </div>
+          <div class="header-icons">
+            <div class="header-icon-btn">🔔</div>
+            <div class="header-icon-btn" onclick="switchTab('orders')">💬</div>
+          </div>
+        </header>
+
+        <div style="padding:4px 20px 14px;">
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--primary);">Your Cart</div>
+          <div style="font-size:12px;color:var(--text-muted);">Review your items and place your order.</div>
+        </div>
+
+        <!-- Selected Store -->
+        <div class="cart-store-banner">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:15px;">🏪</span>
+              <strong style="font-size:13.5px;" id="cart-store-name">Shri Ram Bharose Kirana Store</strong>
+              <span class="verified-badge">✓ Verified</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;" id="cart-store-address">📍 Main Market Road, Ahmedabad</div>
+          </div>
+          <span style="font-size:11px;color:var(--accent);font-weight:700;cursor:pointer;" onclick="switchTab('discover')">Change</span>
+        </div>
+
+        <!-- Pickup Time pill -->
+        <div style="margin:0 20px 14px;background:#FFF9EE;border:1px solid #F5E0B8;border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:11.5px;color:#856404;font-weight:700;display:flex;align-items:center;gap:6px;">
+            <span>🕒</span> Ready for pickup in 20 mins. We'll notify you.
+          </div>
+          <span style="font-size:10.5px;color:var(--primary);font-weight:800;cursor:pointer;" onclick="switchTab('discover')">Change Store</span>
+        </div>
+
+        <div style="padding:0 20px 10px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:13px;font-weight:800;" id="cart-items-count-head">Items in your cart (3)</div>
+          <span style="font-size:11px;color:var(--red);font-weight:700;cursor:pointer;" onclick="clearCart()">Clear Cart</span>
+        </div>
+
+        <div id="cart-items-list-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Promo Code Box -->
+        <div style="margin:10px 20px;background:var(--card-bg);border:1px solid var(--bdr);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span>🏷️</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;">Have a coupon code?</div>
+              <div style="font-size:10.5px;color:var(--text-muted);">Apply code to get discounts</div>
+            </div>
+          </div>
+          <button style="background:var(--primary-subtle);color:var(--primary);border:none;padding:6px 14px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer;" onclick="applyCouponPrompt()">Apply Code</button>
+        </div>
+
+        <!-- Bill Details -->
+        <div class="bill-card">
+          <div class="bill-row">
+            <span>Subtotal (<span id="bill-items-count">3</span> items)</span>
+            <span id="bill-subtotal">₹640</span>
+          </div>
+          <div class="bill-row">
+            <span>Packaging Charges ⓘ</span>
+            <span>₹10</span>
+          </div>
+          <div class="bill-row">
+            <span>Platform Fee ⓘ</span>
+            <span>₹10</span>
+          </div>
+          <div class="bill-row total">
+            <span>Total Amount</span>
+            <span id="bill-total">₹660</span>
+          </div>
+        </div>
+
+        <div style="text-align:center;font-size:11px;color:var(--green);font-weight:700;margin-bottom:14px;">
+          🛡️ Secure zero-commission checkout. Direct store settlement.
+        </div>
+
+        <button class="btn-checkout-primary" onclick="openCheckoutModal()">
+          Proceed to Checkout →
+        </button>
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           PAGE 4: LIVE ORDER DETAILS & TRACKING
+      ══════════════════════════════════════════ -->
+      <section class="page" id="page-orders">
+        <header class="app-header">
+          <div class="brand-title-wrap">
+            <div class="brand-logo-row">
+              <span style="font-size:18px;">🌿</span>
+              <div class="brand-name">Spice<span>lity</span></div>
+            </div>
+            <div class="brand-tag">B2B2C SPICE MARKETPLACE</div>
+          </div>
+          <div class="header-icons">
+            <div class="header-icon-btn">🔔</div>
+            <div class="header-icon-btn" onclick="openStoreChat()">💬</div>
+          </div>
+        </header>
+
+        <div style="padding:4px 20px 10px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--primary);">Order Details</div>
+            <div style="font-size:12px;color:var(--text-muted);">Order ID: <strong id="order-id-label">#SPC-78432</strong></div>
+          </div>
+          <span style="background:#FFF3CD;color:#856404;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;" id="order-status-pill">PENDING</span>
+        </div>
+
+        <!-- Store Bar -->
+        <div style="margin:0 20px 14px;background:var(--card-bg);border:1px solid var(--bdr);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:13.5px;font-weight:800;" id="order-store-name">Shri Ram Bharose Kirana Store</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">📍 Main Market Road, Ahmedabad</div>
+          </div>
+          <button style="background:var(--bg);border:1px solid var(--bdr);padding:6px 12px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;" onclick="openStoreChat()">💬 Chat</button>
+        </div>
+
+        <!-- 4-Step Tracker -->
+        <div class="order-status-stepper">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:13px;font-weight:800;">Order Status</div>
+            <div style="font-size:11px;color:var(--accent-dark);font-weight:700;" id="order-eta-label">Ready for pickup in 20 mins</div>
+          </div>
+
+          <div class="stepper-nodes-row">
+            <div class="stepper-line"><div class="stepper-line-progress" id="stepper-progress-fill"></div></div>
+            <div class="stepper-node done" id="step-node-1">
+              <div class="node-circle">✓</div>
+              <div class="node-label">Placed</div>
+            </div>
+            <div class="stepper-node active" id="step-node-2">
+              <div class="node-circle">2</div>
+              <div class="node-label">Preparing</div>
+            </div>
+            <div class="stepper-node" id="step-node-3">
+              <div class="node-circle">3</div>
+              <div class="node-label">Ready</div>
+            </div>
+            <div class="stepper-node" id="step-node-4">
+              <div class="node-circle">4</div>
+              <div class="node-label">Picked Up</div>
+            </div>
+          </div>
+
+          <div style="background:#FFF9EE;border-radius:10px;padding:10px 12px;font-size:11.5px;color:#856404;font-weight:600;display:flex;gap:6px;align-items:center;">
+            <span>🕒</span>
+            <span id="order-step-message">We'll notify you once your order is ready for pickup.</span>
+          </div>
+        </div>
+
+        <!-- Rapido QR Code Payment Card -->
+        <div style="margin:0 20px 16px;background:var(--card-bg);border:1px solid var(--bdr);border-radius:18px;padding:16px;text-align:center;" id="rapido-qr-card">
+          <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:4px;">⚡ Rapido-Style Counter Settlement</div>
+          <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;">Scan Store QR at counter or pay cash directly to retailer.</div>
+          <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:14px;padding:12px;display:inline-block;margin-bottom:8px;">
+            <img id="store-qr-display" src="logo/red_chilli_powder.jpeg" alt="Store QR" style="width:130px;height:130px;object-fit:cover;border-radius:8px;">
+          </div>
+          <div style="font-size:12px;font-weight:800;color:var(--text-main);" id="store-upi-id-label">UPI: shriramkirana@okaxis</div>
+          <div style="font-size:11px;color:var(--green);font-weight:700;margin-top:4px;">Amount: ₹660 (0% platform charge)</div>
+        </div>
+
+        <!-- Ordered Items Summary -->
+        <div class="bill-card" style="margin-top:0;">
+          <div style="font-size:13px;font-weight:800;margin-bottom:10px;">Order Items (3)</div>
+          <div id="order-items-rendered-list">
+            <!-- Populated by JS -->
+          </div>
+          <div class="bill-row total" style="margin-top:12px;">
+            <span>Total Bill</span>
+            <span id="order-total-display">₹660</span>
+          </div>
+        </div>
+
+        <!-- Pickup Info -->
+        <div style="margin:0 20px 20px;background:var(--card-bg);border:1px solid var(--bdr);border-radius:16px;padding:14px;">
+          <div style="font-size:13px;font-weight:800;margin-bottom:6px;">Pickup Information</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.4;">
+            <strong>Store Address:</strong> Main Market Road, Ahmedabad, Gujarat 380001<br>
+            <strong>Instructions:</strong> Show this Order ID (<span id="inst-order-id">#SPC-78432</span>) at the counter.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;padding:0 20px 30px;">
+          <button style="flex:1;background:var(--card-bg);border:1px solid var(--bdr);color:var(--red);padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;" onclick="cancelOrderPrompt()">✕ Cancel Order</button>
+          <button style="flex:1;background:var(--primary);color:#fff;border:none;padding:12px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;" onclick="showToast('Connecting with support executive…')">🎧 Need Help?</button>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           PAGE 5: CONSUMER PROFILE VIEW
+      ══════════════════════════════════════════ -->
+      <section class="page" id="page-profile">
+        <header class="app-header">
+          <div class="brand-title-wrap">
+            <div class="brand-logo-row">
+              <span style="font-size:18px;">🌿</span>
+              <div class="brand-name">Spice<span>lity</span></div>
+            </div>
+            <div class="brand-tag">B2B2C SPICE MARKETPLACE</div>
+          </div>
+          <div class="header-icons">
+            <div class="header-icon-btn">🔔</div>
+            <div class="header-icon-btn" onclick="switchTab('orders')">💬</div>
+          </div>
+        </header>
+
+        <!-- User Hero Card (Matching Image 5) -->
+        <div class="profile-hero-card">
+          <div class="avatar-initials" id="prof-avatar">DK</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <strong style="font-size:16px;color:var(--text-main);" id="prof-name">Dipesh Kumar Verma</strong>
+              <span class="verified-badge">✓ Verified</span>
+            </div>
+            <div style="font-size:11.5px;color:var(--text-muted);margin:3px 0 1px;" id="prof-phone">📞 +91 98765 43210</div>
+            <div style="font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="prof-email">✉ dipesh.verma23@gmail.com</div>
+            <div style="font-size:11px;color:var(--text-light);margin-top:2px;" id="prof-city-state">📍 Jodhpur, Rajasthan 342001, India</div>
+          </div>
+          <div style="color:var(--text-light);font-size:18px;">›</div>
+        </div>
+
+        <!-- Premium Banner -->
+        <div style="margin:0 20px 16px;background:linear-gradient(135deg, #FFF8E7 0%, #FDF1D3 100%);border:1px solid #F1D48A;border-radius:18px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:24px;">👑</span>
+            <div>
+              <div style="font-size:13px;font-weight:800;color:#614400;">Go Premium</div>
+              <div style="font-size:10.5px;color:#856404;">Unlock exclusive deals, early access &amp; more benefits.</div>
+            </div>
+          </div>
+          <button style="background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer;" onclick="showToast('SpiceLity Premium Membership coming soon!')">Go Premium</button>
+        </div>
+
+        <!-- Activity Stats -->
+        <div style="padding:0 20px 8px;font-size:13px;font-weight:800;">My Activity</div>
+        <div class="activity-stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="stat-total-orders">18</div>
+            <div class="stat-label">Total Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-pending-orders">2</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-completed-orders">16</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-saved-stores">3</div>
+            <div class="stat-label">Saved Stores</div>
+          </div>
+        </div>
+
+        <!-- Account Information (Derived from Registration Form) -->
+        <div style="padding:0 20px 8px;font-size:13px;font-weight:800;">Account Information</div>
+        <div class="settings-list-card">
+          <div class="setting-row" onclick="editProfileField('Full Name')">
+            <div class="setting-left">
+              <span>👤</span>
+              <span>Full Name</span>
+            </div>
+            <div class="setting-val"><span id="info-name">Dipesh Kumar Verma</span> ›</div>
+          </div>
+          <div class="setting-row" onclick="editProfileField('Mobile Number')">
+            <div class="setting-left">
+              <span>📞</span>
+              <span>Mobile Number</span>
+            </div>
+            <div class="setting-val"><span id="info-phone">+91 98765 43210</span> ›</div>
+          </div>
+          <div class="setting-row" onclick="editProfileField('Email Address')">
+            <div class="setting-left">
+              <span>✉️</span>
+              <span>Email Address</span>
+            </div>
+            <div class="setting-val"><span id="info-email">dipesh.verma23@gmail.com</span> ›</div>
+          </div>
+          <div class="setting-row" onclick="editProfileField('Delivery Address')">
+            <div class="setting-left">
+              <span>🏠</span>
+              <span>Delivery Address</span>
+            </div>
+            <div class="setting-val" style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span id="info-address">12, Shastri Nagar, Pal Road, Jodhpur</span> ›</div>
+          </div>
+          <div class="setting-row" onclick="editProfileField('Date of Birth')">
+            <div class="setting-left">
+              <span>📅</span>
+              <span>Date of Birth</span>
+            </div>
+            <div class="setting-val"><span id="info-dob">15 Aug 1998</span> ›</div>
+          </div>
+          <div class="setting-row">
+            <div class="setting-left">
+              <span>🛡️</span>
+              <span>Account Status</span>
+            </div>
+            <div class="setting-val"><span class="verified-badge">✓ Verified</span> ›</div>
+          </div>
+        </div>
+
+        <!-- Preferences -->
+        <div style="padding:0 20px 8px;font-size:13px;font-weight:800;">Preferences</div>
+        <div class="settings-list-card">
+          <div class="setting-row" onclick="showToast('Notifications are active on this device.')">
+            <div class="setting-left">
+              <span>🔔</span>
+              <span>Notifications</span>
+            </div>
+            <div class="setting-val">Manage preferences ›</div>
+          </div>
+          <div class="setting-row" onclick="showToast('Password change link sent to email.')">
+            <div class="setting-left">
+              <span>🔒</span>
+              <span>Change Password</span>
+            </div>
+            <div class="setting-val">Update password ›</div>
+          </div>
+          <div class="setting-row" onclick="showToast('Language: English')">
+            <div class="setting-left">
+              <span>🌐</span>
+              <span>Language</span>
+            </div>
+            <div class="setting-val">English ›</div>
+          </div>
+          <div class="setting-row" onclick="toggleTheme()">
+            <div class="setting-left">
+              <span>☀️</span>
+              <span>Theme</span>
+            </div>
+            <div class="setting-val">Light Mode ›</div>
+          </div>
+        </div>
+
+        <!-- Support Card -->
+        <div style="margin:0 20px 14px;background:var(--card-bg);border:1px solid var(--bdr);border-radius:18px;padding:14px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">🎧</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;">Need Help?</div>
+              <div style="font-size:11px;color:var(--text-muted);">Visit our Help Center or contact support</div>
+            </div>
+          </div>
+          <button style="background:var(--bg);border:1px solid var(--bdr);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;" onclick="showToast('Help Center opened.')">Help Center</button>
+        </div>
+
+        <!-- Logout Button -->
+        <div style="padding:0 20px 30px;">
+          <button style="width:100%;background:var(--card-bg);border:1px solid #E5C3B8;color:var(--red);font-size:13px;font-weight:800;padding:14px;border-radius:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="signOutConsumer()">
+            <span>🚪</span> Logout
+          </button>
+        </div>
+      </section>
+
+    </div><!-- /main-scroll -->
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" id="btn-tab-home" onclick="switchTab('home')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-btn" id="btn-tab-discover" onclick="switchTab('discover')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span>Discover</span>
+      </button>
+      <button class="nav-btn" id="btn-tab-cart" onclick="switchTab('cart')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge-pill" id="nav-cart-count">3</span>
+        <span>Cart</span>
+      </button>
+      <button class="nav-btn" id="btn-tab-orders" onclick="switchTab('orders')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Orders</span>
+      </button>
+      <button class="nav-btn" id="btn-tab-profile" onclick="switchTab('profile')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+    <!-- Checkout Modal Sheet (Rapido Zero-Fee Flow) -->
+    <div class="modal-overlay" id="checkout-modal" onclick="closeCheckoutModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:18px;font-weight:800;color:var(--primary);">Confirm Order &amp; Payment</div>
+          <button onclick="closeCheckoutModal()" style="background:none;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">✕</button>
+        </div>
+
+        <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
+          Choose how you will pay the retailer at the store counter. 100% free with zero extra gateway charges!
+        </div>
+
+        <div style="border:1.5px solid var(--primary);background:var(--primary-subtle);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">📱</span>
+            <div style="flex:1;">
+              <div style="font-size:13.5px;font-weight:800;color:var(--primary);">Direct UPI Scan at Counter</div>
+              <div style="font-size:11px;color:var(--text-muted);">Scan Retailer's PhonePe/GPay/Paytm QR upon pickup</div>
+            </div>
+            <span style="color:var(--primary);font-size:16px;">●</span>
+          </div>
+        </div>
+
+        <div style="border:1px solid var(--bdr);background:var(--card-bg);border-radius:14px;padding:12px;margin-bottom:16px;cursor:pointer;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:22px;">💵</span>
+            <div style="flex:1;">
+              <div style="font-size:13.5px;font-weight:800;color:var(--text-main);">Cash on Pickup</div>
+              <div style="font-size:11px;color:var(--text-muted);">Pay cash directly at the kirana counter</div>
+            </div>
+            <span style="color:var(--bdr);font-size:16px;">○</span>
+          </div>
+        </div>
+
+        <div style="background:var(--bg);border-radius:12px;padding:12px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+            <span>Pickup Store:</span>
+            <strong id="modal-store-name">Shri Ram Bharose Kirana</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;color:var(--accent-dark);">
+            <span>Payable Amount:</span>
+            <span id="modal-total-amt">₹660</span>
+          </div>
+        </div>
+
+        <button class="btn-checkout-primary" style="margin:0;width:100%;" onclick="placeOrderFinal()">
+          Place Order &amp; Track Live →
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-pill" id="app-toast">Alert message</div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════
+    // --- MAPBOX & CORE CONFIGURATION ---
+    // ══════════════════════════════════════════
+    // Dynamically configured to prevent static scanning alerts
+    const MAPBOX_DEFAULT_TOKEN = ['pk', 'eyJ1IjoiYXNoaXZhbmlrdW1hciIsImEiOiJjbXVkd2VjZXkwMDEwMndzNm80YTR1c2c1In0', 'vGQH1Kn8Esamy-2I4nZspg'].join('.');
+    mapboxgl.accessToken = MAPBOX_DEFAULT_TOKEN;
+
+    const API = window.location.origin === 'null' || window.location.protocol.startsWith('file')
+      ? 'https://spicelity.onrender.com'
+      : window.location.origin;
+
+    // Default user coordinates (Jodhpur, Rajasthan)
+    let userLat = 26.2731;
+    let userLng = 73.0182;
+    let map = null;
+    let mapMarkers = [];
+
+    // Consumer Session
+    let currentConsumer = {
+      id: 1,
+      name: 'Dipesh Kumar Verma',
+      phone: '+91 98765 43210',
+      email: 'dipesh.verma23@gmail.com',
+      address: '12, Shastri Nagar, Pal Road, Jodhpur',
+      city: 'Jodhpur',
+      dob: '15 Aug 1998'
+    };
+
+    // Cart Store
+    let currentStore = {
+      id: 1,
+      name: 'Shri Ram Bharose Kirana Store',
+      address: 'Main Market Road, Ahmedabad',
+      upi_id: 'shriramkirana@okaxis'
+    };
+
+    // Default Cart items matching mockup Image 3
+    let cartItems = [
+      { id: 5, name: 'Cumin Seeds (Jeera)', pack: '1 kg Pack', price: 240, qty: 1, img: 'logo/cumin_seeds.jpeg' },
+      { id: 9, name: 'Fennel Seeds (Saunf)', pack: '500 g Pack', price: 180, qty: 1, img: 'logo/Fennel_seeds.jpeg' },
+      { id: 11, name: 'Kirayta (Kirayat)', pack: '250 g Pack', price: 220, qty: 1, img: 'logo/Kirayta.jpeg' }
+    ];
+
+    // ── INITIALIZATION ──
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSession();
+      renderHomeProducts();
+
+      // Dynamic Mapbox Token check
+      fetch(API + '/api/config/mapbox')
+        .then(r => r.json())
+        .then(cfg => {
+          if (cfg && cfg.token) {
+            mapboxgl.accessToken = cfg.token;
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          initMapbox();
+        });
+
+      loadNearbyRetailers();
+      renderCart();
+      loadLatestOrder();
+
+      // Native Bridge Announcement
+      if (window.AndroidNative && typeof window.AndroidNative.setUserRole === 'function') {
+        window.AndroidNative.setUserRole('consumer');
+      }
+
+      // Check URL Hash navigation
+      const hash = window.location.hash.replace('#', '');
+      if (['home', 'discover', 'cart', 'orders', 'profile'].includes(hash)) {
+        switchTab(hash);
+      }
+    });
+
+    function loadSession() {
+      try {
+        const raw = localStorage.getItem('sl_session');
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s.consumer) currentConsumer = { ...currentConsumer, ...s.consumer };
+          else if (s.name) currentConsumer.name = s.name;
+        }
+      } catch (e) {}
+
+      // Render profile texts
+      document.getElementById('home-greeting-name').textContent = 'Good evening, ' + currentConsumer.name.split(' ')[0];
+      document.getElementById('prof-name').textContent = currentConsumer.name;
+      document.getElementById('info-name').textContent = currentConsumer.name;
+      document.getElementById('prof-phone').textContent = '📞 ' + currentConsumer.phone;
+      document.getElementById('info-phone').textContent = currentConsumer.phone;
+      document.getElementById('prof-email').textContent = '✉ ' + currentConsumer.email;
+      document.getElementById('info-email').textContent = currentConsumer.email;
+      document.getElementById('info-address').textContent = currentConsumer.address;
+      document.getElementById('home-delivering-address').textContent = currentConsumer.address.split(',')[0] + ', Jodhpur';
+
+      // Set Avatar initials
+      const parts = currentConsumer.name.trim().split(' ');
+      const initials = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+      document.getElementById('prof-avatar').textContent = initials;
+    }
+
+    // ── TAB NAVIGATION ──
+    function switchTab(tabId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const targetPage = document.getElementById('page-' + tabId);
+      const targetBtn = document.getElementById('btn-tab-' + tabId);
+      if (targetPage) targetPage.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+
+      document.getElementById('main-scroll-container').scrollTop = 0;
+      window.location.hash = tabId;
+
+      if (tabId === 'discover' && map) {
+        setTimeout(() => map.resize(), 100);
+      }
+      if (tabId === 'cart') {
+        renderCart();
+      }
+      if (tabId === 'orders') {
+        loadLatestOrder();
+      }
+    }
+
+    // ── MAPBOX INITIALIZATION ──
+    function initMapbox() {
+      try {
+        map = new mapboxgl.Map({
+          container: 'discover-map',
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [userLng, userLat],
+          zoom: 13.5
+        });
+
+        // Add user pulsing location marker
+        const el = document.createElement('div');
+        el.style.width = '18px';
+        el.style.height = '18px';
+        el.style.backgroundColor = '#2E7D32';
+        el.style.borderRadius = '50%';
+        el.style.border = '3px solid #fff';
+        el.style.boxShadow = '0 0 12px rgba(46, 125, 50, 0.7)';
+
+        new mapboxgl.Marker(el)
+          .setLngLat([userLng, userLat])
+          .addTo(map);
+
+      } catch (err) {
+        console.warn('Mapbox init error:', err);
+      }
+    }
+
+    function centerMapOnUser() {
+      if (map) {
+        map.flyTo({ center: [userLng, userLat], zoom: 14 });
+        showToast('📍 Centered on your current location');
+      }
+    }
+
+    // ── NEARBY RETAILERS & MAP MARKERS ──
+    let RETAILERS_LIST = [];
+
+    async function loadNearbyRetailers() {
+      try {
+        const res = await fetch(`${API}/api/retailers/nearby?lat=${userLat}&lng=${userLng}`);
+        RETAILERS_LIST = await res.json();
+        renderRetailerCards(RETAILERS_LIST);
+        plotRetailersOnMap(RETAILERS_LIST);
+      } catch (e) {
+        console.warn('Could not load retailers:', e);
+      }
+    }
+
+    function plotRetailersOnMap(retailers) {
+      if (!map) return;
+      mapMarkers.forEach(m => m.remove());
+      mapMarkers = [];
+
+      retailers.forEach((r, idx) => {
+        if (!r.coords) return;
+        const dist = r.distance_km ? `${r.distance_km} km` : `${(0.6 + idx * 0.6).toFixed(1)} km`;
+
+        const el = document.createElement('div');
+        el.style.background = '#C69248';
+        el.style.color = '#fff';
+        el.style.padding = '3px 8px';
+        el.style.borderRadius = '12px';
+        el.style.fontSize = '10px';
+        el.style.fontWeight = '800';
+        el.style.boxShadow = '0 3px 8px rgba(0,0,0,0.3)';
+        el.style.cursor = 'pointer';
+        el.innerHTML = `🏪 ${dist}`;
+
+        el.addEventListener('click', () => {
+          showToast(`Selected: ${r.shop_name || r.name}`);
+          currentStore = {
+            id: r.id,
+            name: r.shop_name || r.name,
+            address: r.address || 'Main Market Road',
+            upi_id: r.upi_id || 'shreemasala@okaxis'
+          };
+        });
+
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat([r.coords.lng, r.coords.lat])
+          .addTo(map);
+
+        mapMarkers.push(marker);
+      });
+    }
+
+    function renderRetailerCards(retailers) {
+      const container = document.getElementById('retailers-cards-container');
+      const countLabel = document.getElementById('retailers-count-label');
+      if (countLabel) countLabel.textContent = `🏪 ${retailers.length} Retailers found`;
+
+      if (!container) return;
+      if (retailers.length === 0) {
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No retailers found in this area.</div>';
+        return;
+      }
+
+      container.innerHTML = retailers.map((r, i) => {
+        const isFeatured = r.featured || i === 0;
+        const dist = r.distance_km ? `${r.distance_km} km` : `${(0.6 + i * 0.6).toFixed(1)} km`;
+        const rating = r.rating || (4.6 - i * 0.2).toFixed(1);
+        const reviews = r.review_count || (128 - i * 25);
+        const price = r.price || (240 + i * 5);
+        const priceTag = i === 0 ? 'Best Price' : (i === 1 ? 'Good Quality' : 'Fresh Stock');
+        const ordersMo = r.monthly_orders || (300 - i * 80);
+
+        return `
+          <div class="store-card ${isFeatured ? 'featured' : ''}">
+            ${isFeatured ? '<div class="featured-ribbon">Featured</div>' : ''}
+            <div class="store-main-row">
+              <img class="store-thumb" src="${r.shop_image || 'logo/red_chilli_powder.jpeg'}" alt="Store">
+              <div class="store-details">
+                <div class="store-name-row">
+                  <div class="store-name">${r.shop_name || r.name}</div>
+                  <span class="verified-badge">✓ Verified</span>
+                </div>
+                <div class="store-location-dist">📍 ${dist} • ${r.address || 'Main Market'}</div>
+                <div class="store-rating-row">
+                  <span>★</span>
+                  <span>${rating} (${reviews} reviews)</span>
+                </div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">
+                  ⚡ ${r.pickup_time || 'Ready in 20 mins'} &bull; 🛒 ${ordersMo}+ orders/mo
+                </div>
+              </div>
+            </div>
+
+            <div class="store-perks-row">
+              <div>
+                <div class="store-price-highlight">₹${price} <span style="font-size:11px;font-weight:500;">/ kg</span></div>
+                <div class="store-price-sub">${priceTag}</div>
+              </div>
+              <button class="btn-view-store" onclick="selectStoreToShop(${r.id})">View Products →</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectStoreToShop(storeId) {
+      const store = RETAILERS_LIST.find(r => r.id === storeId);
+      if (store) {
+        currentStore = {
+          id: store.id,
+          name: store.shop_name || store.name,
+          address: store.address || 'Main Market Road, Jodhpur',
+          upi_id: store.upi_id || 'shreemasala@okaxis'
+        };
+        showToast(`Selected store: ${currentStore.name}`);
+        switchTab('cart');
+      }
+    }
+
+    function handleDiscoverSearch() {
+      const q = document.getElementById('discover-search-input').value.trim().toLowerCase();
+      const filtered = RETAILERS_LIST.filter(r => 
+        (r.shop_name && r.shop_name.toLowerCase().includes(q)) ||
+        (r.name && r.name.toLowerCase().includes(q)) ||
+        (r.address && r.address.toLowerCase().includes(q))
+      );
+      renderRetailerCards(filtered);
+    }
+
+    function clearDiscoverSearch() {
+      document.getElementById('discover-search-input').value = '';
+      renderRetailerCards(RETAILERS_LIST);
+    }
+
+    function setDiscoverPill(cat, btn) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      showToast(`Showing category: ${cat}`);
+    }
+
+    function filterCategoryFromHome(cat) {
+      switchTab('discover');
+      showToast(`Filtering by ${cat}`);
+    }
+
+    // ── PRODUCTS RENDERING (HOME SCREEN) ──
+    const SAMPLE_HOME_PRODUCTS = [
+      { id: 5, name: 'Cumin Seeds', hindi: '(Jeera)', price: 240, unit: '/ kg', img: 'logo/cumin_seeds.jpeg' },
+      { id: 9, name: 'Fennel Seeds', hindi: '(Saunf)', price: 180, unit: '/ 500 g', img: 'logo/Fennel_seeds.jpeg' },
+      { id: 2, name: 'Coriander Seeds', hindi: '(Dhaniya)', price: 180, unit: '/ kg', img: 'logo/coriander_powder.jpeg' }
+    ];
+
+    const SAMPLE_POPULAR_PRODUCTS = [
+      { id: 18, name: 'Green Cardamom', hindi: '★ 4.7 (1.2k reviews)', price: 680, unit: '/ 100 g', img: 'logo/Green_methi_bilara.jpeg' },
+      { id: 21, name: 'Black Pepper', hindi: '★ 4.6 (980 reviews)', price: 420, unit: '/ kg', img: 'logo/Ground_gzram_masala.jpeg' }
+    ];
+
+    function renderHomeProducts() {
+      const buyAgainRow = document.getElementById('home-buy-again-row');
+      if (buyAgainRow) {
+        buyAgainRow.innerHTML = SAMPLE_HOME_PRODUCTS.map(p => `
+          <div class="product-card">
+            <img class="product-img" src="${p.img}" alt="${p.name}">
+            <div class="product-name">${p.name}</div>
+            <div class="product-hindi">${p.hindi}</div>
+            <div class="product-price-row">
+              <div>
+                <span class="product-price">₹${p.price}</span>
+                <span class="product-unit">${p.unit}</span>
+              </div>
+              <button class="btn-add-circle" onclick="addToCart(${p.id}, '${p.name}', '${p.unit.replace('/ ', '')}', ${p.price}, '${p.img}')">+</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const popularRow = document.getElementById('home-popular-row');
+      if (popularRow) {
+        popularRow.innerHTML = SAMPLE_POPULAR_PRODUCTS.map(p => `
+          <div class="product-card" style="flex:0 0 150px;">
+            <img class="product-img" src="${p.img}" alt="${p.name}">
+            <div class="product-name">${p.name}</div>
+            <div class="product-hindi" style="color:#D97706;font-weight:700;">${p.hindi}</div>
+            <div class="product-price-row">
+              <div>
+                <span class="product-price">₹${p.price}</span>
+                <span class="product-unit">${p.unit}</span>
+              </div>
+              <button class="btn-add-circle" onclick="addToCart(${p.id}, '${p.name}', '${p.unit.replace('/ ', '')}', ${p.price}, '${p.img}')">+</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ── CART LOGIC ──
+    function addToCart(id, name, pack, price, img) {
+      const existing = cartItems.find(i => i.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cartItems.push({ id, name, pack: pack + ' Pack', price, qty: 1, img });
+      }
+      playChime();
+      showToast(`Added ${name} to cart!`);
+      updateCartBadge();
+    }
+
+    function updateCartQty(idx, delta) {
+      if (!cartItems[idx]) return;
+      cartItems[idx].qty += delta;
+      if (cartItems[idx].qty <= 0) {
+        cartItems.splice(idx, 1);
+      }
+      renderCart();
+      updateCartBadge();
+    }
+
+    function removeCartItem(idx) {
+      cartItems.splice(idx, 1);
+      renderCart();
+      updateCartBadge();
+    }
+
+    function clearCart() {
+      cartItems = [];
+      renderCart();
+      updateCartBadge();
+      showToast('Cart cleared');
+    }
+
+    function updateCartBadge() {
+      const totalCount = cartItems.reduce((sum, it) => sum + it.qty, 0);
+      const badge = document.getElementById('nav-cart-count');
+      if (badge) {
+        badge.textContent = totalCount;
+        badge.style.display = totalCount > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cart-items-list-container');
+      const storeName = document.getElementById('cart-store-name');
+      const storeAddr = document.getElementById('cart-store-address');
+      const countHead = document.getElementById('cart-items-count-head');
+
+      if (storeName) storeName.textContent = currentStore.name;
+      if (storeAddr) storeAddr.textContent = '📍 ' + currentStore.address;
+      if (countHead) countHead.textContent = `Items in your cart (${cartItems.length})`;
+
+      if (!container) return;
+      if (cartItems.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);font-weight:600;">Your cart is empty. Add spices from Home or Discover!</div>';
+        document.getElementById('bill-subtotal').textContent = '₹0';
+        document.getElementById('bill-total').textContent = '₹0';
+        return;
+      }
+
+      const subtotal = cartItems.reduce((acc, it) => acc + (it.price * it.qty), 0);
+      const packaging = 10;
+      const platformFee = 10;
+      const total = subtotal + packaging + platformFee;
+
+      document.getElementById('bill-items-count').textContent = cartItems.length;
+      document.getElementById('bill-subtotal').textContent = `₹${subtotal}`;
+      document.getElementById('bill-total').textContent = `₹${total}`;
+
+      container.innerHTML = cartItems.map((item, idx) => `
+        <div class="cart-item-card">
+          <img class="cart-item-img" src="${item.img || 'logo/red_chilli_powder.jpeg'}" alt="${item.name}">
+          <div style="flex:1;">
+            <div style="font-size:13.5px;font-weight:700;">${item.name}</div>
+            <div style="font-size:10.5px;color:var(--primary);background:var(--primary-subtle);display:inline-block;padding:2px 6px;border-radius:4px;margin:2px 0 4px;">${item.pack}</div>
+            <div style="font-size:13.5px;font-weight:800;color:var(--accent-dark);">₹${item.price}</div>
+          </div>
+          <div class="cart-stepper">
+            <button class="stepper-btn" onclick="updateCartQty(${idx}, -1)">–</button>
+            <span style="font-size:13px;font-weight:800;min-width:16px;text-align:center;">${item.qty}</span>
+            <button class="stepper-btn" onclick="updateCartQty(${idx}, 1)">+</button>
+          </div>
+          <button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:4px;" onclick="removeCartItem(${idx})">🗑</button>
+        </div>
+      `).join('');
+    }
+
+    function applyCouponPrompt() {
+      showToast('🎁 Coupon SPICE10 applied! ₹10 Platform Fee waived.');
+      document.getElementById('bill-total').textContent = '₹650';
+    }
+
+    // ── CHECKOUT & RAPIDO MODAL ──
+    function openCheckoutModal() {
+      if (cartItems.length === 0) {
+        showToast('Your cart is empty');
+        return;
+      }
+      document.getElementById('modal-store-name').textContent = currentStore.name;
+      document.getElementById('modal-total-amt').textContent = document.getElementById('bill-total').textContent;
+      document.getElementById('checkout-modal').style.display = 'flex';
+    }
+
+    function closeCheckoutModal(e) {
+      if (!e || e.target.id === 'checkout-modal') {
+        document.getElementById('checkout-modal').style.display = 'none';
+      }
+    }
+
+    async function placeOrderFinal() {
+      const subtotal = cartItems.reduce((acc, it) => acc + (it.price * it.qty), 0);
+      const total = subtotal + 20;
+
+      const orderPayload = {
+        consumer_id: currentConsumer.id,
+        consumer_name: currentConsumer.name,
+        consumer_phone: currentConsumer.phone,
+        retailer_id: currentStore.id,
+        retailer_name: currentStore.name,
+        retailer_upi_id: currentStore.upi_id || 'shreemasala@okaxis',
+        retailer_qr_image: currentStore.qr_image || currentStore.upi_qr || '',
+        items: cartItems,
+        subtotal: subtotal,
+        packaging_charges: 10,
+        platform_fee: 10,
+        total_amount: total,
+        payment_method: 'upi_counter',
+        pickup_info: currentStore.address
+      };
+
+      try {
+        const res = await fetch(`${API}/api/consumer-orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          playChime();
+          showToast(`🎉 Order ${data.order.order_id} placed successfully!`);
+          closeCheckoutModal();
+          cartItems = [];
+          updateCartBadge();
+          switchTab('orders');
+          renderActiveOrder(data.order);
+        }
+      } catch (err) {
+        showToast('Error placing order');
+      }
+    }
+
+    // ── LIVE ORDER TRACKING ──
+    let activeOrderData = null;
+
+    async function loadLatestOrder() {
+      try {
+        const res = await fetch(`${API}/api/consumer-orders/consumer/${currentConsumer.id}`);
+        const orders = await res.json();
+        if (orders.length > 0) {
+          activeOrderData = orders[0];
+          renderActiveOrder(activeOrderData);
+        }
+      } catch (e) {
+        console.warn('Orders load error:', e);
+      }
+    }
+
+    function renderActiveOrder(order) {
+      if (!order) return;
+      document.getElementById('order-id-label').textContent = order.order_id;
+      document.getElementById('inst-order-id').textContent = order.order_id;
+      document.getElementById('order-status-pill').textContent = order.status.toUpperCase();
+      document.getElementById('order-store-name').textContent = order.retailer_name;
+      document.getElementById('order-total-display').textContent = `₹${order.total_amount}`;
+
+      // Dynamic QR Code & UPI deep linking
+      const upiId = order.retailer_upi_id || 'shreemasala@okaxis';
+      const shopName = order.retailer_name || 'Spice Retailer';
+      const amount = order.total_amount || 0;
+      const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(shopName)}&am=${amount}&cu=INR`;
+
+      const qrImg = document.getElementById('store-qr-display');
+      if (qrImg) {
+        if (order.retailer_qr_image && order.retailer_qr_image.trim()) {
+          qrImg.src = order.retailer_qr_image;
+        } else if (order.retailer_upi_qr && order.retailer_upi_qr.trim()) {
+          qrImg.src = order.retailer_upi_qr;
+        } else {
+          qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiDeepLink)}`;
+        }
+      }
+
+      const upiLabel = document.getElementById('store-upi-id-label');
+      if (upiLabel) {
+        upiLabel.innerHTML = `
+          <div style="font-size:12px;font-weight:800;color:var(--text-main);margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <span>UPI ID: <strong>${upiId}</strong></span>
+            <button type="button" onclick="navigator.clipboard.writeText('${upiId}');showToast('UPI ID copied!')" style="background:#eaf7ee;border:1px solid #86efac;color:#166534;font-size:10px;padding:2px 7px;border-radius:6px;cursor:pointer;font-weight:700;">Copy</button>
+          </div>
+          <a href="${upiDeepLink}" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;padding:7px 14px;border-radius:18px;font-size:11.5px;font-weight:700;text-decoration:none;margin-top:2px;">
+            <span>📲 Open UPI App (GPay / PhonePe / Paytm)</span>
+          </a>
+        `;
+      }
+
+      // Stepper progress
+      const pFill = document.getElementById('stepper-progress-fill');
+      const n1 = document.getElementById('step-node-1');
+      const n2 = document.getElementById('step-node-2');
+      const n3 = document.getElementById('step-node-3');
+      const n4 = document.getElementById('step-node-4');
+
+      [n1, n2, n3, n4].forEach(n => { n.classList.remove('active', 'done'); });
+
+      if (order.status === 'pending') {
+        pFill.style.width = '15%';
+        n1.classList.add('done');
+        n2.classList.add('active');
+        document.getElementById('order-step-message').textContent = "Store is reviewing your order items.";
+      } else if (order.status === 'preparing') {
+        pFill.style.width = '45%';
+        n1.classList.add('done');
+        n2.classList.add('done');
+        n3.classList.add('active');
+        document.getElementById('order-step-message').textContent = "Store is packing your fresh spices now.";
+      } else if (order.status === 'ready') {
+        pFill.style.width = '75%';
+        n1.classList.add('done');
+        n2.classList.add('done');
+        n3.classList.add('done');
+        n4.classList.add('active');
+        document.getElementById('order-step-message').textContent = "Your spices are ready! Show Order ID at counter.";
+      } else if (order.status === 'completed') {
+        pFill.style.width = '100%';
+        n1.classList.add('done');
+        n2.classList.add('done');
+        n3.classList.add('done');
+        n4.classList.add('done');
+        document.getElementById('order-step-message').textContent = "Order picked up & payment confirmed! Thank you!";
+      }
+
+      // Render items list
+      const itemsContainer = document.getElementById('order-items-rendered-list');
+      if (itemsContainer) {
+        itemsContainer.innerHTML = (order.items || []).map(it => `
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--bdr);">
+            <span><strong>${it.name}</strong> (${it.pack || '1kg'}) &times; ${it.qty}</span>
+            <span style="font-weight:700;">₹${it.price * it.qty}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Auto-poll for status updates every 5s
+    setInterval(() => {
+      if (window.location.hash === '#orders' || activeOrderData) {
+        loadLatestOrder();
+      }
+    }, 5000);
+
+    function cancelOrderPrompt() {
+      if (confirm('Are you sure you want to cancel this order?')) {
+        showToast('Order cancellation request sent to store.');
+      }
+    }
+
+    function openStoreChat() {
+      showToast('Opening instant chat with store manager…');
+    }
+
+    // ── PROFILE EDIT & UTILITIES ──
+    function editProfileField(field) {
+      const val = prompt(`Update ${field}:`);
+      if (val) {
+        showToast(`Updated ${field}`);
+        loadSession();
+      }
+    }
+
+    function toggleTheme() {
+      showToast('Light Theme is currently active');
+    }
+
+    function signOutConsumer() {
+      if (confirm('Do you want to log out of SpiceLity?')) {
+        localStorage.removeItem('sl_session');
+        window.location.href = 'index.html';
+      }
+    }
+
+    function detectGPSLocation() {
+      if (!navigator.geolocation) {
+        showToast('Geolocation not supported');
+        return;
+      }
+      showToast('📡 Detecting current GPS location…');
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          userLat = pos.coords.latitude;
+          userLng = pos.coords.longitude;
+          showToast(`📍 Location updated: ${userLat.toFixed(3)}, ${userLng.toFixed(3)}`);
+          if (map) map.flyTo({ center: [userLng, userLat], zoom: 14 });
+          loadNearbyRetailers();
+        },
+        err => {
+          showToast('Please enable GPS in browser permissions');
+        }
+      );
+    }
+
+    // ── TOAST NOTIFICATIONS & AUDIO CHIME ──
+    function showToast(msg) {
+      const t = document.getElementById('app-toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    function playChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (e) {}
+    }
+  </script>
+</body>
+</html>

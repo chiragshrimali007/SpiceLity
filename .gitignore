@@ -9,3 +9,4 @@ build/
 android/.gradle/
 android/app/build/
 android/build/
+mapbox-gl-js-main/

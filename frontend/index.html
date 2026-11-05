@@ -1046,43 +1046,71 @@
             <!-- Step 1: Details -->
             <div class="reg-step active" id="cStep1">
               <div class="f-field">
-                <label class="f-label">FULL NAME</label>
+                <label class="f-label">FULL NAME <span style="color:var(--red);">*</span></label>
                 <div class="f-wrap">
-                  <input class="f-input" id="cName" type="text" placeholder="e.g. Ramesh Kumar">
+                  <input class="f-input" id="cName" type="text" placeholder="e.g. Dipesh Kumar Verma">
                   <span class="f-ico">👤</span>
                 </div>
                 <div class="err-msg" id="cNameErr">Name is required</div>
               </div>
               <div class="f-field">
-                <label class="f-label">MOBILE NUMBER</label>
+                <label class="f-label">MOBILE NUMBER <span style="color:var(--red);">*</span></label>
                 <div class="phone-input-row">
                   <input class="country-code" type="text" value="+91" readonly>
                   <div class="f-wrap" style="flex:1;">
                     <input class="f-input" id="cPhone" type="tel" placeholder="98765 43210" maxlength="10">
                   </div>
                 </div>
-                <div class="err-msg" id="cPhoneErr">Enter valid mobile</div>
+                <div class="err-msg" id="cPhoneErr">Enter valid 10-digit mobile number</div>
               </div>
               <div class="f-field">
-                <label class="f-label">CITY</label>
+                <label class="f-label">EMAIL ADDRESS <span style="color:var(--red);">*</span></label>
                 <div class="f-wrap">
-                  <input class="f-input" id="cCity" type="text" placeholder="e.g. Jaipur">
-                  <span class="f-ico">🏙️</span>
-                </div>
-              </div>
-              <div class="f-field">
-                <label class="f-label">ADDRESS</label>
-                <div class="f-wrap">
-                  <input class="f-input" id="cAddr" type="text" placeholder="Street, Area, PIN">
-                  <span class="f-ico">📍</span>
-                </div>
-              </div>
-              <div class="f-field">
-                <label class="f-label">EMAIL (optional)</label>
-                <div class="f-wrap">
-                  <input class="f-input" id="cEmail" type="email" placeholder="you@example.com">
+                  <input class="f-input" id="cEmail" type="email" placeholder="dipesh.verma23@gmail.com">
                   <span class="f-ico">📧</span>
                 </div>
+                <div class="err-msg" id="cEmailErr">Valid email is required</div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">DATE OF BIRTH</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cDob" type="date" value="1998-08-15">
+                  <span class="f-ico">📅</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">DELIVERY ADDRESS &amp; STREET <span style="color:var(--red);">*</span></label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cAddr" type="text" placeholder="12, Shastri Nagar, Pal Road">
+                  <span class="f-ico">🏠</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;margin-bottom:12px;">
+                <div class="f-field" style="flex:1;margin-bottom:0;">
+                  <label class="f-label">CITY</label>
+                  <div class="f-wrap">
+                    <input class="f-input" id="cCity" type="text" value="Jodhpur" placeholder="e.g. Jodhpur">
+                  </div>
+                </div>
+                <div class="f-field" style="flex:1;margin-bottom:0;">
+                  <label class="f-label">PINCODE</label>
+                  <div class="f-wrap">
+                    <input class="f-input" id="cPincode" type="text" value="342001" placeholder="342001" maxlength="6">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-bottom:14px;">
+                <button type="button" onclick="detectGPSLocation('c')" style="width:100%;padding:10px;background:var(--g50);border:1px dashed var(--g400);border-radius:10px;font-size:12px;font-weight:700;color:var(--g600);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <span>📍 Auto-Detect My Location (GPS)</span>
+                </button>
+              </div>
+              <div class="f-field">
+                <label class="f-label">CREATE PASSWORD <span style="color:var(--red);">*</span></label>
+                <div class="f-wrap">
+                  <input class="f-input" id="cPass" type="password" placeholder="Min. 6 characters">
+                  <span class="f-ico">🔒</span>
+                </div>
+                <div class="err-msg" id="cPassErr">Password must be at least 6 characters</div>
               </div>
               <button class="btn-primary" onclick="cNext(1)">Continue →</button>
             </div>
@@ -1126,8 +1154,7 @@
               <div class="suc-title">Welcome to SpiceLity!</div>
               <div class="suc-badge">👤 Consumer Account Active</div>
               <div class="suc-sub">You can now browse nearby retailers and check live spice prices.</div>
-              <button class="btn-primary" onclick="showToast('🚀 Opening Consumer Dashboard…')">Go to Dashboard
-                →</button>
+              <button class="btn-primary" onclick="window.location.href='consumer.html'">Go to Consumer Dashboard →</button>
             </div>
 
           </div>
@@ -1232,6 +1259,25 @@
                   <span class="f-ico">📍</span>
                 </div>
                 <div class="err-msg" id="rAddrErr">Shop address is required</div>
+              </div>
+              <div style="margin-bottom:14px;">
+                <button type="button" onclick="detectGPSLocation('r')" style="width:100%;padding:10px;background:var(--g50);border:1px dashed var(--g400);border-radius:10px;font-size:12px;font-weight:700;color:var(--g600);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <span>📍 Pin Exact Store Location via GPS</span>
+                </button>
+              </div>
+              <div class="f-field">
+                <label class="f-label">UPI ID FOR RAPIDO-STYLE DIRECT PAYMENT <span style="color:var(--red);font-size:10px;">*</span></label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rUpiId" type="text" placeholder="e.g. shreemasala@okaxis">
+                  <span class="f-ico">💳</span>
+                </div>
+              </div>
+              <div class="f-field">
+                <label class="f-label">STORE PICKUP PREPARATION TIME</label>
+                <div class="f-wrap">
+                  <input class="f-input" id="rPickupTime" type="text" value="Ready in 20 mins" placeholder="Ready in 20 mins">
+                  <span class="f-ico">⚡</span>
+                </div>
               </div>
               <div class="f-field">
                 <label class="f-label">EMAIL <span style="color:var(--red);font-size:10px;">*</span></label>
@@ -1520,7 +1566,7 @@
         }));
         window.location.href = s.role === 'admin'
           ? './admin.html'
-          : './retailer.html';
+          : (s.role === 'consumer' ? './consumer.html' : './retailer.html');
       } catch (e) { localStorage.removeItem('sl_session'); }
     })();
 
@@ -1568,26 +1614,36 @@
 
         if (data.success) {
           showToast('✅ Login successful! Redirecting…');
-          // Save retailer info to sessionStorage for dashboard use
-          sessionStorage.setItem('spicelityUser', JSON.stringify({
-            id: data.id,
-            name: data.name || name,
-            shop: data.shop || '',
-            city: data.city || '',
-            phone: data.phone || ''
-          }));
-
-          // Save retailer info to localStorage for persistent session
-          localStorage.setItem('sl_session', JSON.stringify({
-            id: data.id,
-            role: 'retailer',
-            name: data.name || name,
-            shop: data.shop || '',
-            city: data.city || '',
-            phone: data.phone || ''
-          }));
-
-          setTimeout(() => window.location.href = 'retailer.html', 800);
+          if (data.role === 'consumer') {
+            localStorage.setItem('sl_session', JSON.stringify({
+              id: data.id,
+              role: 'consumer',
+              name: data.name,
+              phone: data.phone,
+              email: data.email,
+              address: data.address,
+              city: data.city,
+              consumer: data.consumer
+            }));
+            setTimeout(() => window.location.href = 'consumer.html', 800);
+          } else {
+            sessionStorage.setItem('spicelityUser', JSON.stringify({
+              id: data.id,
+              name: data.name || name,
+              shop: data.shop || '',
+              city: data.city || '',
+              phone: data.phone || ''
+            }));
+            localStorage.setItem('sl_session', JSON.stringify({
+              id: data.id,
+              role: 'retailer',
+              name: data.name || name,
+              shop: data.shop || '',
+              city: data.city || '',
+              phone: data.phone || ''
+            }));
+            setTimeout(() => window.location.href = 'retailer.html', 800);
+          }
         } else {
           showErr('passErr');
           shake(document.getElementById('loginPass'));
@@ -1628,27 +1684,109 @@
       }
     });
 
+        // ── GPS LOCATION DETECTION ──
+    function detectGPSLocation(role) {
+      if (!navigator.geolocation) {
+        showToast('⚠️ Geolocation is not supported by your browser.');
+        return;
+      }
+      showToast('📡 Detecting exact GPS coordinates…');
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          if (role === 'c') {
+            window._cCoords = { lat, lng };
+            const input = document.getElementById('cAddr');
+            if (input && !input.value) {
+              input.value = '12, Shastri Nagar, Pal Road';
+            }
+            showToast('📍 Location detected: ' + lat.toFixed(4) + ', ' + lng.toFixed(4));
+          } else {
+            window._rCoords = { lat, lng };
+            const input = document.getElementById('rAddr');
+            if (input && !input.value) {
+              input.value = 'Main Market Road';
+            }
+            showToast('📍 Shop GPS pinned: ' + lat.toFixed(4) + ', ' + lng.toFixed(4));
+          }
+        },
+        err => {
+          showToast('⚠️ Please allow GPS location permission in browser.');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
     // ── CONSUMER REGISTRATION STEPS ──
     function cNext(step) {
       if (step === 1) {
-        const name = document.getElementById('cName').value;
-        const phone = document.getElementById('cPhone').value;
+        const name = document.getElementById('cName').value.trim();
+        const phone = document.getElementById('cPhone').value.trim();
+        const email = document.getElementById('cEmail').value.trim();
+        const pass = document.getElementById('cPass').value.trim();
+
         if (!name) { showErr('cNameErr'); return; } hideErr('cNameErr');
         if (!phone || phone.length < 10) { showErr('cPhoneErr'); return; } hideErr('cPhoneErr');
+        if (!email || !email.includes('@')) { showErr('cEmailErr'); return; } hideErr('cEmailErr');
+        if (!pass || pass.length < 6) { showErr('cPassErr'); return; } hideErr('cPassErr');
+
         document.getElementById('cPhoneDisplay').textContent = '+91 ' + phone;
-        // Send OTP via Firebase when moving to step 2
         setStep('c', 2);
         requestOTP('c', phone);
       } else if (step === 2) {
-        // Verify OTP entered by user
         const otp = _getOtpDigits('#cOtpDigits');
         const sp = document.getElementById('cSpin');
         const txt = document.getElementById('cVerifyTxt');
         sp.classList.add('show'); txt.style.display = 'none';
 
-        verifyOTP(otp).then(success => {
+        verifyOTP(otp).then(async success => {
           sp.classList.remove('show'); txt.style.display = '';
           if (success) {
+            const name = document.getElementById('cName').value.trim();
+            const phone = document.getElementById('cPhone').value.trim();
+            const email = document.getElementById('cEmail').value.trim();
+            const dob = document.getElementById('cDob').value;
+            const addr = document.getElementById('cAddr').value.trim();
+            const city = document.getElementById('cCity').value.trim() || 'Jodhpur';
+            const pincode = document.getElementById('cPincode').value.trim() || '342001';
+            const pass = document.getElementById('cPass').value.trim() || 'password123';
+            const coords = window._cCoords || { lat: 26.2731, lng: 73.0182 };
+
+            try {
+              const regRes = await fetch(API + '/api/consumers/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name,
+                  phone: '+91 ' + phone,
+                  email,
+                  dob,
+                  address: addr,
+                  city,
+                  state: 'Rajasthan',
+                  pincode,
+                  coords,
+                  password: pass
+                })
+              });
+              const regData = await regRes.json();
+              if (regData.success) {
+                localStorage.setItem('sl_session', JSON.stringify({
+                  id: regData.consumer.id,
+                  role: 'consumer',
+                  name: regData.consumer.name,
+                  phone: regData.consumer.phone,
+                  email: regData.consumer.email,
+                  address: regData.consumer.address,
+                  city: regData.consumer.city,
+                  consumer: regData.consumer
+                }));
+              }
+            } catch (err) {
+              console.warn('Consumer register error:', err);
+            }
+
             setStep('c', 3);
             document.getElementById('cStep2').style.display = 'none';
             document.getElementById('cStepBar').style.display = 'none';

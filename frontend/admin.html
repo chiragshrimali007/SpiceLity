@@ -2428,8 +2428,15 @@
             <circle cx="9" cy="7" r="4" />
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>
-          Retailers
+          Retailers (B2B)
           <span class="nav-badge" id="admin-retailers-badge" style="background:var(--red); display:none;">0</span>
+        </button>
+        <button class="nav-item" data-page="consumers" onclick="showPage('consumers',this)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Consumers (B2C)
         </button>
         <button class="nav-item" data-page="chat" onclick="showPage('chat',this)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -2638,6 +2645,24 @@
       </section>
 
       <!-- ── REPORTS ── -->
+      
+      <!-- ── CONSUMERS (B2C) MANAGEMENT ── -->
+      <section class="page" id="page-consumers">
+        <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="page-title">👤 Registered Consumers</div>
+            <div class="page-sub">Manage retail consumers, view order activity &amp; block spam accounts</div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <input type="text" id="consumer-search" placeholder="Search consumers…" oninput="renderConsumers()" style="padding:8px 14px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;font-size:13px;width:220px;">
+          </div>
+        </div>
+
+        <div id="consumers-list-container">
+          <div style="text-align:center;padding:40px;color:var(--t400);">Loading registered consumers…</div>
+        </div>
+      </section>
+
       <section class="page" id="page-reports">
         <div class="page-header">
           <div class="page-title">Reports &amp; Analytics</div>
@@ -3134,6 +3159,7 @@
         if (activePage === 'orders') renderOrders();
         if (activePage === 'pricing' && editingPriceId === null) renderPricing();
         if (activePage === 'retailers' && document.getElementById('ret-search') !== document.activeElement) renderRetailers();
+      loadConsumers();
         // Start messaging polling
         // WebSocket Chat is initialized automatically below
 
@@ -3575,7 +3601,9 @@
         <button class="btn btn-sm btn-ghost" onclick="toast('Opening chat with ${r.name}')">💬 Message</button>
         ${callBtn}
         ${r.outstanding > 0 ? `<button class="btn btn-sm btn-danger" onclick="toast('Payment reminder sent to ${r.name}','success')">⚠️ Send Reminder</button>` : ''}
-        <button class="btn btn-sm btn-danger" style="margin-left:8px;" onclick="deleteRetailerAccount(${r.id}, '${r.name.replace(/'/g, "\\'")}')">🗑️ Delete Account</button>
+        <button class="btn btn-sm ${r.verified !== false ? 'btn-ghost' : 'btn-primary'}" onclick="toggleRetailerVerify(${r.id})" title="Toggle Verified Badge">${r.verified !== false ? '✓ Verified' : '⭐ Verify Shop'}</button>
+        <button class="btn btn-sm ${r.isBlocked ? 'btn-primary' : 'btn-danger'}" style="margin-left:6px;" onclick="toggleBlockUser('retailer', ${r.id})">${r.isBlocked ? '🟢 Unblock' : '🚫 Block'}</button>
+        <button class="btn btn-sm btn-danger" style="margin-left:6px;" onclick="deleteRetailerAccount(${r.id}, '${r.name.replace(/'/g, "\\'")}')">🗑️ Delete</button>
         <button class="btn btn-sm btn-primary" style="margin-left:auto;" onclick="openRetailerPanel(${r.id})">View Account →</button>
       </div>
     </div>`;
@@ -4418,6 +4446,112 @@
     <div id="rp-panel-inner"></div>
   </div>
 
+<script>
+
+    // ══════════════════════════════════════════
+    // --- CONSUMERS & SPAM MODERATION ---
+    // ══════════════════════════════════════════
+    let CONSUMERS_LIST = [];
+
+    async function loadConsumers() {
+      try {
+        const res = await fetch(API + '/api/consumers');
+        CONSUMERS_LIST = await res.json();
+        renderConsumers();
+      } catch (e) {
+        console.warn('Consumers fetch error:', e);
+      }
+    }
+
+    function renderConsumers() {
+      const container = document.getElementById('consumers-list-container');
+      if (!container) return;
+
+      const q = (document.getElementById('consumer-search')?.value || '').toLowerCase();
+      let list = CONSUMERS_LIST;
+      if (q) {
+        list = list.filter(c => 
+          (c.name && c.name.toLowerCase().includes(q)) ||
+          (c.phone && c.phone.toLowerCase().includes(q)) ||
+          (c.email && c.email.toLowerCase().includes(q)) ||
+          (c.city && c.city.toLowerCase().includes(q))
+        );
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No consumers found</div></div>';
+        return;
+      }
+
+      container.innerHTML = list.map(c => {
+        const isBlocked = Boolean(c.isBlocked);
+        const statusBadge = isBlocked
+          ? '<span class="pill p-red"><span class="pill-dot"></span>Suspended / Blocked</span>'
+          : '<span class="pill p-green"><span class="pill-dot"></span>Active Verified</span>';
+
+        return '<div class="ret-card" style="' + (isBlocked ? 'border-color:var(--red);opacity:0.85;' : '') + '">' +
+          '<div class="ret-top">' +
+            '<div class="ret-avatar" style="background:' + (isBlocked ? '#B03010' : '#1A3010') + ';color:#fff;">' + (c.name ? c.name.substring(0, 2).toUpperCase() : 'CU') + '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="ret-name">' + c.name + ' ' + (isBlocked ? '<span style="color:var(--red);font-size:12px;font-weight:800;">[BLOCKED]</span>' : '') + '</div>' +
+              '<div style="font-size:12px;color:var(--t400);font-weight:500;margin-top:1px;">📞 ' + c.phone + ' &bull; ✉ ' + (c.email || 'No email') + '</div>' +
+              '<div class="ret-meta">📍 ' + (c.address || c.city || 'Jodhpur') + ' &bull; DOB: ' + (c.dob || '15 Aug 1998') + '</div>' +
+            '</div>' +
+            '<div class="ret-pills">' + statusBadge + '</div>' +
+          '</div>' +
+          '<div class="ret-stats">' +
+            '<div class="rst"><div class="rst-val">' + (c.totalOrders || 0) + '</div><div class="rst-lbl">Total Orders</div></div>' +
+            '<div class="rst"><div class="rst-val">' + (c.completedOrders || 0) + '</div><div class="rst-lbl">Completed</div></div>' +
+            '<div class="rst"><div class="rst-val">' + (c.pendingOrders || 0) + '</div><div class="rst-lbl">Pending</div></div>' +
+          '</div>' +
+          '<div class="ret-actions">' +
+            '<button class="btn btn-sm btn-ghost" onclick="toast(\'Calling consumer ' + c.phone + '\')">📞 Contact</button>' +
+            '<button class="btn btn-sm ' + (isBlocked ? 'btn-primary' : 'btn-danger') + '" style="margin-left:auto;" onclick="toggleBlockUser(\'consumer\', ' + c.id + ')">' +
+              (isBlocked ? '🟢 Unblock Consumer' : '🚫 Block Account (Spam Protection)') +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    async function toggleBlockUser(type, id) {
+      try {
+        const res = await fetch(API + '/api/admin/users/' + type + '/' + id + '/block', {
+          method: 'PUT'
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast((type === 'consumer' ? 'Consumer' : 'Retailer') + ' status updated: ' + (data.isBlocked ? 'Blocked' : 'Active'), 'success');
+          if (type === 'consumer') loadConsumers();
+          else {
+            const r = RETAILERS.find(x => x.id === id);
+            if (r) r.isBlocked = data.isBlocked;
+            renderRetailers();
+          }
+        }
+      } catch (e) {
+        toast('Action failed', 'error');
+      }
+    }
+
+    async function toggleRetailerVerify(id) {
+      try {
+        const res = await fetch(API + '/api/admin/retailers/' + id + '/verify', {
+          method: 'PUT'
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast('Retailer verification updated!', 'success');
+          const r = RETAILERS.find(x => x.id === id);
+          if (r) r.verified = data.verified;
+          renderRetailers();
+        }
+      } catch (e) {
+        toast('Verification toggle failed', 'error');
+      }
+    }
+
+</script>
 </body>
 
 </html>

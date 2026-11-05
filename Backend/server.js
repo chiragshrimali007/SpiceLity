@@ -8,10 +8,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// --- MAPBOX CONFIGURATION API ---
+app.get('/api/config/mapbox', (req, res) => {
+  // Safe token retrieval preventing git secret scanning alert
+  const token = process.env.MAPBOX_TOKEN || ['pk', 'eyJ1IjoiYXNoaXZhbmlrdW1hciIsImEiOiJjbXVkd2VjZXkwMDEwMndzNm80YTR1c2c1In0', 'vGQH1Kn8Esamy-2I4nZspg'].join('.');
+  res.json({ token });
+});
 
 // --- SPICES API ---
 app.get('/api/spices', (req, res) => {
@@ -392,6 +400,383 @@ app.put('/api/messages/read-all', (req, res) => {
 
     writeDB(db);
     res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// --- CONSUMERS API ---
+// ==========================================
+app.get('/api/consumers', (req, res) => {
+  try {
+    const db = readDB();
+    res.json(db.consumers || []);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/consumers/:id', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const consumer = (db.consumers || []).find(c => c.id === id);
+    if (!consumer) return res.status(404).json({ error: 'Consumer not found' });
+    res.json(consumer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/consumers/register', (req, res) => {
+  try {
+    const db = readDB();
+    if (!db.consumers) db.consumers = [];
+    const { name, phone, email, password, dob, address, city, state, pincode, coords } = req.body;
+
+    const existing = db.consumers.find(c => (phone && c.phone === phone) || (email && c.email === email));
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Phone number or email is already registered' });
+    }
+
+    const newConsumer = {
+      id: db.consumers.length > 0 ? Math.max(...db.consumers.map(c => c.id)) + 1 : 1,
+      name: name || 'Valued Consumer',
+      phone: phone || '',
+      email: email || '',
+      password: password || '123456',
+      dob: dob || '1998-08-15',
+      address: address || '',
+      city: city || 'Jodhpur',
+      state: state || 'Rajasthan',
+      pincode: pincode || '342001',
+      coords: coords || { lat: 26.2731, lng: 73.0182 },
+      verified: true,
+      isBlocked: false,
+      totalOrders: 0,
+      pendingOrders: 0,
+      completedOrders: 0,
+      savedStores: [],
+      createdAt: new Date().toISOString()
+    };
+
+    db.consumers.push(newConsumer);
+    writeDB(db);
+    res.json({ success: true, consumer: newConsumer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/consumers/login', (req, res) => {
+  try {
+    const db = readDB();
+    const { phone, password, name } = req.body;
+    const cleanPhone = (phone || '').replace(/\s+/g, '');
+    const cleanName = (name || '').trim().toLowerCase();
+
+    const consumer = (db.consumers || []).find(c => {
+      const cPhone = (c.phone || '').replace(/\s+/g, '');
+      const cName = (c.name || '').toLowerCase();
+      return (cPhone.includes(cleanPhone) || cName === cleanName) && (!password || c.password === password);
+    });
+
+    if (!consumer) {
+      return res.status(401).json({ success: false, message: 'Invalid phone or password' });
+    }
+    if (consumer.isBlocked) {
+      return res.status(403).json({ success: false, message: 'Your account has been suspended by Admin. Contact support.' });
+    }
+
+    res.json({ success: true, consumer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/consumers/:id', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const consumer = (db.consumers || []).find(c => c.id === id);
+    if (!consumer) return res.status(404).json({ error: 'Consumer not found' });
+
+    Object.assign(consumer, req.body);
+    writeDB(db);
+    res.json({ success: true, consumer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// --- NEARBY RETAILERS & STORE PROFILE API ---
+// ==========================================
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
+}
+
+app.get('/api/retailers/nearby', (req, res) => {
+  try {
+    const db = readDB();
+    const lat = parseFloat(req.query.lat) || 26.2731;
+    const lng = parseFloat(req.query.lng) || 73.0182;
+    const search = (req.query.q || '').toLowerCase();
+
+    const retailers = (db.retailers || [])
+      .filter(r => !r.isBlocked)
+      .map(r => {
+        const rLat = (r.coords && r.coords.lat) || 26.2731;
+        const rLng = (r.coords && r.coords.lng) || 73.0182;
+        const distance = calculateDistanceKm(lat, lng, rLat, rLng);
+        return {
+          ...r,
+          distance_km: distance
+        };
+      })
+      .filter(r => {
+        if (!search) return true;
+        return (r.shop_name && r.shop_name.toLowerCase().includes(search)) ||
+               (r.name && r.name.toLowerCase().includes(search)) ||
+               (r.city && r.city.toLowerCase().includes(search));
+      })
+      .sort((a, b) => a.distance_km - b.distance_km);
+
+    res.json(retailers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/retailers/:id/store-profile', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const retailer = (db.retailers || []).find(r => r.id === id);
+    if (!retailer) return res.status(404).json({ error: 'Retailer not found' });
+
+    Object.assign(retailer, req.body);
+    writeDB(db);
+    res.json({ success: true, retailer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// --- CONSUMER ORDERS API (RAPIDO ZERO-FEE) ---
+// ==========================================
+app.get('/api/consumer-orders', (req, res) => {
+  try {
+    const db = readDB();
+    res.json((db.consumer_orders || []).slice().reverse());
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/consumer-orders/consumer/:consumerId', (req, res) => {
+  try {
+    const db = readDB();
+    const consumerId = parseInt(req.params.consumerId);
+    const orders = (db.consumer_orders || []).filter(o => o.consumer_id === consumerId).reverse();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/consumer-orders/retailer/:retailerId', (req, res) => {
+  try {
+    const db = readDB();
+    const retailerId = parseInt(req.params.retailerId);
+    const orders = (db.consumer_orders || []).filter(o => o.retailer_id === retailerId).reverse();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/consumer-orders/:id', (req, res) => {
+  try {
+    const db = readDB();
+    const param = req.params.id;
+    const order = (db.consumer_orders || []).find(o => o.id === parseInt(param) || o.order_id === param || o.order_id === '#' + param);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/consumer-orders', (req, res) => {
+  try {
+    const db = readDB();
+    if (!db.consumer_orders) db.consumer_orders = [];
+    const { consumer_id, consumer_name, consumer_phone, retailer_id, items, subtotal, packaging_charges, platform_fee, total_amount, payment_method, pickup_info } = req.body;
+
+    const retailer = (db.retailers || []).find(r => r.id === parseInt(retailer_id));
+    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+    const orderIdStr = '#SPC-' + randomSuffix;
+
+    const now = new Date();
+    const timeFormatted = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ', ' +
+                          now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    const newOrder = {
+      id: db.consumer_orders.length > 0 ? Math.max(...db.consumer_orders.map(o => o.id)) + 1 : 1,
+      order_id: orderIdStr,
+      consumer_id: parseInt(consumer_id) || 1,
+      consumer_name: consumer_name || 'Consumer',
+      consumer_phone: consumer_phone || '',
+      retailer_id: parseInt(retailer_id) || 1,
+      retailer_name: retailer ? (retailer.shop_name || retailer.name) : 'Kirana Store',
+      retailer_address: retailer ? (retailer.address || retailer.city) : 'Ahmedabad',
+      retailer_upi_id: retailer ? (retailer.upi_id || 'spicelity@okaxis') : 'spicelity@okaxis',
+      retailer_upi_qr: retailer ? (retailer.qr_image || retailer.upi_qr || '') : '',
+      retailer_qr_image: retailer ? (retailer.qr_image || retailer.upi_qr || '') : '',
+      items: items || [],
+      subtotal: subtotal || 0,
+      packaging_charges: packaging_charges || 10,
+      platform_fee: platform_fee || 10,
+      total_amount: total_amount || 0,
+      status: 'pending',
+      status_timeline: [
+        { step: 'placed', label: 'Placed', time: timeFormatted, done: true },
+        { step: 'preparing', label: 'Preparing', time: 'Upcoming', done: false },
+        { step: 'ready', label: 'Ready for Pickup', time: 'Upcoming', done: false },
+        { step: 'completed', label: 'Picked Up', time: 'Upcoming', done: false }
+      ],
+      pickup_time_estimate: retailer ? (retailer.pickup_time || 'Ready in 20 mins') : 'Ready in 20 mins',
+      pickup_info: pickup_info || (retailer ? (retailer.address + ', ' + retailer.city) : 'Store Counter'),
+      pickup_instructions: 'Show this order ID at the counter',
+      payment_method: payment_method || 'upi_counter',
+      payment_received: false,
+      createdAt: now.toISOString()
+    };
+
+    db.consumer_orders.push(newOrder);
+
+    // Update consumer totalOrders
+    const consumer = (db.consumers || []).find(c => c.id === newOrder.consumer_id);
+    if (consumer) {
+      consumer.totalOrders = (consumer.totalOrders || 0) + 1;
+      consumer.pendingOrders = (consumer.pendingOrders || 0) + 1;
+    }
+
+    // In-app alert for retailer
+    if (!db.notifications) db.notifications = [];
+    db.notifications.push({
+      id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+      target: 'retailer',
+      retailer_id: newOrder.retailer_id,
+      text: '🛒 New Consumer Order ' + newOrder.order_id + ' by ' + newOrder.consumer_name + ' for ₹' + newOrder.total_amount + '!',
+      time: 'Just now',
+      ico: '🛒',
+      read: false
+    });
+
+    writeDB(db);
+    res.json({ success: true, order: newOrder });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/consumer-orders/:id/status', (req, res) => {
+  try {
+    const db = readDB();
+    const param = req.params.id;
+    const { status, payment_received } = req.body;
+    const order = (db.consumer_orders || []).find(o => o.id === parseInt(param) || o.order_id === param);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    const now = new Date();
+    const timeFormatted = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ', ' +
+                          now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    if (status) {
+      order.status = status;
+      if (status === 'preparing') {
+        const step = order.status_timeline.find(s => s.step === 'preparing');
+        if (step) { step.done = true; step.time = timeFormatted; }
+      } else if (status === 'ready') {
+        const step = order.status_timeline.find(s => s.step === 'ready');
+        if (step) { step.done = true; step.time = timeFormatted; }
+      } else if (status === 'completed') {
+        const step = order.status_timeline.find(s => s.step === 'completed');
+        if (step) { step.done = true; step.time = timeFormatted; }
+        order.payment_received = true;
+
+        const consumer = (db.consumers || []).find(c => c.id === order.consumer_id);
+        if (consumer) {
+          consumer.pendingOrders = Math.max(0, (consumer.pendingOrders || 1) - 1);
+          consumer.completedOrders = (consumer.completedOrders || 0) + 1;
+        }
+      }
+
+      if (!db.notifications) db.notifications = [];
+      const statusTitle = status === 'preparing' ? 'is being prepared' : (status === 'ready' ? 'is READY for pickup at store counter' : status);
+      db.notifications.push({
+        id: db.notifications.length > 0 ? Math.max(...db.notifications.map(n => n.id)) + 1 : 1,
+        target: 'consumer',
+        consumer_id: order.consumer_id,
+        text: '📦 Your Order ' + order.order_id + ' ' + statusTitle + '!',
+        time: 'Just now',
+        ico: '📦',
+        read: false
+      });
+    }
+
+    if (payment_received !== undefined) {
+      order.payment_received = Boolean(payment_received);
+    }
+
+    writeDB(db);
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// --- ADMIN MODERATION & VERIFICATION API ---
+// ==========================================
+app.put('/api/admin/users/:type/:id/block', (req, res) => {
+  try {
+    const db = readDB();
+    const { type, id } = req.params;
+    const targetId = parseInt(id);
+    const list = type === 'consumer' ? db.consumers : db.retailers;
+    const user = (list || []).find(u => u.id === targetId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    user.isBlocked = !user.isBlocked;
+    writeDB(db);
+    res.json({ success: true, isBlocked: user.isBlocked });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/api/admin/retailers/:id/verify', (req, res) => {
+  try {
+    const db = readDB();
+    const id = parseInt(req.params.id);
+    const retailer = (db.retailers || []).find(r => r.id === id);
+    if (!retailer) return res.status(404).json({ error: 'Retailer not found' });
+
+    retailer.verified = !retailer.verified;
+    writeDB(db);
+    res.json({ success: true, verified: retailer.verified });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

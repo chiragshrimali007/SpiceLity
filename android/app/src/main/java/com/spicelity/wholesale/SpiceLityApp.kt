@@ -10,3 +10,4 @@ class SpiceLityApp : Application() {
         NotificationHelper.scheduleBackgroundSync(this)
     }
 }
+

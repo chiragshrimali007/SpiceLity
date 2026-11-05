@@ -2272,8 +2272,17 @@
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
             <rect x="9" y="3" width="6" height="4" rx="2" />
           </svg>
-          Order History
+          Bulk Wholesale Orders
           <span class="nav-badge" id="retailer-orders-badge" style="display:none;">0</span>
+        </button>
+        <button class="nav-item" data-page="consumer-orders" onclick="showPage('consumer-orders',this)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          Consumer Orders (B2C)
+          <span class="nav-badge" id="retailer-consumer-orders-badge" style="background:var(--a400);color:#fff;display:none;">0</span>
         </button>
       </div>
       <div class="nav-section">
@@ -2431,7 +2440,33 @@
       </section>
 
       <!-- ORDER HISTORY -->
-      <section class="page" id="page-order-history">
+      
+      <!-- ════ CONSUMER ORDERS (B2C) ════ -->
+      <section class="page" id="page-consumer-orders">
+        <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="page-title">🛍️ Consumer Orders (B2C)</div>
+            <div class="page-sub">Direct orders from nearby retail consumers • Counter pickup &amp; Rapido-style instant payment confirmation</div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openStoreSettingsModal()" style="background:var(--g600);color:#fff;">
+            📍 Shop GPS &amp; UPI QR Settings
+          </button>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;" id="cOrderFilterTabs">
+          <button class="badge badge-green" style="padding:8px 16px;cursor:pointer;border:none;font-weight:700;" onclick="filterConsumerOrders('all', this)">All</button>
+          <button class="badge" style="padding:8px 16px;cursor:pointer;border:none;font-weight:700;background:var(--c100);color:var(--t2);" onclick="filterConsumerOrders('pending', this)">Pending</button>
+          <button class="badge" style="padding:8px 16px;cursor:pointer;border:none;font-weight:700;background:var(--c100);color:var(--t2);" onclick="filterConsumerOrders('preparing', this)">Preparing</button>
+          <button class="badge" style="padding:8px 16px;cursor:pointer;border:none;font-weight:700;background:var(--c100);color:var(--t2);" onclick="filterConsumerOrders('ready', this)">Ready for Pickup</button>
+          <button class="badge" style="padding:8px 16px;cursor:pointer;border:none;font-weight:700;background:var(--c100);color:var(--t2);" onclick="filterConsumerOrders('completed', this)">Completed</button>
+        </div>
+
+        <div id="consumer-orders-container">
+          <div style="text-align:center;padding:40px;color:var(--t3);">Loading live consumer orders…</div>
+        </div>
+      </section>
+
+<section class="page" id="page-order-history">
         <div class="page-header">
           <div class="page-title">Order History</div>
           <div class="page-sub">All your purchases from Spicelity</div>
@@ -2586,7 +2621,7 @@
             </div>
             <div class="set-chev">›</div>
           </div>
-          <div class="set-row" onclick="toast('Payment settings')">
+          <div class="set-row" onclick="openStoreSettingsModal()">
             <div class="set-ico">💳</div>
             <div>
               <div class="set-lbl">Payment Settings</div>
@@ -2947,6 +2982,8 @@
 
       // Render dynamic profile hero and notification permission check
       renderProfileHero();
+      loadConsumerOrders();
+      setInterval(loadConsumerOrders, 8000);
       updateRetailerNotificationPermissionUI();
 
       try {
@@ -4212,6 +4249,335 @@
       });
     })();
   </script>
+
+  <!-- ════ STORE SETTINGS & UPI QR MODAL ════ -->
+  <div id="store-settings-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--card);max-width:500px;width:100%;border-radius:20px;padding:24px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:800;color:var(--t1);">🏪 Store GPS Location &amp; UPI Setup</div>
+        <button onclick="closeStoreSettingsModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--t3);">&times;</button>
+      </div>
+      <div style="font-size:13px;color:var(--t3);margin-bottom:16px;line-height:1.5;">
+        Configure your shop details so nearby consumers can find you on the live Map and pay directly to your UPI ID without fees.
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP DISPLAY NAME</label>
+        <input id="set-shop-name" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP PHYSICAL ADDRESS</label>
+        <input id="set-shop-addr" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <button type="button" onclick="detectRetailerGPS()" style="width:100%;padding:10px;background:var(--g50);border:1px dashed var(--g400);border-radius:10px;font-size:12px;font-weight:700;color:var(--g600);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📍 Capture Current Shop GPS (For Mapbox)</span>
+        </button>
+        <div id="set-coords-display" style="font-size:11px;color:var(--t3);margin-top:4px;text-align:center;">GPS: Not set</div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">UPI ID (For Rapido-Style Direct Customer Payment)</label>
+        <input id="set-shop-upi" class="f-input" type="text" placeholder="e.g. shreemasala@okaxis" oninput="updateQrPreviewFromUpi()" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;">Consumers will transfer order amount directly to this UPI ID. 0% commission!</div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:14px;background:var(--bg);border:1px dashed var(--bdr);border-radius:14px;padding:12px;text-align:center;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:6px;">STORE QR CODE (IMAGE UPLOAD OR AUTO UPI)</label>
+        
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">
+          <img id="set-shop-qr-preview" src="" alt="QR Preview" style="width:130px;height:130px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--bdr);padding:4px;display:none;">
+        </div>
+        <div id="set-qr-status" style="font-size:11px;color:var(--t3);margin-bottom:8px;">No custom QR uploaded. Auto UPI QR is active.</div>
+
+        <input type="file" id="set-shop-qr-file" accept="image/*" onchange="handleQrImageUpload(event)" style="display:none;">
+        
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button type="button" onclick="document.getElementById('set-shop-qr-file').click()" style="padding:6px 12px;background:var(--c100);border:1px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;color:var(--t1);cursor:pointer;">
+            📷 Upload QR Photo
+          </button>
+          <button type="button" id="btn-clear-custom-qr" onclick="clearUploadedQr()" style="display:none;padding:6px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:11px;font-weight:700;color:#dc2626;cursor:pointer;">
+            ✕ Reset to UPI QR
+          </button>
+        </div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:16px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">PICKUP ESTIMATION SPEED</label>
+        <input id="set-shop-pickup-time" class="f-input" type="text" value="Ready in 20 mins" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeStoreSettingsModal()" class="btn" style="flex:1;background:var(--c100);color:var(--t2);border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Cancel</button>
+        <button onclick="saveStoreSettings()" class="btn btn-primary" style="flex:1;background:var(--g600);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Save Settings ✓</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+    // ══════════════════════════════════════════
+    // --- CONSUMER ORDERS & RAPIDO WORKFLOW ---
+    // ══════════════════════════════════════════
+    let CONSUMER_ORDERS = [];
+    let consumerFilter = 'all';
+
+    async function loadConsumerOrders() {
+      try {
+        const res = await fetch(API + '/api/consumer-orders');
+        const allOrders = await res.json();
+        // Match retailer either by retailer_id or store name
+        const currentRetailerId = window.RETAILER_ID || 1;
+        CONSUMER_ORDERS = allOrders.filter(o => o.retailer_id === currentRetailerId || !o.retailer_id);
+        
+        const pendingCount = CONSUMER_ORDERS.filter(o => o.status === 'pending' || o.status === 'preparing' || o.status === 'ready').length;
+        const badge = document.getElementById('retailer-consumer-orders-badge');
+        if (badge) {
+          badge.textContent = pendingCount;
+          badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+        }
+
+        renderConsumerOrders();
+      } catch (err) {
+        console.warn('Consumer orders load error:', err);
+      }
+    }
+
+    function filterConsumerOrders(filter, btn) {
+      consumerFilter = filter;
+      const tabs = document.querySelectorAll('#cOrderFilterTabs button');
+      tabs.forEach(t => {
+        t.style.background = 'var(--c100)';
+        t.style.color = 'var(--t2)';
+      });
+      if (btn) {
+        btn.style.background = 'var(--g600)';
+        btn.style.color = '#fff';
+      }
+      renderConsumerOrders();
+    }
+
+    function renderConsumerOrders() {
+      const container = document.getElementById('consumer-orders-container');
+      if (!container) return;
+
+      const filtered = consumerFilter === 'all' 
+        ? CONSUMER_ORDERS 
+        : CONSUMER_ORDERS.filter(o => o.status === consumerFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:50px 20px;background:var(--card);border-radius:16px;border:1px solid var(--bdr);"><div style="font-size:40px;margin-bottom:10px;">📦</div><div style="font-size:16px;font-weight:800;color:var(--t1);">No Consumer Orders Found</div><div style="font-size:13px;color:var(--t3);margin-top:4px;">New incoming consumer orders will appear here in real-time.</div></div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(order => {
+        const statusPill = order.status === 'pending'
+          ? '<span style="background:#FFF3CD;color:#856404;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;">PENDING ACCEPTANCE</span>'
+          : (order.status === 'preparing'
+            ? '<span style="background:#D1ECF1;color:#0C5460;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;">PREPARING</span>'
+            : (order.status === 'ready'
+              ? '<span style="background:#D4EDDA;color:#155724;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;">READY AT COUNTER</span>'
+              : '<span style="background:var(--g50);color:var(--g600);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;">COMPLETED &amp; PAID</span>'));
+
+        const itemsList = (order.items || []).map(it => 
+          '<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed rgba(0,0,0,0.05);">' +
+            '<div><strong>' + it.name + '</strong> (' + (it.pack || '1kg') + ') &times; ' + it.qty + '</div>' +
+            '<div style="font-weight:700;">₹' + (it.price * it.qty) + '</div>' +
+          '</div>'
+        ).join('');
+
+        let actionArea = '';
+        if (order.status === 'pending') {
+          actionArea = '<button onclick="updateConsumerOrderStatus(\'' + order.id + '\', \'preparing\')" class="btn btn-primary" style="width:100%;background:var(--a400);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">⚡ Accept &amp; Start Preparing Order</button>';
+        } else if (order.status === 'preparing') {
+          actionArea = '<button onclick="updateConsumerOrderStatus(\'' + order.id + '\', \'ready\')" class="btn btn-primary" style="width:100%;background:#0D6EFD;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">📦 Mark Order Ready for Pickup</button>';
+        } else if (order.status === 'ready') {
+          actionArea = 
+            '<div style="background:var(--g50);border:1px solid var(--g300);border-radius:12px;padding:12px;margin-bottom:10px;">' +
+              '<div style="font-size:12px;font-weight:800;color:var(--g700);margin-bottom:4px;">Rapido-Style Payment Counter:</div>' +
+              '<div style="font-size:12px;color:var(--t2);">Customer is at counter. Collect <strong>₹' + order.total_amount + '</strong> via UPI (' + (order.retailer_upi_id || 'UPI') + ') or Cash.</div>' +
+            '</div>' +
+            '<button onclick="updateConsumerOrderStatus(\'' + order.id + '\', \'completed\', true)" class="btn btn-primary" style="width:100%;background:var(--g600);color:#fff;border:none;padding:14px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;">✅ Payment Received (₹' + order.total_amount + ') &amp; Order Handed Over</button>';
+        } else {
+          actionArea = '<div style="text-align:center;font-size:13px;color:var(--g600);font-weight:800;">✓ Order Picked Up &amp; Payment Settled</div>';
+        }
+
+        return '<div class="card" style="margin-bottom:16px;border:1px solid var(--bdr);border-radius:16px;padding:18px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:8px;">' +
+            '<div>' +
+              '<div style="font-size:15px;font-weight:800;color:var(--t1);">' + order.order_id + '</div>' +
+              '<div style="font-size:12px;color:var(--t3);margin-top:2px;">Customer: <strong>' + (order.consumer_name || 'Consumer') + '</strong> &bull; ' + (order.consumer_phone || '') + '</div>' +
+            '</div>' +
+            '<div>' + statusPill + '</div>' +
+          '</div>' +
+          '<div style="background:var(--c50);border-radius:10px;padding:10px 14px;margin-bottom:12px;">' +
+            itemsList +
+            '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;color:var(--t1);padding-top:8px;margin-top:4px;">' +
+              '<div>Total Bill to Collect:</div>' +
+              '<div>₹' + order.total_amount + '</div>' +
+            '</div>' +
+          '</div>' +
+          actionArea +
+        '</div>';
+      }).join('');
+    }
+
+    async function updateConsumerOrderStatus(orderId, newStatus, paymentReceived) {
+      try {
+        const payload = { status: newStatus };
+        if (paymentReceived !== undefined) payload.payment_received = paymentReceived;
+
+        const res = await fetch(API + '/api/consumer-orders/' + orderId + '/status', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          playAlertSound();
+          toast('Order ' + (data.order.order_id || '') + ' updated to ' + newStatus, 'success');
+          loadConsumerOrders();
+        }
+      } catch (err) {
+        toast('Failed to update order status', 'error');
+      }
+    }
+
+    // ── STORE SETTINGS & GPS MODAL ──
+    let _activeRetailerData = null;
+
+    function openStoreSettingsModal() {
+      const modal = document.getElementById('store-settings-modal');
+      if (!modal) return;
+      modal.style.display = 'flex';
+
+      // Load existing retailer profile
+      const rId = window.RETAILER_ID || 1;
+      fetch(API + '/api/retailers')
+        .then(r => r.json())
+        .then(retailers => {
+          const r = retailers.find(x => x.id === rId) || retailers[0];
+          if (r) {
+            _activeRetailerData = r;
+            document.getElementById('set-shop-name').value = r.shop_name || r.name;
+            document.getElementById('set-shop-addr').value = r.address || '';
+            document.getElementById('set-shop-upi').value = r.upi_id || 'shreemasala@okaxis';
+            document.getElementById('set-shop-pickup-time').value = r.pickup_time || 'Ready in 20 mins';
+            if (r.coords) {
+              document.getElementById('set-coords-display').textContent = 'GPS: ' + r.coords.lat.toFixed(4) + ', ' + r.coords.lng.toFixed(4);
+            }
+            if (r.qr_image || r.upi_qr) {
+              _uploadedQrImage = r.qr_image || r.upi_qr;
+              const prev = document.getElementById('set-shop-qr-preview');
+              prev.src = _uploadedQrImage;
+              prev.style.display = 'block';
+              document.getElementById('set-qr-status').textContent = '✅ Custom Store QR active';
+              document.getElementById('btn-clear-custom-qr').style.display = 'inline-block';
+            } else {
+              _uploadedQrImage = '';
+              document.getElementById('btn-clear-custom-qr').style.display = 'none';
+              updateQrPreviewFromUpi();
+            }
+          }
+        });
+    }
+
+    let _uploadedQrImage = '';
+
+    function handleQrImageUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        toast('Please upload an image file (PNG/JPG)', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        _uploadedQrImage = evt.target.result;
+        const prev = document.getElementById('set-shop-qr-preview');
+        prev.src = _uploadedQrImage;
+        prev.style.display = 'block';
+        document.getElementById('set-qr-status').textContent = '✅ Custom QR photo loaded';
+        document.getElementById('btn-clear-custom-qr').style.display = 'inline-block';
+        toast('QR Code photo uploaded!', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearUploadedQr() {
+      _uploadedQrImage = '';
+      const fInput = document.getElementById('set-shop-qr-file');
+      if (fInput) fInput.value = '';
+      document.getElementById('btn-clear-custom-qr').style.display = 'none';
+      updateQrPreviewFromUpi();
+      toast('Switched to automatic UPI QR code', 'info');
+    }
+
+    function updateQrPreviewFromUpi() {
+      if (_uploadedQrImage) return; // Keep custom upload
+      const upi = document.getElementById('set-shop-upi').value.trim() || 'shreemasala@okaxis';
+      const name = document.getElementById('set-shop-name').value.trim() || 'Store';
+      const prev = document.getElementById('set-shop-qr-preview');
+      const deepLink = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${encodeURIComponent(name)}&cu=INR`;
+      prev.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(deepLink)}`;
+      prev.style.display = 'block';
+      document.getElementById('set-qr-status').textContent = '⚡ Scannable QR generated from UPI ID';
+    }
+
+    function closeStoreSettingsModal() {
+      const modal = document.getElementById('store-settings-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function detectRetailerGPS() {
+      if (!navigator.geolocation) {
+        toast('Geolocation not supported by browser', 'error');
+        return;
+      }
+      toast('📡 Detecting shop GPS coordinates…', 'info');
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          window._rSettingsCoords = { lat, lng };
+          document.getElementById('set-coords-display').textContent = '📍 GPS: ' + lat.toFixed(4) + ', ' + lng.toFixed(4);
+          toast('GPS coordinates captured for Mapbox!', 'success');
+        },
+        err => {
+          toast('Please enable GPS location permission in browser settings', 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    async function saveStoreSettings() {
+      const rId = window.RETAILER_ID || 1;
+      const shop_name = document.getElementById('set-shop-name').value.trim();
+      const address = document.getElementById('set-shop-addr').value.trim();
+      const upi_id = document.getElementById('set-shop-upi').value.trim();
+      const qr_image = _uploadedQrImage || (_activeRetailerData && _activeRetailerData.qr_image) || '';
+      const pickup_time = document.getElementById('set-shop-pickup-time').value.trim();
+      const coords = window._rSettingsCoords || (_activeRetailerData && _activeRetailerData.coords) || { lat: 26.2731, lng: 73.0182 };
+
+      try {
+        const res = await fetch(API + '/api/retailers/' + rId + '/store-profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ shop_name, address, upi_id, qr_image, pickup_time, coords })
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast('✅ Store settings & GPS location saved!', 'success');
+          closeStoreSettingsModal();
+        }
+      } catch (e) {
+        toast('Failed to save store settings', 'error');
+      }
+    }
+
+</script>
 </body>
 
 </html>
