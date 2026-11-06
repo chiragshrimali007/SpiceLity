@@ -451,12 +451,17 @@
       color: rgba(255, 255, 255, .8);
     }
 
+    html, body {
+      overscroll-behavior-y: contain;
+    }
+
     /* MAIN */
     .main {
       flex: 1;
       min-width: 0;
       padding: 28px;
       overflow-y: auto;
+      overscroll-behavior-y: contain;
       width: 100%;
       box-sizing: border-box;
     }
@@ -2751,6 +2756,72 @@
     </div>
   </div>
 
+  <!-- ════ STORE SETTINGS & UPI QR MODAL ════ -->
+  <div id="store-settings-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--card);max-width:500px;width:100%;border-radius:20px;padding:24px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-size:18px;font-weight:800;color:var(--t1);">🏪 Store GPS Location &amp; UPI Setup</div>
+        <button onclick="closeStoreSettingsModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--t3);">&times;</button>
+      </div>
+      <div style="font-size:13px;color:var(--t3);margin-bottom:16px;line-height:1.5;">
+        Configure your shop details so nearby consumers can find you on the live Map and pay directly to your UPI ID without fees.
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP DISPLAY NAME</label>
+        <input id="set-shop-name" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP PHYSICAL ADDRESS</label>
+        <input id="set-shop-addr" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <button type="button" onclick="detectRetailerGPS()" style="width:100%;padding:10px;background:var(--g50);border:1px dashed var(--g400);border-radius:10px;font-size:12px;font-weight:700;color:var(--g600);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📍 Capture Current Shop GPS (For Mapbox)</span>
+        </button>
+        <div id="set-coords-display" style="font-size:11px;color:var(--t3);margin-top:4px;text-align:center;">GPS: Not set</div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:12px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">UPI ID (For Rapido-Style Direct Customer Payment)</label>
+        <input id="set-shop-upi" class="f-input" type="text" placeholder="e.g. shreemasala@okaxis" oninput="updateQrPreviewFromUpi()" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;">Consumers will transfer order amount directly to this UPI ID. 0% commission!</div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:14px;background:var(--bg);border:1px dashed var(--bdr);border-radius:14px;padding:12px;text-align:center;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:6px;">STORE QR CODE (IMAGE UPLOAD OR AUTO UPI)</label>
+        
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">
+          <img id="set-shop-qr-preview" src="" alt="QR Preview" style="width:130px;height:130px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--bdr);padding:4px;display:none;">
+        </div>
+        <div id="set-qr-status" style="font-size:11px;color:var(--t3);margin-bottom:8px;">No custom QR uploaded. Auto UPI QR is active.</div>
+
+        <input type="file" id="set-shop-qr-file" accept="image/*" onchange="handleQrImageUpload(event)" style="display:none;">
+        
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button type="button" onclick="document.getElementById('set-shop-qr-file').click()" style="padding:6px 12px;background:var(--c100);border:1px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;color:var(--t1);cursor:pointer;">
+            📷 Upload QR Photo
+          </button>
+          <button type="button" id="btn-clear-custom-qr" onclick="clearUploadedQr()" style="display:none;padding:6px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:11px;font-weight:700;color:#dc2626;cursor:pointer;">
+            ✕ Reset to UPI QR
+          </button>
+        </div>
+      </div>
+
+      <div class="f-field" style="margin-bottom:16px;">
+        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">PICKUP ESTIMATION SPEED</label>
+        <input id="set-shop-pickup-time" class="f-input" type="text" value="Ready in 20 mins" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="closeStoreSettingsModal()" class="btn" style="flex:1;background:var(--c100);color:var(--t2);border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Cancel</button>
+        <button onclick="saveStoreSettings()" class="btn btn-primary" style="flex:1;background:var(--g600);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Save Settings ✓</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase SDKs & Config -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2982,8 +3053,18 @@
 
       // Render dynamic profile hero and notification permission check
       renderProfileHero();
-      loadConsumerOrders();
-      setInterval(loadConsumerOrders, 8000);
+      try {
+        if (typeof loadConsumerOrders === 'function') loadConsumerOrders();
+      } catch (err) {
+        console.warn('Initial consumer orders load:', err);
+      }
+      if (!window._cOrdersSyncInterval) {
+        window._cOrdersSyncInterval = setInterval(() => {
+          try {
+            if (typeof loadConsumerOrders === 'function') loadConsumerOrders();
+          } catch (_) {}
+        }, 10000);
+      }
       updateRetailerNotificationPermissionUI();
 
       try {
@@ -3039,8 +3120,9 @@
         // Merge: price change notifs first, then API notifs
         NOTIFS_R = [...priceNotifs, ...NOTIFS_R];
 
-        // Update notification badge count on topbar bell + sidebar item
-        const _notifCount = NOTIFS_R.length;
+        // Update notification badge count on topbar bell + sidebar item (only unread)
+        const _unreadNotifs = NOTIFS_R.filter(n => n.read === false);
+        const _notifCount = _unreadNotifs.length;
         const _topBadge = document.getElementById('notif-badge');
         const _sideBadge = document.getElementById('notif-sidebar-badge');
         if (_topBadge) {
@@ -4179,145 +4261,6 @@
       if (msgs) msgs.scrollTop = msgs.scrollHeight;
     });
 
-    /* ═══ INIT ═══ */
-    initApp();
-
-    /* ═══ PULL TO REFRESH ═══ */
-    (function initPTR() {
-      const main = document.querySelector('.main');
-      if (!main) return;
-      const ptr = document.createElement('div');
-      ptr.id = 'ptr';
-      ptr.innerHTML = '<div class="ptr-spinner"></div>';
-      document.body.appendChild(ptr);
-
-      let startY = 0, currentY = 0, ptrEnabled = false, ptrRefreshing = false;
-      const THRESHOLD = 60;
-      const spinner = ptr.querySelector('.ptr-spinner');
-
-      main.addEventListener('touchstart', e => {
-        if (main.scrollTop <= 0 && !ptrRefreshing) {
-          ptrEnabled = true;
-          startY = e.touches[0].clientY;
-          main.classList.remove('ptr-release');
-          main.classList.add('ptr-pull');
-          ptr.style.transition = 'none';
-        } else {
-          ptrEnabled = false;
-        }
-      }, { passive: true });
-
-      main.addEventListener('touchmove', e => {
-        if (!ptrEnabled || ptrRefreshing) return;
-        const y = e.touches[0].clientY;
-        const diff = y - startY;
-        if (diff > 0 && main.scrollTop <= 0) {
-          currentY = diff * 0.4;
-          if (currentY > THRESHOLD + 20) currentY = THRESHOLD + 20;
-          main.style.transform = `translateY(${currentY}px)`;
-          ptr.style.transform = `translateY(${currentY - 50}px)`;
-          spinner.style.transform = `rotate(${currentY * 3}deg)`;
-        }
-      }, { passive: true });
-
-      main.addEventListener('touchend', async () => {
-        if (!ptrEnabled || ptrRefreshing) return;
-        ptrEnabled = false;
-        main.classList.remove('ptr-pull');
-        main.classList.add('ptr-release');
-        ptr.style.transition = 'transform 0.3s ease';
-
-        if (currentY >= THRESHOLD) {
-          ptrRefreshing = true;
-          main.style.transform = `translateY(50px)`;
-          ptr.style.transform = `translateY(0px)`;
-          spinner.classList.add('spin');
-
-          try { await initApp(); } catch (e) { }
-
-          main.style.transform = 'translateY(0)';
-          ptr.style.transform = 'translateY(-100%)';
-          setTimeout(() => {
-            spinner.classList.remove('spin');
-            ptrRefreshing = false;
-          }, 300);
-        } else {
-          main.style.transform = 'translateY(0)';
-          ptr.style.transform = 'translateY(-100%)';
-        }
-        currentY = 0;
-      });
-    })();
-  </script>
-
-  <!-- ════ STORE SETTINGS & UPI QR MODAL ════ -->
-  <div id="store-settings-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
-    <div style="background:var(--card);max-width:500px;width:100%;border-radius:20px;padding:24px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div style="font-size:18px;font-weight:800;color:var(--t1);">🏪 Store GPS Location &amp; UPI Setup</div>
-        <button onclick="closeStoreSettingsModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--t3);">&times;</button>
-      </div>
-      <div style="font-size:13px;color:var(--t3);margin-bottom:16px;line-height:1.5;">
-        Configure your shop details so nearby consumers can find you on the live Map and pay directly to your UPI ID without fees.
-      </div>
-
-      <div class="f-field" style="margin-bottom:12px;">
-        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP DISPLAY NAME</label>
-        <input id="set-shop-name" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
-      </div>
-
-      <div class="f-field" style="margin-bottom:12px;">
-        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">SHOP PHYSICAL ADDRESS</label>
-        <input id="set-shop-addr" class="f-input" type="text" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
-      </div>
-
-      <div style="margin-bottom:14px;">
-        <button type="button" onclick="detectRetailerGPS()" style="width:100%;padding:10px;background:var(--g50);border:1px dashed var(--g400);border-radius:10px;font-size:12px;font-weight:700;color:var(--g600);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-          <span>📍 Capture Current Shop GPS (For Mapbox)</span>
-        </button>
-        <div id="set-coords-display" style="font-size:11px;color:var(--t3);margin-top:4px;text-align:center;">GPS: Not set</div>
-      </div>
-
-      <div class="f-field" style="margin-bottom:12px;">
-        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">UPI ID (For Rapido-Style Direct Customer Payment)</label>
-        <input id="set-shop-upi" class="f-input" type="text" placeholder="e.g. shreemasala@okaxis" oninput="updateQrPreviewFromUpi()" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
-        <div style="font-size:11px;color:var(--t3);margin-top:4px;">Consumers will transfer order amount directly to this UPI ID. 0% commission!</div>
-      </div>
-
-      <div class="f-field" style="margin-bottom:14px;background:var(--bg);border:1px dashed var(--bdr);border-radius:14px;padding:12px;text-align:center;">
-        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:6px;">STORE QR CODE (IMAGE UPLOAD OR AUTO UPI)</label>
-        
-        <div style="display:flex;justify-content:center;margin-bottom:8px;">
-          <img id="set-shop-qr-preview" src="" alt="QR Preview" style="width:130px;height:130px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--bdr);padding:4px;display:none;">
-        </div>
-        <div id="set-qr-status" style="font-size:11px;color:var(--t3);margin-bottom:8px;">No custom QR uploaded. Auto UPI QR is active.</div>
-
-        <input type="file" id="set-shop-qr-file" accept="image/*" onchange="handleQrImageUpload(event)" style="display:none;">
-        
-        <div style="display:flex;gap:8px;justify-content:center;">
-          <button type="button" onclick="document.getElementById('set-shop-qr-file').click()" style="padding:6px 12px;background:var(--c100);border:1px solid var(--bdr);border-radius:8px;font-size:11px;font-weight:700;color:var(--t1);cursor:pointer;">
-            📷 Upload QR Photo
-          </button>
-          <button type="button" id="btn-clear-custom-qr" onclick="clearUploadedQr()" style="display:none;padding:6px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:11px;font-weight:700;color:#dc2626;cursor:pointer;">
-            ✕ Reset to UPI QR
-          </button>
-        </div>
-      </div>
-
-      <div class="f-field" style="margin-bottom:16px;">
-        <label class="f-label" style="font-size:11px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px;">PICKUP ESTIMATION SPEED</label>
-        <input id="set-shop-pickup-time" class="f-input" type="text" value="Ready in 20 mins" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--bdr);font-family:inherit;">
-      </div>
-
-      <div style="display:flex;gap:10px;">
-        <button onclick="closeStoreSettingsModal()" class="btn" style="flex:1;background:var(--c100);color:var(--t2);border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Cancel</button>
-        <button onclick="saveStoreSettings()" class="btn btn-primary" style="flex:1;background:var(--g600);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:700;cursor:pointer;">Save Settings ✓</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-
     // ══════════════════════════════════════════
     // --- CONSUMER ORDERS & RAPIDO WORKFLOW ---
     // ══════════════════════════════════════════
@@ -4330,7 +4273,7 @@
         const allOrders = await res.json();
         // Match retailer either by retailer_id or store name
         const currentRetailerId = window.RETAILER_ID || 1;
-        CONSUMER_ORDERS = allOrders.filter(o => o.retailer_id === currentRetailerId || !o.retailer_id);
+        CONSUMER_ORDERS = (allOrders || []).filter(o => o.retailer_id === currentRetailerId || !o.retailer_id);
         
         const pendingCount = CONSUMER_ORDERS.filter(o => o.status === 'pending' || o.status === 'preparing' || o.status === 'ready').length;
         const badge = document.getElementById('retailer-consumer-orders-badge');
@@ -4447,6 +4390,7 @@
 
     // ── STORE SETTINGS & GPS MODAL ──
     let _activeRetailerData = null;
+    let _uploadedQrImage = '';
 
     function openStoreSettingsModal() {
       const modal = document.getElementById('store-settings-modal');
@@ -4458,7 +4402,7 @@
       fetch(API + '/api/retailers')
         .then(r => r.json())
         .then(retailers => {
-          const r = retailers.find(x => x.id === rId) || retailers[0];
+          const r = (retailers || []).find(x => x.id === rId) || (retailers && retailers[0]);
           if (r) {
             _activeRetailerData = r;
             document.getElementById('set-shop-name').value = r.shop_name || r.name;
@@ -4483,8 +4427,6 @@
           }
         });
     }
-
-    let _uploadedQrImage = '';
 
     function handleQrImageUpload(e) {
       const file = e.target.files && e.target.files[0];
@@ -4528,12 +4470,25 @@
 
     function closeStoreSettingsModal() {
       const modal = document.getElementById('store-settings-modal');
-      if (modal) modal.style.display = 'none';
+      if (!modal) return;
+      modal.style.display = 'none';
     }
 
     function detectRetailerGPS() {
+      if (window.AndroidNative && typeof window.AndroidNative.isNativeApp === 'function') {
+        if (typeof window.AndroidNative.isGpsEnabled === 'function' && !window.AndroidNative.isGpsEnabled()) {
+          toast('Kripya mobile settings me Location (GPS) on karein', 'error');
+          window.AndroidNative.promptEnableGps();
+          return;
+        }
+        if (typeof window.AndroidNative.isLocationPermissionGranted === 'function' && !window.AndroidNative.isLocationPermissionGranted()) {
+          toast('Requesting phone GPS permission...', 'info');
+          window.AndroidNative.requestLocationPermission();
+        }
+      }
+
       if (!navigator.geolocation) {
-        toast('Geolocation not supported by browser', 'error');
+        toast('Geolocation not supported by device', 'error');
         return;
       }
       toast('📡 Detecting shop GPS coordinates…', 'info');
@@ -4546,9 +4501,13 @@
           toast('GPS coordinates captured for Mapbox!', 'success');
         },
         err => {
-          toast('Please enable GPS location permission in browser settings', 'error');
+          if (window.AndroidNative && typeof window.AndroidNative.isGpsEnabled === 'function' && !window.AndroidNative.isGpsEnabled()) {
+            window.AndroidNative.promptEnableGps();
+          } else {
+            toast('Please enable GPS location permission', 'error');
+          }
         },
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
       );
     }
 
@@ -4577,7 +4536,9 @@
       }
     }
 
-</script>
+    /* ═══ INIT ═══ */
+    initApp();
+  </script>
 </body>
 
 </html>

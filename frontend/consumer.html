@@ -88,19 +88,9 @@
       }
     }
 
-    /* ── DYNAMIC ISLAND / TOP STATUS BAR ── */
-    .status-bar {
-      height: 44px;
-      background: var(--bg);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 24px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      z-index: 50;
-      flex-shrink: 0;
+    /* ── SAFE AREA PADDING ── */
+    .app-viewport {
+      padding-top: env(safe-area-inset-top, 0px);
     }
 
     /* ── SCROLLABLE SCREEN CONTENT ── */
@@ -1110,16 +1100,6 @@
 <body>
 
   <div class="app-viewport">
-    <!-- Top System Status -->
-    <div class="status-bar">
-      <span>9:41</span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"/></svg>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.66-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
-        <span style="font-size:11px;">100%</span>
-      </div>
-    </div>
-
     <!-- Main Scrollable Area -->
     <div class="main-scroll" id="main-scroll-container">
 
@@ -1260,7 +1240,7 @@
         <div style="padding:0 20px 12px;display:flex;gap:8px;">
           <div class="search-input-row" style="flex:1;">
             <span>🔍</span>
-            <input type="text" id="discover-search-input" placeholder="cumin seeds" value="cumin seeds" oninput="handleDiscoverSearch()">
+            <input type="text" id="discover-search-input" placeholder="Search cumin, turmeric, saunf, dhaniya..." value="cumin seeds" oninput="handleDiscoverSearch()">
             <span style="cursor:pointer;" onclick="clearDiscoverSearch()">✕</span>
           </div>
           <div style="background:var(--card-bg);border:1px solid var(--bdr);border-radius:14px;padding:10px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;">
@@ -1278,17 +1258,17 @@
         </div>
 
         <!-- Selected Spice Highlight Card -->
-        <div class="spice-highlight-card">
-          <img class="highlight-img" src="logo/cumin_seeds.jpeg" alt="Cumin Seeds">
+        <div class="spice-highlight-card" id="discover-spice-highlight">
+          <img class="highlight-img" id="highlight-spice-img" src="logo/cumin_seeds.jpeg" alt="Cumin Seeds">
           <div class="highlight-info">
-            <div class="highlight-title">Cumin Seeds (Jeera) 🌿</div>
-            <div class="highlight-desc">Adds earthy aroma &amp; authentic flavor to your kitchen. Rich in antioxidants.</div>
-            <div class="badge-tags-row">
+            <div class="highlight-title" id="highlight-spice-title">Cumin Seeds (Jeera) 🌿</div>
+            <div class="highlight-desc" id="highlight-spice-desc">Adds earthy aroma &amp; authentic flavor to your kitchen. Rich in antioxidants.</div>
+            <div class="badge-tags-row" id="highlight-spice-tags">
               <span class="tag-badge">🌿 100% Natural</span>
               <span class="tag-badge">⏱ Long Shelf Life</span>
               <span class="tag-badge">✨ Premium Quality</span>
             </div>
-            <div class="market-price-box">Market Price: ₹235 – ₹280 / kg</div>
+            <div class="market-price-box" id="highlight-spice-price">Market Price: ₹235 – ₹280 / kg</div>
           </div>
         </div>
 
@@ -1988,6 +1968,182 @@
       });
     }
 
+    // ── MASTER SPICE CATALOG ──
+    const SPICE_CATALOG = [
+      {
+        id: 5,
+        name: 'Cumin Seeds',
+        hindi: '(Jeera)',
+        category: 'Seeds',
+        price: 240,
+        marketRange: '₹235 – ₹280 / kg',
+        img: 'logo/cumin_seeds.jpeg',
+        desc: 'Adds earthy aroma & authentic flavor to your kitchen. Rich in antioxidants.',
+        tags: ['🌿 100% Natural', '⏱ Long Shelf Life', '✨ Premium Quality']
+      },
+      {
+        id: 3,
+        name: 'Turmeric Powder',
+        hindi: '(Haldi)',
+        category: 'Powders',
+        price: 240,
+        marketRange: '₹220 – ₹270 / kg',
+        img: 'logo/termeric_powder.jpeg',
+        desc: 'High curcumin golden turmeric with anti-inflammatory immunity booster properties.',
+        tags: ['✨ High Curcumin', '🛡 Immunity Booster', '🌿 Pure Golden']
+      },
+      {
+        id: 9,
+        name: 'Fennel Seeds',
+        hindi: '(Saunf)',
+        category: 'Seeds',
+        price: 180,
+        marketRange: '₹170 – ₹220 / kg',
+        img: 'logo/Fennel_seeds.jpeg',
+        desc: 'Sweet fragrant fennel seeds for natural digestion, cooking & refreshing mouth freshener.',
+        tags: ['🌿 Sweet Aroma', '🥗 Digestion Aid', '✨ Selected Green']
+      },
+      {
+        id: 2,
+        name: 'Coriander Powder',
+        hindi: '(Dhaniya)',
+        category: 'Powders',
+        price: 190,
+        marketRange: '₹180 – ₹230 / kg',
+        img: 'logo/coriander_powder.jpeg',
+        desc: 'Aromatic crushed whole coriander seeds that lend mild sweetness and thick gravy body.',
+        tags: ['🍃 Fresh Ground', '🍲 Rich Gravy', '🌿 100% Pure']
+      },
+      {
+        id: 1,
+        name: 'Red Chilli Powder',
+        hindi: '(Lal Mirch)',
+        category: 'Powders',
+        price: 320,
+        marketRange: '₹300 – ₹380 / kg',
+        img: 'logo/red_chilli_powder.jpeg',
+        desc: 'Vibrant natural red colour with balanced fiery pungency directly from Mathania / Jodhpur.',
+        tags: ['🌶 Mathania Red', '🔥 Fiery Heat', '✨ Natural Colour']
+      },
+      {
+        id: 20,
+        name: 'Whole Garam Masala',
+        hindi: '(Khada Masala)',
+        category: 'Whole Spices',
+        price: 850,
+        marketRange: '₹800 – ₹950 / kg',
+        img: 'logo/Whole_gzram_masala.jpeg',
+        desc: 'Master blend of whole cloves, green cardamom, cinnamon, mace, star anise & bay leaves.',
+        tags: ['👑 Royal Blend', '🌟 Aromatic Whole', '✨ Handpicked']
+      },
+      {
+        id: 21,
+        name: 'Ground Garam Masala',
+        hindi: '(Pisa Masala)',
+        category: 'Blends',
+        price: 850,
+        marketRange: '₹820 – ₹920 / kg',
+        img: 'logo/Ground_gzram_masala.jpeg',
+        desc: 'Richly roasted and finely ground royal spice medley for authentic curries and biryanis.',
+        tags: ['🍲 Rich Aroma', '✨ Slow Roasted', '👑 Secret Blend']
+      },
+      {
+        id: 4,
+        name: 'Amchur Powder',
+        hindi: '(Amchur)',
+        category: 'Powders',
+        price: 280,
+        marketRange: '₹260 – ₹310 / kg',
+        img: 'logo/Amchur.jpeg',
+        desc: 'Tangy dried green mango powder adds citrus zest and tart punch to Indian snacks & curries.',
+        tags: ['🍋 Tangy Zest', '🥭 Sun-dried Mango', '✨ Zero Additives']
+      },
+      {
+        id: 7,
+        name: 'Mustard Seeds',
+        hindi: '(Rai)',
+        category: 'Seeds',
+        price: 110,
+        marketRange: '₹95 – ₹130 / kg',
+        img: 'logo/Mustard_seeds.jpeg',
+        desc: 'Crisp tiny pungent black mustard seeds for essential tadkas and pickling.',
+        tags: ['🍳 Perfect Tadka', '🌿 Rich Aroma', '✨ Fine Graded']
+      },
+      {
+        id: 8,
+        name: 'Fenugreek Seeds',
+        hindi: '(Methi)',
+        category: 'Seeds',
+        price: 90,
+        marketRange: '₹80 – ₹110 / kg',
+        img: 'logo/Fenugreek_seeds.jpeg',
+        desc: 'Golden-yellow bitter-sweet seeds known for diabetic wellness and authentic curry base.',
+        tags: ['🩺 Health Tonic', '🌿 Golden Seeds', '✨ Traditional']
+      },
+      {
+        id: 17,
+        name: 'Carom Seeds',
+        hindi: '(Ajwain)',
+        category: 'Seeds',
+        price: 210,
+        marketRange: '₹200 – ₹240 / kg',
+        img: 'logo/Caro _seeds.jpeg',
+        desc: 'Thymol-rich pungent carom seeds essential for puris, parathas, samosas & digestion.',
+        tags: ['🥐 Puri & Paratha', '🌿 Strong Thymol', '✨ Premium']
+      },
+      {
+        id: 11,
+        name: 'Kirayata',
+        hindi: '(Kirayat)',
+        category: 'Whole Spices',
+        price: 220,
+        marketRange: '₹210 – ₹260 / kg',
+        img: 'logo/Kirayta.jpeg',
+        desc: 'Traditional cooling herbal herb known for blood purification and ayurvedic wellness.',
+        tags: ['🌿 Ayurvedic', '🍵 Herbal Tonic', '✨ Pure Natural']
+      },
+      {
+        id: 16,
+        name: 'Flax Seeds',
+        hindi: '(Alsi)',
+        category: 'Seeds',
+        price: 120,
+        marketRange: '₹110 – ₹140 / kg',
+        img: 'logo/Flax_seeds.jpeg',
+        desc: 'Superfood shiny flax seeds loaded with Omega-3, dietary fiber and healthy lignans.',
+        tags: ['💪 Omega-3 Rich', '✨ Superfood', '🌿 Roasted Ready']
+      },
+      {
+        id: 19,
+        name: 'Green Methi - Bilara',
+        hindi: '(Kasuri Methi)',
+        category: 'Whole Spices',
+        price: 200,
+        marketRange: '₹190 – ₹240 / kg',
+        img: 'logo/Green_methi_bilara.jpeg',
+        desc: 'Famous fragrant Bilara/Nagaur sundried green methi leaves for restaurant style curries.',
+        tags: ['🍃 Bilara Special', '🍲 Restaurant Aroma', '✨ Pure Green']
+      }
+    ];
+
+    let activeSearchedSpice = SPICE_CATALOG[0];
+
+    function updateHighlightCard(spice) {
+      if (!spice) return;
+      activeSearchedSpice = spice;
+      const img = document.getElementById('highlight-spice-img');
+      const title = document.getElementById('highlight-spice-title');
+      const desc = document.getElementById('highlight-spice-desc');
+      const tags = document.getElementById('highlight-spice-tags');
+      const price = document.getElementById('highlight-spice-price');
+
+      if (img) img.src = spice.img;
+      if (title) title.innerHTML = `${spice.name} ${spice.hindi} 🌿`;
+      if (desc) desc.textContent = spice.desc;
+      if (tags) tags.innerHTML = (spice.tags || []).map(t => `<span class="tag-badge">${t}</span>`).join('');
+      if (price) price.textContent = `Market Price: ${spice.marketRange || ('₹' + spice.price + ' / kg')}`;
+    }
+
     function renderRetailerCards(retailers) {
       const container = document.getElementById('retailers-cards-container');
       const countLabel = document.getElementById('retailers-count-label');
@@ -1995,16 +2151,18 @@
 
       if (!container) return;
       if (retailers.length === 0) {
-        container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No retailers found in this area.</div>';
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No retailers found matching your search.</div>';
         return;
       }
+
+      const spice = activeSearchedSpice || SPICE_CATALOG[0];
 
       container.innerHTML = retailers.map((r, i) => {
         const isFeatured = r.featured || i === 0;
         const dist = r.distance_km ? `${r.distance_km} km` : `${(0.6 + i * 0.6).toFixed(1)} km`;
         const rating = r.rating || (4.6 - i * 0.2).toFixed(1);
         const reviews = r.review_count || (128 - i * 25);
-        const price = r.price || (240 + i * 5);
+        const spicePrice = spice.price + (i * 5);
         const priceTag = i === 0 ? 'Best Price' : (i === 1 ? 'Good Quality' : 'Fresh Stock');
         const ordersMo = r.monthly_orders || (300 - i * 80);
 
@@ -2012,13 +2170,16 @@
           <div class="store-card ${isFeatured ? 'featured' : ''}">
             ${isFeatured ? '<div class="featured-ribbon">Featured</div>' : ''}
             <div class="store-main-row">
-              <img class="store-thumb" src="${r.shop_image || 'logo/red_chilli_powder.jpeg'}" alt="Store">
+              <div style="position:relative;">
+                <img class="store-thumb" src="${spice.img}" alt="${spice.name}">
+                <span style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.65);color:#fff;font-size:8.5px;padding:2px 5px;border-radius:4px;font-weight:700;">${spice.name.split(' ')[0]}</span>
+              </div>
               <div class="store-details">
                 <div class="store-name-row">
                   <div class="store-name">${r.shop_name || r.name}</div>
                   <span class="verified-badge">✓ Verified</span>
                 </div>
-                <div class="store-location-dist">📍 ${dist} • ${r.address || 'Main Market'}</div>
+                <div class="store-location-dist">📍 ${dist} • ${r.address || 'Main Market Road'}</div>
                 <div class="store-rating-row">
                   <span>★</span>
                   <span>${rating} (${reviews} reviews)</span>
@@ -2031,54 +2192,95 @@
 
             <div class="store-perks-row">
               <div>
-                <div class="store-price-highlight">₹${price} <span style="font-size:11px;font-weight:500;">/ kg</span></div>
-                <div class="store-price-sub">${priceTag}</div>
+                <div class="store-price-highlight">₹${spicePrice} <span style="font-size:11px;font-weight:500;">/ kg</span></div>
+                <div class="store-price-sub">${spice.name} &bull; ${priceTag}</div>
               </div>
-              <button class="btn-view-store" onclick="selectStoreToShop(${r.id})">View Products →</button>
+              <button class="btn-view-store" onclick="selectStoreToShop(${r.id}, ${spice.id})">Order Fresh →</button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function selectStoreToShop(storeId) {
+    function selectStoreToShop(storeId, spiceId) {
       const store = RETAILERS_LIST.find(r => r.id === storeId);
       if (store) {
         currentStore = {
           id: store.id,
           name: store.shop_name || store.name,
           address: store.address || 'Main Market Road, Jodhpur',
-          upi_id: store.upi_id || 'shreemasala@okaxis'
+          upi_id: store.upi_id || 'shreemasala@okaxis',
+          qr_image: store.qr_image || store.upi_qr || ''
         };
-        showToast(`Selected store: ${currentStore.name}`);
+
+        const targetSpice = SPICE_CATALOG.find(s => s.id === spiceId) || activeSearchedSpice;
+        if (targetSpice) {
+          // Put the selected spice in cart
+          cartItems = [
+            { id: targetSpice.id, name: targetSpice.name + ' ' + targetSpice.hindi, pack: '1 kg Pack', price: targetSpice.price, qty: 1, img: targetSpice.img }
+          ];
+          renderCart();
+        }
+
+        showToast(`Store selected: ${currentStore.name}`);
         switchTab('cart');
       }
     }
 
     function handleDiscoverSearch() {
       const q = document.getElementById('discover-search-input').value.trim().toLowerCase();
-      const filtered = RETAILERS_LIST.filter(r => 
-        (r.shop_name && r.shop_name.toLowerCase().includes(q)) ||
-        (r.name && r.name.toLowerCase().includes(q)) ||
-        (r.address && r.address.toLowerCase().includes(q))
+
+      // 1. Search for matching spice
+      const matched = SPICE_CATALOG.find(s => 
+        s.name.toLowerCase().includes(q) ||
+        s.hindi.toLowerCase().includes(q) ||
+        (s.category && s.category.toLowerCase().includes(q))
       );
+
+      if (matched) {
+        updateHighlightCard(matched);
+      }
+
+      // 2. Filter retailers
+      const filtered = RETAILERS_LIST.filter(r => {
+        if (!q) return true;
+        const matchesStore = (r.shop_name && r.shop_name.toLowerCase().includes(q)) ||
+                             (r.name && r.name.toLowerCase().includes(q)) ||
+                             (r.address && r.address.toLowerCase().includes(q));
+        return matchesStore || Boolean(matched);
+      });
+
       renderRetailerCards(filtered);
     }
 
     function clearDiscoverSearch() {
       document.getElementById('discover-search-input').value = '';
+      updateHighlightCard(SPICE_CATALOG[0]);
       renderRetailerCards(RETAILERS_LIST);
     }
 
     function setDiscoverPill(cat, btn) {
       document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (cat === 'All') {
+        clearDiscoverSearch();
+        return;
+      }
+
+      const matching = SPICE_CATALOG.find(s => s.category.toLowerCase() === cat.toLowerCase());
+      if (matching) {
+        updateHighlightCard(matching);
+        document.getElementById('discover-search-input').value = matching.name.toLowerCase();
+      }
+      renderRetailerCards(RETAILERS_LIST);
       showToast(`Showing category: ${cat}`);
     }
 
     function filterCategoryFromHome(cat) {
       switchTab('discover');
-      showToast(`Filtering by ${cat}`);
+      const pill = Array.from(document.querySelectorAll('.filter-pill')).find(p => p.textContent.trim().toLowerCase() === cat.toLowerCase());
+      setDiscoverPill(cat, pill);
     }
 
     // ── PRODUCTS RENDERING (HOME SCREEN) ──
@@ -2425,8 +2627,21 @@
     }
 
     function detectGPSLocation() {
+      // Android Native Bridge Check
+      if (window.AndroidNative && typeof window.AndroidNative.isNativeApp === 'function') {
+        if (typeof window.AndroidNative.isGpsEnabled === 'function' && !window.AndroidNative.isGpsEnabled()) {
+          alert('GPS/Location is OFF on your phone. Please turn ON Location in phone settings.');
+          window.AndroidNative.promptEnableGps();
+          return;
+        }
+        if (typeof window.AndroidNative.isLocationPermissionGranted === 'function' && !window.AndroidNative.isLocationPermissionGranted()) {
+          showToast('Requesting phone location access...');
+          window.AndroidNative.requestLocationPermission();
+        }
+      }
+
       if (!navigator.geolocation) {
-        showToast('Geolocation not supported');
+        showToast('Geolocation not supported by device');
         return;
       }
       showToast('📡 Detecting current GPS location…');
@@ -2439,10 +2654,19 @@
           loadNearbyRetailers();
         },
         err => {
-          showToast('Please enable GPS in browser permissions');
-        }
+          if (window.AndroidNative && typeof window.AndroidNative.isGpsEnabled === 'function' && !window.AndroidNative.isGpsEnabled()) {
+            window.AndroidNative.promptEnableGps();
+          } else {
+            showToast('Please grant location permission to find local shops');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
       );
     }
+
+    window.onNativeLocationPermissionGranted = function() {
+      detectGPSLocation();
+    };
 
     // ── TOAST NOTIFICATIONS & AUDIO CHIME ──
     function showToast(msg) {

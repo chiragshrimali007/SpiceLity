@@ -6,12 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
+import android.webkit.GeolocationPermissions
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -22,6 +25,7 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -57,6 +61,64 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var pendingGeolocationOrigin: String? = null
+    private var pendingGeolocationCallback: GeolocationPermissions.Callback? = null
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        val granted = fineGranted || coarseGranted
+
+        pendingGeolocationCallback?.invoke(pendingGeolocationOrigin, granted, false)
+        pendingGeolocationCallback = null
+        pendingGeolocationOrigin = null
+
+        if (granted) {
+            webView.evaluateJavascript(
+                "if (typeof onNativeLocationPermissionGranted === 'function') { onNativeLocationPermissionGranted(); }",
+                null
+            )
+        }
+    }
+
+    fun hasLocationPermission(): Boolean {
+        val fine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val coarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return fine || coarse
+    }
+
+    fun checkAndRequestLocationPermission() {
+        if (!hasLocationPermission()) {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    fun isGpsEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return false
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+               locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    fun promptEnableGps() {
+        try {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Please enable Location in device settings", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun setSwipeRefreshEnabled(enabled: Boolean) {
+        swipeRefreshLayout.isEnabled = enabled
+    }
+
     private val APP_URL = "https://spicelity.onrender.com"
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -71,6 +133,8 @@ class MainActivity : AppCompatActivity() {
 
         webView = findViewById(R.id.webView)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+        // Disable swipeRefreshLayout to prevent reload loops when scrolling up
+        swipeRefreshLayout.isEnabled = false
         progressBar = findViewById(R.id.progressBar)
         errorContainer = findViewById(R.id.errorContainer)
         btnRetry = findViewById(R.id.btnRetry)
@@ -148,6 +212,10 @@ class MainActivity : AppCompatActivity() {
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
         settings.databaseEnabled = true
+        settings.setGeolocationEnabled(true)
+        try {
+            settings.setGeolocationDatabasePath(filesDir.path)
+        } catch (_: Exception) {}
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.allowFileAccess = true
@@ -209,6 +277,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         webView.webChromeClient = object : WebChromeClient() {
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: GeolocationPermissions.Callback?
+            ) {
+                if (hasLocationPermission()) {
+                    callback?.invoke(origin, true, false)
+                } else {
+                    pendingGeolocationOrigin = origin
+                    pendingGeolocationCallback = callback
+                    checkAndRequestLocationPermission()
+                }
+            }
+
             override fun onShowFileChooser(
                 webView: WebView?,
                 filePathCallback: ValueCallback<Array<Uri>>?,
