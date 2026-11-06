@@ -157,30 +157,115 @@ app.put('/api/retailers/:id/password', (req, res) => {
   }
 });
 
-// Login with name + password
+// Helper matchers for consumer & retailer login
+function findConsumerAccount(consumers, input, pass) {
+  if (!input || !pass) return null;
+  const q = String(input).trim().toLowerCase();
+  const qDigits = q.replace(/\D/g, '');
+
+  return (consumers || []).find(c => {
+    if (!c.password || c.password !== pass) return false;
+    const cName = (c.name || '').trim().toLowerCase();
+    const cEmail = (c.email || '').trim().toLowerCase();
+    const cPhone = (c.phone || '').trim().toLowerCase();
+    const cDigits = cPhone.replace(/\D/g, '');
+
+    const nameMatch = cName === q || cName.includes(q) || q.includes(cName);
+    const emailMatch = cEmail && cEmail === q;
+    const phoneMatch = qDigits.length >= 7 && (cDigits.endsWith(qDigits) || qDigits.endsWith(cDigits));
+
+    return nameMatch || emailMatch || phoneMatch;
+  });
+}
+
+function findRetailerAccount(retailers, input, pass) {
+  if (!input || !pass) return null;
+  const q = String(input).trim().toLowerCase();
+  const qDigits = q.replace(/\D/g, '');
+
+  return (retailers || []).find(r => {
+    if (!r.password || r.password !== pass) return false;
+    const rName = (r.name || '').trim().toLowerCase();
+    const rShop = (r.shop_name || '').trim().toLowerCase();
+    const rOwner = (r.owner_name || '').trim().toLowerCase();
+    const rEmail = (r.email || '').trim().toLowerCase();
+    const rPhone = (r.phone || '').trim().toLowerCase();
+    const rDigits = rPhone.replace(/\D/g, '');
+
+    const nameMatch = rName.includes(q) || rShop.includes(q) || rOwner.includes(q);
+    const emailMatch = rEmail && rEmail === q;
+    const phoneMatch = qDigits.length >= 7 && (rDigits.endsWith(qDigits) || qDigits.endsWith(rDigits));
+
+    return nameMatch || emailMatch || phoneMatch;
+  });
+}
+
+// Universal Login with Name, Phone or Email + Password (Consumer & Retailer)
 app.post('/api/login', (req, res) => {
   try {
     const db = readDB();
-    const { name, password } = req.body;
-    const retailer = db.retailers.find(r =>
-      r.name.toLowerCase().includes(name.toLowerCase()) && r.password === password
-    );
-    if (retailer) {
-      // Parse shop name out of the stored "Shop Name (Owner Name)" format
-      const shopMatch = retailer.name.match(/^(.+?)\s*\(/);
-      const shopName = shopMatch ? shopMatch[1].trim() : retailer.name;
-      res.json({
+    const { name, phone, email, identifier, password, role } = req.body;
+    const input = name || phone || email || identifier;
+
+    if (!input || !password) {
+      return res.status(400).json({ success: false, message: 'Please enter your username/phone and password' });
+    }
+
+    const consumers = db.consumers || [];
+    const retailers = db.retailers || [];
+
+    let matchedConsumer = null;
+    let matchedRetailer = null;
+
+    if (role === 'consumer') {
+      matchedConsumer = findConsumerAccount(consumers, input, password);
+      if (!matchedConsumer) matchedRetailer = findRetailerAccount(retailers, input, password);
+    } else if (role === 'retailer') {
+      matchedRetailer = findRetailerAccount(retailers, input, password);
+      if (!matchedRetailer) matchedConsumer = findConsumerAccount(consumers, input, password);
+    } else {
+      // Auto-detect
+      matchedConsumer = findConsumerAccount(consumers, input, password);
+      matchedRetailer = findRetailerAccount(retailers, input, password);
+    }
+
+    if (matchedConsumer) {
+      if (matchedConsumer.isBlocked) {
+        return res.status(403).json({ success: false, message: 'Your account has been suspended by Admin. Contact support.' });
+      }
+      return res.json({
+        success: true,
+        role: 'consumer',
+        id: matchedConsumer.id,
+        name: matchedConsumer.name,
+        phone: matchedConsumer.phone,
+        email: matchedConsumer.email || '',
+        address: matchedConsumer.address || '',
+        city: matchedConsumer.city || '',
+        consumer: matchedConsumer
+      });
+    }
+
+    if (matchedRetailer) {
+      if (matchedRetailer.isBlocked) {
+        return res.status(403).json({ success: false, message: 'Your retailer account has been suspended by Admin. Contact support.' });
+      }
+      const shopMatch = matchedRetailer.name.match(/^(.+?)\s*\(/);
+      const shopName = matchedRetailer.shop_name || (shopMatch ? shopMatch[1].trim() : matchedRetailer.name);
+      const ownerName = matchedRetailer.owner_name || matchedRetailer.name.replace(/\s*\(.*\)$/, '').trim() || matchedRetailer.name;
+      return res.json({
         success: true,
         role: 'retailer',
-        id: retailer.id,
-        name: retailer.name.replace(/\s*\(.*\)$/, '').trim() || retailer.name, // owner name
+        id: matchedRetailer.id,
+        name: ownerName,
         shop: shopName,
-        city: retailer.city || '',
-        phone: retailer.phone || ''
+        city: matchedRetailer.city || '',
+        phone: matchedRetailer.phone || '',
+        retailer: matchedRetailer
       });
-    } else {
-      res.status(401).json({ success: false, message: 'Invalid name or password' });
     }
+
+    res.status(401).json({ success: false, message: 'Invalid name, phone or password' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -472,18 +557,12 @@ app.post('/api/consumers/register', (req, res) => {
 app.post('/api/consumers/login', (req, res) => {
   try {
     const db = readDB();
-    const { phone, password, name } = req.body;
-    const cleanPhone = (phone || '').replace(/\s+/g, '');
-    const cleanName = (name || '').trim().toLowerCase();
-
-    const consumer = (db.consumers || []).find(c => {
-      const cPhone = (c.phone || '').replace(/\s+/g, '');
-      const cName = (c.name || '').toLowerCase();
-      return (cPhone.includes(cleanPhone) || cName === cleanName) && (!password || c.password === password);
-    });
+    const { phone, password, name, email, identifier } = req.body;
+    const input = phone || name || email || identifier;
+    const consumer = findConsumerAccount(db.consumers || [], input, password);
 
     if (!consumer) {
-      return res.status(401).json({ success: false, message: 'Invalid phone or password' });
+      return res.status(401).json({ success: false, message: 'Invalid phone, email or password' });
     }
     if (consumer.isBlocked) {
       return res.status(403).json({ success: false, message: 'Your account has been suspended by Admin. Contact support.' });

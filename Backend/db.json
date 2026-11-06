@@ -518,7 +518,44 @@
       "time": "3:20"
     }
   ],
-  "notifications": [],
+  "notifications": [
+    {
+      "id": 1,
+      "target": "consumer",
+      "consumer_id": 1,
+      "text": "📦 Your Order #SPC-78432 is being prepared!",
+      "time": "Just now",
+      "ico": "📦",
+      "read": false
+    },
+    {
+      "id": 2,
+      "target": "consumer",
+      "consumer_id": 1,
+      "text": "📦 Your Order #SPC-78432 is READY for pickup at store counter!",
+      "time": "Just now",
+      "ico": "📦",
+      "read": false
+    },
+    {
+      "id": 3,
+      "target": "consumer",
+      "consumer_id": 1,
+      "text": "📦 Your Order #SPC-78432 completed!",
+      "time": "Just now",
+      "ico": "📦",
+      "read": false
+    },
+    {
+      "id": 4,
+      "target": "retailer",
+      "retailer_id": 10,
+      "text": "🛒 New Consumer Order #SPC-24442 by consumer for ₹260!",
+      "time": "Just now",
+      "ico": "🛒",
+      "read": false
+    }
+  ],
   "messages": [
     {
       "id": 1,
@@ -548,14 +585,37 @@
       "verified": true,
       "isBlocked": false,
       "totalOrders": 18,
-      "pendingOrders": 2,
-      "completedOrders": 16,
+      "pendingOrders": 1,
+      "completedOrders": 17,
       "savedStores": [
         1,
         2,
         3
       ],
       "createdAt": "2026-05-10T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "consumer",
+      "phone": "+91 1234568761",
+      "email": "chiragshrimali03@gmail.com",
+      "password": "123456",
+      "dob": "1998-08-15",
+      "address": "12, Shastri Nagar, Pal Road",
+      "city": "Jodhpur",
+      "state": "Rajasthan",
+      "pincode": "342006",
+      "coords": {
+        "lat": 26.31076323115502,
+        "lng": 73.04412694483662
+      },
+      "verified": true,
+      "isBlocked": false,
+      "totalOrders": 1,
+      "pendingOrders": 1,
+      "completedOrders": 0,
+      "savedStores": [],
+      "createdAt": "2026-11-06T12:38:03.610Z"
     }
   ],
   "consumer_orders": [
@@ -607,7 +667,7 @@
       "packaging_charges": 10,
       "platform_fee": 10,
       "total_amount": 660,
-      "status": "pending",
+      "status": "completed",
       "status_timeline": [
         {
           "step": "placed",
@@ -618,12 +678,72 @@
         {
           "step": "preparing",
           "label": "Preparing",
-          "time": "12 May, 10:35 AM",
+          "time": "6 Nov, 03:52 pm",
           "done": true
         },
         {
           "step": "ready",
           "label": "Ready",
+          "time": "6 Nov, 03:53 pm",
+          "done": true
+        },
+        {
+          "step": "completed",
+          "label": "Picked Up",
+          "time": "6 Nov, 04:02 pm",
+          "done": true
+        }
+      ],
+      "pickup_time_estimate": "Ready for pickup in 20 mins",
+      "pickup_info": "Main Market Road, Ahmedabad, Gujarat 380001",
+      "pickup_instructions": "Show this order ID at the counter",
+      "payment_method": "upi_counter",
+      "payment_received": true,
+      "createdAt": "2026-05-12T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "order_id": "#SPC-24442",
+      "consumer_id": 2,
+      "consumer_name": "consumer",
+      "consumer_phone": "+91 1234568761",
+      "retailer_id": 10,
+      "retailer_name": "chirag (chirag)",
+      "retailer_address": "Jodhpur",
+      "retailer_upi_id": "spicelity.10@okaxis",
+      "retailer_upi_qr": "",
+      "retailer_qr_image": "",
+      "items": [
+        {
+          "id": 5,
+          "name": "Cumin Seeds (Jeera)",
+          "pack": "1 kg Pack",
+          "price": 240,
+          "qty": 1,
+          "img": "logo/cumin_seeds.jpeg"
+        }
+      ],
+      "subtotal": 240,
+      "packaging_charges": 10,
+      "platform_fee": 10,
+      "total_amount": 260,
+      "status": "pending",
+      "status_timeline": [
+        {
+          "step": "placed",
+          "label": "Placed",
+          "time": "6 Nov, 06:09 pm",
+          "done": true
+        },
+        {
+          "step": "preparing",
+          "label": "Preparing",
+          "time": "Upcoming",
+          "done": false
+        },
+        {
+          "step": "ready",
+          "label": "Ready for Pickup",
           "time": "Upcoming",
           "done": false
         },
@@ -634,12 +754,12 @@
           "done": false
         }
       ],
-      "pickup_time_estimate": "Ready for pickup in 20 mins",
-      "pickup_info": "Main Market Road, Ahmedabad, Gujarat 380001",
+      "pickup_time_estimate": "Ready in 25 mins",
+      "pickup_info": "Main Market Road, Jodhpur",
       "pickup_instructions": "Show this order ID at the counter",
       "payment_method": "upi_counter",
       "payment_received": false,
-      "createdAt": "2026-05-12T10:30:00Z"
+      "createdAt": "2026-11-06T12:39:09.218Z"
     }
   ]
 }

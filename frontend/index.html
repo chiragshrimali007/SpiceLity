@@ -516,6 +516,36 @@
       color: var(--t3);
     }
 
+    /* ── LOGIN ROLE TABS ── */
+    .login-role-tabs {
+      display: flex;
+      gap: 5px;
+      background: var(--c200);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .login-tab {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--t2);
+      cursor: pointer;
+      transition: all .2s ease;
+      font-family: inherit;
+    }
+
+    .login-tab.active {
+      background: #ffffff;
+      color: var(--g800);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+    }
+
     /* ── CARD 2: ROLE SELECTION ── */
     .role-big-row {
       display: grid;
@@ -906,25 +936,32 @@
         <div class="card card-pull">
           <div class="card-hdr">
             <div class="card-title">Login to SpiceLity</div>
-            <div class="card-sub">Enter your name and password to continue</div>
+            <div class="card-sub">Login with your Name, Phone or Email</div>
           </div>
           <div class="card-body">
 
-            <!-- Name -->
+            <!-- Role Selector Tabs -->
+            <div class="login-role-tabs">
+              <button type="button" class="login-tab active" id="tabAuto" onclick="selectLoginRole('auto')">⚡ Auto-Detect</button>
+              <button type="button" class="login-tab" id="tabConsumer" onclick="selectLoginRole('consumer')">👤 Consumer</button>
+              <button type="button" class="login-tab" id="tabRetailer" onclick="selectLoginRole('retailer')">🏪 Retailer</button>
+            </div>
+
+            <!-- Name / Phone / Email -->
             <div class="f-field">
-              <label class="f-label">YOUR NAME</label>
+              <label class="f-label" id="loginIdLbl">YOUR NAME, PHONE OR EMAIL</label>
               <div class="f-wrap">
-                <input class="f-input" id="loginName" type="text" placeholder="e.g. Vikram Patel">
-                <span class="f-ico">👤</span>
+                <input class="f-input" id="loginName" type="text" placeholder="e.g. Dipesh, 9876543210 or email" autocomplete="username">
+                <span class="f-ico" id="loginIdIco">👤</span>
               </div>
-              <div class="err-msg" id="nameErr">Please enter your registered name</div>
+              <div class="err-msg" id="nameErr">Please enter your registered name, phone or email</div>
             </div>
 
             <!-- Password -->
             <div class="f-field">
               <label class="f-label">PASSWORD</label>
               <div class="f-wrap">
-                <input class="f-input" id="loginPass" type="password" placeholder="Your password">
+                <input class="f-input" id="loginPass" type="password" placeholder="Your password" autocomplete="current-password">
                 <span class="f-ico">🔒</span>
               </div>
               <div class="err-msg" id="passErr">Incorrect password. Please try again.</div>
@@ -1585,6 +1622,32 @@
       goTo('s3' + role);
     }
 
+    // ── LOGIN ROLE SELECTOR ──
+    let currentLoginRole = 'auto';
+    function selectLoginRole(role) {
+      currentLoginRole = role;
+      document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+      const lbl = document.getElementById('loginIdLbl');
+      const inp = document.getElementById('loginName');
+      const ico = document.getElementById('loginIdIco');
+      if (role === 'consumer') {
+        document.getElementById('tabConsumer')?.classList.add('active');
+        if (lbl) lbl.textContent = 'CONSUMER NAME, PHONE OR EMAIL';
+        if (inp) inp.placeholder = 'e.g. Dipesh, +91 98765 43210 or email';
+        if (ico) ico.textContent = '👤';
+      } else if (role === 'retailer') {
+        document.getElementById('tabRetailer')?.classList.add('active');
+        if (lbl) lbl.textContent = 'RETAILER NAME, SHOP OR PHONE';
+        if (inp) inp.placeholder = 'e.g. Vikram Patel, Shop Name or Phone';
+        if (ico) ico.textContent = '🏪';
+      } else {
+        document.getElementById('tabAuto')?.classList.add('active');
+        if (lbl) lbl.textContent = 'YOUR NAME, PHONE OR EMAIL';
+        if (inp) inp.placeholder = 'e.g. Dipesh, 9876543210 or email';
+        if (ico) ico.textContent = '👤';
+      }
+    }
+
     // ── SCREEN 1: LOGIN FLOW ──
     async function handleLoginBtn() {
       const name = document.getElementById('loginName').value.trim();
@@ -1606,7 +1669,7 @@
         const res = await fetch(API + '/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, password: pass })
+          body: JSON.stringify({ name, password: pass, role: currentLoginRole })
         });
         const data = await res.json();
         btn.classList.remove('loading'); sp.classList.remove('show');
@@ -1645,6 +1708,8 @@
             setTimeout(() => window.location.href = 'retailer.html', 800);
           }
         } else {
+          const passErr = document.getElementById('passErr');
+          if (passErr) passErr.textContent = data.message || 'Incorrect credentials. Please try again.';
           showErr('passErr');
           shake(document.getElementById('loginPass'));
         }
@@ -1654,6 +1719,20 @@
         showToast('⚠️ Could not reach server. Is it running?');
       }
     }
+
+    // Attach keyboard and input listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const pInp = document.getElementById('loginPass');
+      const nInp = document.getElementById('loginName');
+      if (pInp) {
+        pInp.addEventListener('keydown', e => { if (e.key === 'Enter') handleLoginBtn(); });
+        pInp.addEventListener('input', () => hideErr('passErr'));
+      }
+      if (nInp) {
+        nInp.addEventListener('keydown', e => { if (e.key === 'Enter') handleLoginBtn(); });
+        nInp.addEventListener('input', () => hideErr('nameErr'));
+      }
+    });
 
     // ── OTP DIGIT AUTO-FOCUS ──
     function dMove(el, idx, prefix) {
